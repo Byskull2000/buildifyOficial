@@ -1,11 +1,15 @@
-Primero siempre después de pullear:
-npm install
+# Instrucciones
+## Despues de cada pull instalar las dependencias:
+```npm install```
 
-Luego:
-npm run dev
+## Comando para ejecutar el Proyecto:
+```npm run dev```
 
-Integrantes:
-Anturiano Eulate Eleonor Camile
-Grájeda Herrera Diego Gualberto
-García Llanqui Jhunior Remberto
-Limachi García Pablo Hans
+# Integrantes:
+* Anturiano Eulate Eleonor Camile
+* Bruno Meneses Nestor Antonio
+* Camacho Vargas Jhoel Freddy
+* Grájeda Herrera Diego Gualberto
+* García Llanqui Jhunior Remberto
+* Limachi García Pablo Hans
+ 
