@@ -54,7 +54,7 @@ iniciar
 
 ```npm run dev```
 
-## Como verificar que el backend funcionara en PythonAnywhere
+## Como verificar que el frontend funcionara en PythonAnywhere
 
 1. acceder al directorio frontend
 
