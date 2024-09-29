@@ -9,7 +9,6 @@ createRoot(document.getElementById('root')!).render(
     <Router>
       <Routes>
         <Route path="/" element={<App />} />
-        <Route path="/about" element={<App />} />
       </Routes>
     </Router>
   </StrictMode>,

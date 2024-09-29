@@ -54,6 +54,35 @@ iniciar
 
 ```npm run dev```
 
+## Como verificar que el backend funcionara en PythonAnywhere
+
+1. acceder al directorio frontend
+
+    ```cd frontend```
+
+2. generar los archivos estaticos de react
+
+    ```npm run build```
+
+3. mover el directorio '/static' del directorio ***frontend*** a ***backend***
+
+    ```mv .\static\ ..\backend\```
+4. abrir el directorio del backend desde el frontend
+
+    ```cd ..\backend\```
+
+5. iniciar el entorno virtual si es que lo tienes creado caso contrario crearlo e instalar los requerimientos
+
+    ```./.venv/Scripts/activate```
+
+6. iniciar el servidor
+
+    ```flask run```
+
+7. abrir el navegador
+
+    <http://localhost:5000>
+
 ## Integrantes
 
 - Anturiano Eulate Eleonor Camile
