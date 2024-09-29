@@ -1,12 +1,18 @@
 # Instrucciones
 
-## Backend
+## Requerimientos
 
-### Requerimientos
+***backend***
 
 - Python 3.10
 
-### Como iniciar
+***frontend***
+
+- Node Js 20.12
+
+## Como Iniciar
+
+### Backend
 
 abrir el directorio backend
 
@@ -30,19 +36,21 @@ iniciar servidor
 
 ### Antes de Realizar un Push
 
-## Crear o Actualizar el archivo requirements.txt
-
-actualizar en caso de instalar alguna dependencia
+Crear o Actualizar el archivo requirements.txt en caso de instalar alguna dependencia nueva
 
 ```python -m pip freeze > requirements.txt```
 
-## Frontend
+### Frontend
 
-## Despues de cada pull instalar las dependencias
+abrir el directorio frontend
+
+```cd frontend```
+
+instalar dependencias
 
 ```npm install```
 
-## Comando para ejecutar el Proyecto
+iniciar
 
 ```npm run dev```
 
