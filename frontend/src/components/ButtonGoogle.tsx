@@ -1,9 +1,21 @@
 import { useGoogleLogin } from "@react-oauth/google";
 import GoogleLogo from "../assets/google.svg";
+import axios from "axios";
 
 const ButtonGoogle = () => {
     const login = useGoogleLogin({
-        onSuccess: (response) => console.log(response),
+        onSuccess: async tokenResponse => {
+            console.log(tokenResponse);
+            const userInfo = await axios.get(
+                'https://www.googleapis.com/oauth2/v3/userinfo',
+                {
+                    headers: {
+                        Authorization: `Bearer ${tokenResponse.access_token}`,
+                    }
+                }
+            )
+            console.log(userInfo);
+        },
         onError: (error) => console.log("Error en el Login: ", error)
     })
 
