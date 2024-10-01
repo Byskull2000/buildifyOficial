@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import fondologin from "../assets/fondoRegisterF.jpg"
-
 import logo from "../assets/Buildify.png"
 const page = () => {
     const [showPassword, setShowPassword] = useState(false);
