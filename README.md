@@ -87,3 +87,4 @@ iniciar
 - Grájeda Herrera Diego Gualberto
 - García Llanqui Jhunior Remberto
 - Limachi García Pablo Hans
+- Huanca Zubieta Nilson Erwin
