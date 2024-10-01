@@ -1,5 +1,5 @@
 // Todas las imagenes deben estar en /src/assets
-import NavBar from '../components/navBar';
+import NavBar from "../components/NavBar";
 function App() {
     return (
         <>
