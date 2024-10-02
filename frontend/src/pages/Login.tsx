@@ -1,7 +1,8 @@
 "use client";
 import { useState } from "react";
-import fondologin from "../assets/fondoRegisterF.jpg"
+import fondologin from "../assets/fondoLoginF.jpg"
 import logo from "../assets/Buildify.png"
+import { Link } from 'react-router-dom';
 
 
 const Page = () => {
@@ -76,7 +77,13 @@ const Page = () => {
             </form>
 
             <div className="mt-4 text-sm text-center lg:mb-36">
-              <p className="text-gray-600">No tienes una cuenta? <a href="../pages/register" className="text-blue-500 hover:underline">Regístrate ahora</a></p>
+              <p className="text-gray-600">No tienes una cuenta?
+                <Link
+                  to="/register"
+                  className="text-blue-500 hover:underline"
+                >
+                    Regístrate ahora
+                </Link></p>
             </div>
           </div>
         </div>
