@@ -1,6 +1,7 @@
 import { useState } from "react";
 import fondologin from "../assets/fondoRegisterF.jpg"
 import logo from "../assets/Buildify.png"
+import { Link } from 'react-router-dom';
 const page = () => {
     const [showPassword, setShowPassword] = useState(false);
     return (
@@ -100,7 +101,14 @@ const page = () => {
                         </form>
 
                         <div className="mt-4 text-sm text-center lg:mb-36">
-                            <p className="text-gray-600">Ya tienes una cuenta? <a href="../pages/login" className="text-blue-500 hover:underline">Iniciar sesion</a></p>
+                            <p className="text-gray-600">Ya tienes una cuenta? 
+                            <Link
+                                to="/login"
+                                className="text-blue-500 hover:underline"
+                            >
+                                Iniciar sesión
+                            </Link>
+                            </p>
                         </div>
                     </div>
                 </div>
