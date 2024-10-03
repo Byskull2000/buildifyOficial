@@ -4,17 +4,18 @@ import logo from "../assets/Buildify.png"
 import { Link } from 'react-router-dom';
 const page = () => {
     const [showPassword, setShowPassword] = useState(false);
+    const [showPassword2, setShowPassword2] = useState(false);
     return (
         <div >
             <div className="flex h-screen">
                 <div className="hidden lg:flex items-center justify-center flex-1 relative bg-white text-black w-2/3">
-                <img src={fondologin} alt="ImagenDelLogin" className="absolute inset-0 w-full h-full object-cover" />
+                    <img src={fondologin} alt="ImagenDelLogin" className="absolute inset-0 w-full h-full object-cover" />
                 </div>
 
                 <div className="w-full bg-white lg:w-1/3 flex items-center justify-center">
                     <div className="max-w-md w-full p-6">
                         <div className="flex items-center lg:ml-[-16px] lg:mb-16">
-                        <img src={logo} alt="Buildify Logo" width={50} height={50} className="mr-2" />
+                            <img src={logo} alt="Buildify Logo" width={50} height={50} className="mr-2" />
                             <h1 className="text-3xl font-bold text-black">Buildify</h1>
                         </div>
                         <h1 className="text-2xl font-semibold mb-6 text-black text-left w-full lg:ml-[-10px]">Regístrate ahora</h1>
@@ -63,17 +64,17 @@ const page = () => {
                                 <div className="relative">
                                     <input
                                         placeholder="Ingresa tu contraseña"
-                                        type={showPassword ? "text" : "password"}
+                                        type={showPassword2 ? "text" : "password"}
                                         id="password"
                                         name="password"
                                         className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                                     />
                                     <button
                                         type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
+                                        onClick={() => setShowPassword2(!showPassword2)}
                                         className="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-500"
                                     >
-                                        {showPassword ? (
+                                        {showPassword2 ? (
                                             <svg className="mt-1 w-5 h-5 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
                                                 <path fill="#9e9e9e" d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM144 256a144 144 0 1 1 288 0 144 144 0 1 1 -288 0zm144-64c0 35.3-28.7 64-64 64c-7.1 0-13.9-1.2-20.3-3.3c-5.5-1.8-11.9 1.6-11.7 7.4c.3 6.9 1.3 13.8 3.2 20.7c13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-11.1-41.5-47.8-69.4-88.6-71.1c-5.8-.2-9.2 6.1-7.4 11.7c2.1 6.4 3.3 13.2 3.3 20.3z" />
                                             </svg>
@@ -101,13 +102,13 @@ const page = () => {
                         </form>
 
                         <div className="mt-4 text-sm text-center lg:mb-36">
-                            <p className="text-gray-600">Ya tienes una cuenta? 
-                            <Link
-                                to="/login"
-                                className="text-blue-500 hover:underline"
-                            >
-                                Iniciar sesión
-                            </Link>
+                            <p className="text-gray-600">Ya tienes una cuenta?
+                                <Link
+                                    to="/login"
+                                    className="text-blue-500 hover:underline"
+                                >
+                                    Iniciar sesión
+                                </Link>
                             </p>
                         </div>
                     </div>
