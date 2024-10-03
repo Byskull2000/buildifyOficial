@@ -1,70 +1,79 @@
 import os
-from flask import Flask, send_from_directory, jsonify, render_template, request, redirect, url_for
+from flask import Flask, send_from_directory, jsonify, request, redirect, url_for, flash
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
+from base64 import b64encode
+
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 
-# Configuración de la base de datos MySQL
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:nilson123@localhost/Fotos'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = 'static/uploads'  
-
-# Asegúrate de que el directorio de subida exista
+app.secret_key = 'nilson123'  
+app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/uploads')
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+app.config['MAX_PHOTOS'] = 10
+CORS(app)
 
 db = SQLAlchemy(app)
 
-# Modelo de base de datos para las fotos
 class Foto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(100), nullable=False)
+    data = db.Column(db.LargeBinary, nullable=False)
 
-# Endpoint de la API
+@app.template_filter('b64encode')
+def b64encode_filter(data):
+    if data is None:
+        return ""  
+    return b64encode(data).decode('utf-8')
+
+# Aqui se pondran los endpoints de las API que se vayan a crear siempre deben empezar con la ruta /api/
 @app.route('/api/integrantes')
 def api():
-    integrantes = ["Pablo", "Diego", "Jhunior", "Eleonor", "Fernanda", "Bruno", "Jhoel", "Kike", "Nilson"]
-    return jsonify({'integrantes': integrantes})
+    integrantes = ["Pablo, Diego, Jhunior, Eleonor,Fernanda","Bruno","Jhoel","Kike","Nilson"]
+    return jsonify({'integrantes':integrantes})
 
-# Ruta para subir fotos
-@app.route('/upload', methods=['GET', 'POST'])
+@app.route('/api/upload', methods=['POST'])
 def upload_file():
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            return 'No file part', 400
-        
-        file = request.files['file']
-        
-        if file.filename == '':
-            return 'No selected file', 400
-        
-        if file:
-            # Guardar el archivo
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            
-            # Guardar el nombre del archivo en la base de datos
-            nueva_foto = Foto(filename=filename)
-            db.session.add(nueva_foto)
-            db.session.commit()
+    if 'file' not in request.files:
+        flash('No hay archivo en la solicitud', 'error')
+        return jsonify({'error': 'No hay archivo en la solicitud'}), 400
 
-            return redirect(url_for('upload_file'))
+    file = request.files['file']
+    if file.filename == '':
+        flash('No se ha seleccionado ningún archivo', 'error')
+        return jsonify({'error': 'No se ha seleccionado ningún archivo'}), 400
 
-    return render_template('upload.html')  
+    if file:
+        filename = secure_filename(file.filename)
+        file_data = file.read()
 
-# Ruta para mostrar las fotos almacenadas
-@app.route('/fotos')
+        nueva_foto = Foto(filename=filename, data=file_data)
+        db.session.add(nueva_foto)
+        db.session.commit()
+
+        flash('Imagen subida correctamente', 'success')
+        return jsonify({'success': 'Imagen subida correctamente'}), 200
+
 def mostrar_fotos():
     fotos = Foto.query.all()
-    return render_template('mostrar_fotos.html', fotos=fotos)
+    fotos_data = [{'id': foto.id, 'filename': foto.filename, 'data': b64encode(foto.data).decode('utf-8')} for foto in fotos]
+    return jsonify({'fotos': fotos_data}), 200
 
-# Código para servir la aplicación React
+#######################################################################
+# el codigo de abajo sirve para poder ejecutar react en python anywhere
+
 @app.route('/', defaults={'path': ''})
-@app.route('/<path>')
+@app.route('/<path:path>')
 def serve_react_app(path):
-    return send_from_directory(app.static_folder, 'index.html')
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'app.tsx')
 
 if __name__ == "__main__":
     with app.app_context():
-        db.create_all()  # Crear la base de datos si no existe
+        db.create_all()  
     app.run(debug=True)
