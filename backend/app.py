@@ -13,6 +13,7 @@ app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__fil
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
 app.config['SECRET_KEY'] = 'supersecretkey' 
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1080 * 1080
 
 
 
@@ -136,8 +137,20 @@ def upload_file():
     if file.filename == '':
         flash('No se ha seleccionado ningún archivo', 'error')
         return jsonify({'error': 'No se ha seleccionado ningún archivo'}), 400
+    
+    if len(file) > 10:
+        return jsonify({'error': 'Solo se pueden subir hasta 10 fotos'}), 400
+    
+     if not validar_formato(file.filename):
+        return jsonify({'error': 'Formato no valido. Solo se permiten imagenes PNG o JPG'}), 400
+    
+    img = Image.open(file)
+    if img.size != (1080, 1080):
+        return jsonify({'error','la imagen debe ser de 1080x1080 pixeles'}), 400
+    
 
     if file:
+        file.seek(0)
         filename = secure_filename(file.filename)
         file_data = file.read()
 
@@ -147,6 +160,10 @@ def upload_file():
 
         flash('Imagen subida correctamente', 'success')
         return jsonify({'success': 'Imagen subida correctamente'}), 200
+
+def validar_formato(filename):
+    validar_extension = {'png', 'jpg'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in validar_extension
 
 def mostrar_fotos():
     fotos = Foto.query.all()
