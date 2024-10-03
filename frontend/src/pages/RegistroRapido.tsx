@@ -1,11 +1,11 @@
-import fondoRegistroRapido from "../assets/fondoRegistroRapido.jpg"
+import fondoRegistroRapido from "../assets/FotoRegistroRapido.jpg"
 import { useState } from "react";
 import logo from '../assets/Buildify.png'
 const page = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
     return (
-        <div className="min-h-screen text-gray-900 flex justify-center bg-[#FDBC3F]">
+        <div className="min-h-screen text-gray-900 flex justify-center bg-[#DBDBDB]">
             <div className="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1 rounder-lg">
                 <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12 rounded-lg">
                     <div className="flex items-center lg:ml-[-16px] lg:mb-16">
