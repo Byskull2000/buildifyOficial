@@ -10,7 +10,11 @@ app = Flask(__name__, static_folder='static', static_url_path='')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/uploads')
+#CONEXION PARA PRUEBAS EN PYTHONANYWHERE
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
+
+#CONEXION PARA PRUEBAS EN BASE LOCAL
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/buildify'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
 app.config['SECRET_KEY'] = 'supersecretkey' 
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1080 * 1080
@@ -72,7 +76,7 @@ def obtener_usuarios():
     } for u in usuarios])  # Devolver como JSON
 
 # Ruta para agregar un nuevo usuario
-@app.route('/api/usuarios', methods=['POST'])
+@app.route('/api/RegistrarUsuario', methods=['POST'])
 def agregar_usuario():
     data = request.get_json()  # Obtener los datos del cuerpo de la petición
     nuevo_usuario = Usuario(
@@ -115,6 +119,43 @@ def login():
         return jsonify({"message": 'Contraseña incorrecta'}), 401
 
 
+# Ruta para actualizar la zona de trabajo de un usuario
+@app.route('/api/usuarios/<int:id_usuario>/zona', methods=['PUT'])
+def actualizar_zona(id_usuario):
+    data = request.get_json()
+    usuario = Usuario.query.get_or_404(id_usuario)
+    usuario.zona_trabajo = data.get('zona_trabajo', usuario.zona_trabajo)
+    db.session.commit()
+    return jsonify({"message": "Zona de trabajo actualizada", "zona_trabajo": usuario.zona_trabajo})
+
+# Ruta para actualizar la imagen de perfil de un usuario
+@app.route('/api/usuarios/<int:id_usuario>/imagen', methods=['PUT'])
+def actualizar_imagen(id_usuario):
+    data = request.get_json()
+    usuario = Usuario.query.get_or_404(id_usuario)
+    usuario.imagen_perfil = data.get('imagen_perfil', usuario.imagen_perfil)  # Se espera que la imagen esté en Base64
+    db.session.commit()
+    return jsonify({"message": "Imagen de perfil actualizada"})
+
+# Ruta para actualizar el nombre de usuario
+@app.route('/api/usuarios/<int:id_usuario>/nombre', methods=['PUT'])
+def actualizar_nombre(id_usuario):
+    data = request.get_json()
+    usuario = Usuario.query.get_or_404(id_usuario)
+    usuario.nombre_usuario = data.get('nombre_usuario', usuario.nombre_usuario)
+    db.session.commit()
+    return jsonify({"message": "Nombre de usuario actualizado", "nombre_usuario": usuario.nombre_usuario})
+
+# Ruta para actualizar el teléfono de un usuario
+@app.route('/api/usuarios/<int:id_usuario>/telefono', methods=['PUT'])
+def actualizar_telefono(id_usuario):
+    data = request.get_json()
+    usuario = Usuario.query.get_or_404(id_usuario)
+    usuario.telefono = data.get('telefono', usuario.telefono)
+    db.session.commit()
+    return jsonify({"message": "Teléfono actualizado", "telefono": usuario.telefono})
+
+
 @app.template_filter('b64encode')  #convertir a binario las fotos
 def b64encode_filter(data):
     if data is None:
@@ -141,7 +182,7 @@ def upload_file():
     if len(file) > 10:
         return jsonify({'error': 'Solo se pueden subir hasta 10 fotos'}), 400
     
-     if not validar_formato(file.filename):
+    if not validar_formato(file.filename):
         return jsonify({'error': 'Formato no valido. Solo se permiten imagenes PNG o JPG'}), 400
     
     img = Image.open(file)
