@@ -4,17 +4,21 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from base64 import b64encode
+from flask_cors import CORS
+
 
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 
+CORS(app)
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/uploads')
 #CONEXION PARA PRUEBAS EN PYTHONANYWHERE
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
 
 #CONEXION PARA PRUEBAS EN BASE LOCAL
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/buildify'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/buildify'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
 app.config['SECRET_KEY'] = 'supersecretkey' 
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1080 * 1080
@@ -29,10 +33,6 @@ CORS(app)
 db = SQLAlchemy(app)
 
 
-class Foto(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    filename = db.Column(db.String(100), nullable=False)
-    data = db.Column(db.LargeBinary, nullable=False)
 
 # Modelo para la tabla Usuario
 class Usuario(db.Model):
@@ -52,7 +52,8 @@ class Usuario(db.Model):
 class Foto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(100), nullable=False)
-    
+    data = db.Column(db.LargeBinary, nullable=False)
+  
 # Ruta para devolver los nombres de los campos de la tabla Usuario
 @app.route('/api/usuarios/campos', methods=['GET'])
 def obtener_campos_usuario():
