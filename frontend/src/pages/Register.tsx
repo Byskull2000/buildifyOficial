@@ -67,6 +67,7 @@ const page = () => {
 
             const { data } = await res.json();
             console.log("data: ", data);
+             
 
         } catch (e) {
             console.error(e);
@@ -211,7 +212,7 @@ const page = () => {
                                     </p>
                                 )}
                             </div>
-
+                            
                             <div>
                                 <button type="submit" className="mb-2 py-2 w-full bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">Registrarme</button>
                             </div>

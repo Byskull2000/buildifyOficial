@@ -6,11 +6,11 @@ const Page = () => {
             
             <Link
                 to="/registroRapido"
-                className="text-blue-500 hover:underline mb-4"
+                className="text-blue-500 hover:underline"
             >
                 Prueba registro Rápido
             </Link>
-            <br /> 
+            <br></br> 
             
             <Link
                 to="/subirImagenes"  

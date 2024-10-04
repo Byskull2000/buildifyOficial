@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+/*import { Link } from 'react-router-dom';*/
 import logo from "../assets/Buildify.png"
 const Page = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -52,6 +52,7 @@ const Page = () => {
 
             const { data } = await res.json();
             console.log("data: ", data);
+            
 
         } catch (e) {
             console.error(e);
@@ -214,7 +215,10 @@ const Page = () => {
                                         )}
                                     </button>
                                 </div>
+                                
+                                
                             </div>
+                            
                             <div className="w-full mb-2 lg:mb-0 mt-5">
                                 <button type="button" className="py-3 w-full flex justify-center items-center gap-2 bg-stone-800 text-sm text-gray-100 p-2 rounded-lg hover:bg-stone-950 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-950 transition-colors duration-300">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-4" id="google">

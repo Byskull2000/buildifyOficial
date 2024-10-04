@@ -56,7 +56,7 @@ class Usuario(db.Model):
 # Modelo de base de datos para las fotos
 class Foto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario'), nullable=False)
+    #id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario'), nullable=False)
     filename = db.Column(db.String(100), nullable=False)
     data = db.Column(db.LargeBinary,nullable=False)
     
