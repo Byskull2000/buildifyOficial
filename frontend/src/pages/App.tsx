@@ -1,12 +1,12 @@
 // Todas las imagenes deben estar en /src/assets
 import NavBar from '../components/NavBar';
-import Body1 from '../components/Body';
+import PopupRegristro from '../components/RegistroRapidoPP';
 function App() {
     return (
         <>
             <div className="bg-white">
                 <NavBar/>
-                <Body1></Body1>
+                <PopupRegristro></PopupRegristro>
             </div>
         </>
     );
