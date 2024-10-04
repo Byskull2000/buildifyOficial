@@ -9,16 +9,28 @@ const page = () => {
     const [nombre,setNombre] = useState("");
     const [telefono, setTelefono] = useState ("");
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
     const [passwordS, setPasswordS] = useState("");
+    const [password, setPassword] = useState('');
     const [error, setError] = useState("");
     const navigate = useNavigate(); 
+    const [hasUpperCase, setHasUpperCase] = useState(false);
+    const [hasNumber, setHasNumber] = useState(false);
+    const [passwordLength, setPasswordLength] = useState(false);
+    const [passwordsMatch, setPasswordsMatch] = useState(false);
+
 
 
 
     const handleSubmit = async (e:React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
-    
+        if (passwordS !== password) {
+            console.error('Las contraseñas no son iguales');
+            return;
+        }
+        if (!validatePassword(password)) {
+            console.error('La contraseña debe contener al menos una letra mayúscula y un número');
+            return;
+        }
     
         const body = {
           "nombre_usuario": nombre,
@@ -46,14 +58,48 @@ const page = () => {
     
           const { data } = await res.json();
           console.log("data: ", data);
-    
-    
-          //navigate("/");
-    
+
         } catch (e) {
           console.error(e);
           setError("Error en la conexión con el servidor");
         }
+    };
+    
+    const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newPassword = event.target.value;
+        setPassword(newPassword);
+
+
+        const upperCaseRegex = /[A-Z]/;
+        setHasUpperCase(upperCaseRegex.test(newPassword));
+
+
+        const numberRegex = /\d/;
+        setHasNumber(numberRegex.test(newPassword));
+
+
+        setPasswordLength(newPassword.length >= 8);
+    };
+
+    const handlePasswordVerifyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const confirmPassword = event.target.value;
+        setPasswordS(confirmPassword);
+
+        if (confirmPassword === password) {
+            setPasswordsMatch(true);
+        } else {
+            setPasswordsMatch(false);
+        }
+    };
+
+    const validatePassword = (password: string) => {
+        const upperCaseCheck = /[A-Z]/.test(password);
+        const numberCheck = /\d/.test(password);
+        const lengthCheck = password.length >= 8;
+        setHasUpperCase(upperCaseCheck);
+        setHasNumber(numberCheck);
+        setPasswordLength(lengthCheck);
+        return upperCaseCheck && numberCheck && lengthCheck;
     };
 
     return (
@@ -68,7 +114,7 @@ const page = () => {
                             <img src={logo} alt="Buildify Logo" width={50} height={50} className="mr-2" />
                             <h1 className="text-3xl font-bold text-black">Buildify</h1>
                         </div>
-                        <h1 className="text-2xl font-semibold mb-6 text-black text-left w-full lg:ml-[-10px]">Regístrate ahora</h1>
+                        <h1 className="mt-[-10px] text-2xl font-semibold mb-6 text-black text-left w-full lg:ml-[-10px]">Regístrate ahora</h1>
                         <form onSubmit={handleSubmit} method="POST" className="space-y-4">
                             <div>
                                 <label htmlFor="name" className="block text-sm font-medium text-gray-500 ml-2">Nombre</label>
@@ -86,7 +132,7 @@ const page = () => {
                                 <label htmlFor="password" className="block text-sm font-medium text-gray-500 ml-2">Contraseña</label>
                                 <div className="relative">
                                     <input
-                                        value={password} onChange={e => setPassword(e.target.value)} 
+                                        value={password} 
                                         placeholder="Ingresa tu contraseña"
                                         type={showPassword ? "text" : "password"}
                                         id="password"
@@ -125,7 +171,7 @@ const page = () => {
                                 <label htmlFor="password" className="block text-sm font-medium text-gray-500 ml-2">Repite tu contraseña</label>
                                 <div className="relative">
                                     <input
-                                        value={passwordS} onChange={e => setPasswordS(e.target.value)} 
+                                        value={passwordS}
                                         placeholder="Ingresa tu contraseña"
                                         type={showPassword2 ? "text" : "password"}
                                         id="password"
