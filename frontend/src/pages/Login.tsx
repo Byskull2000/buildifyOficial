@@ -10,9 +10,9 @@ const Page = () => {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate(); // Para redireccionar al usuario después del login
+  const navigate = useNavigate(); 
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!email || !password) {
@@ -25,8 +25,10 @@ const Page = () => {
       "contrasenia": password,
     };
 
+
     try {
-      const res = await fetch("http://localhost:5000/api/login", {
+      const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
+      const res = await fetch(URL_BACKEND + "/api/login", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,7 +45,7 @@ const Page = () => {
       const { data } = await res.json();
       console.log("data: ", data);
 
-      // Guardar datos en localStorage o manejar redireccionamiento si es exitoso
+   
       if (rememberMe) {
         localStorage.setItem("user", JSON.stringify(data));
       }else {
@@ -71,7 +73,7 @@ const Page = () => {
               <h1 className="text-3xl font-bold text-black">Buildify</h1>
             </div>
             <h1 className="text-2xl font-semibold mb-6 text-black text-left w-full lg:ml-[-10px]">Bienvenido de nuevo</h1>
-            <form action="#" method="POST" className="space-y-4">
+            <form onSubmit={handleSubmit} method="POST" className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-500 ml-2">Inicio de sesión</label>
                 <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Correo electrónico" type="text" id="email" name="email" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
@@ -114,74 +116,13 @@ const Page = () => {
               </div>
               {error && <p style={{ color: 'red' }}>{error}</p>}
               <div>
-                <button onClick={handleSubmit}  className="mb-2 py-2 w-full bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">Iniciar sesión</button>
+                <button  className="mb-2 py-2 w-full bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">Iniciar sesión</button>
               </div>
               <hr className="border-gray-200" />
               <div className="w-full mb-2 lg:mb-0 mt-5">
                 <button type="button" className="py-3 w-full flex justify-center items-center gap-2 bg-stone-800 text-sm text-gray-100 p-2 rounded-lg hover:bg-stone-950 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-950 transition-colors duration-300">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-4" id="google">
-<<<<<<< Tabnine <<<<<<<
-      @app.route('/api/login', methods=['POST'])//+
-      def login()://+
-          """//+
-          This function handles user login. It receives a POST request with JSON data containing //+
-          the user's email and password. It checks if the user exists in the database and verifies //+
-          the password. If successful, it returns the user's information; otherwise, it returns an //+
-          appropriate error message.//+
-      //+
-          Parameters://+
-          - request: The incoming POST request containing JSON data.//+
-      //+
-          Returns://+
-          - A JSON response with the following structure://+
-            - If the user is found and the password is correct://+
-              {//+
-                  'data': {//+
-                      'id_usuario': user.id_usuario,//+
-                      'nombre_usuario': user.nombre_usuario,//+
-                      'correo_electronico': user.correo_electronico,//+
-                      'fecha_creacion': user.fecha_creacion,//+
-                      'ultimo_login': user.ultimo_login,//+
-                      'estado_usuario': user.estado_usuario,//+
-                      'zona_trabajo': user.zona_trabajo,//+
-                      'imagen_perfil': user.imagen_perfil.decode('utf-8') if user.imagen_perfil else None//+
-                  },//+
-                  'status': 200//+
-              }//+
-            - If the user is not found://+
-              {//+
-                  'message': 'Usuario no encontrado',//+
-                  'status': 404//+
-              }//+
-            - If the password is incorrect://+
-              {//+
-                  'message': 'Contraseña incorrecta',//+
-                  'status': 401//+
-              }//+
-          """//+
-          data = request.get_json()//+
-          correo_electronico = data["correo_electronico"]//+
-          contrasenia = data["contrasenia"]//+
-          //+
-          user = Usuario.query.filter_by(correo_electronico=correo_electronico).first()//+
-          //+
-          if not user://+
-              return jsonify({'message': "Usuario no encontrado"}), 404//+
-          if user.contrasenia == contrasenia: //+
-              return jsonify({'data': {//+
-                  'id_usuario': user.id_usuario,//+
-                  'nombre_usuario': user.nombre_usuario,//+
-                  'correo_electronico': user.correo_electronico,//+
-                  'fecha_creacion': user.fecha_creacion,//+
-                  'ultimo_login': user.ultimo_login,//+
-                  'estado_usuario': user.estado_usuario,//+
-                  'zona_trabajo': user.zona_trabajo,//+
-                  'imagen_perfil': user.imagen_perfil.decode('utf-8') if user.imagen_perfil else None//+
-              } //+
-                          }), 200    //+
-          else:   //+
-              return jsonify({"message": 'Contraseña incorrecta'}), 401//+
->>>>>>> Tabnine >>>>>>>// {"conversationId":"c291eae2-3c5d-4e8a-8d53-a9134bd81db2","source":"instruct"}
+
                     <path fill="#fbbb00" d="M113.47 309.408 95.648 375.94l-65.139 1.378C11.042 341.211 0 299.9 0 256c0-42.451 10.324-82.483 28.624-117.732h.014L86.63 148.9l25.404 57.644c-5.317 15.501-8.215 32.141-8.215 49.456.002 18.792 3.406 36.797 9.651 53.408z"></path>
                     <path fill="#518ef8" d="M507.527 208.176C510.467 223.662 512 239.655 512 256c0 18.328-1.927 36.206-5.598 53.451-12.462 58.683-45.025 109.925-90.134 146.187l-.014-.014-73.044-3.727-10.338-64.535c29.932-17.554 53.324-45.025 65.646-77.911h-136.89V208.176h245.899z"></path>
                     <path fill="#28b446" d="m416.253 455.624.014.014C372.396 490.901 316.666 512 256 512c-97.491 0-182.252-54.491-225.491-134.681l82.961-67.91c21.619 57.698 77.278 98.771 142.53 98.771 28.047 0 54.323-7.582 76.87-20.818l83.383 68.262z"></path>

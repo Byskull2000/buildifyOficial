@@ -14,11 +14,13 @@ CORS(app)
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/uploads')
+
 #CONEXION PARA PRUEBAS EN PYTHONANYWHERE
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
 
 #CONEXION PARA PRUEBAS EN BASE LOCAL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/buildify'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/buildify'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
 app.config['SECRET_KEY'] = 'supersecretkey' 
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1080 * 1080
@@ -216,12 +218,9 @@ def mostrar_fotos():
 # el codigo de abajo sirve para poder ejecutar react en python anywhere
 
 @app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
+@app.route('/<path>')
 def serve_react_app(path):
-    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
-        return send_from_directory(app.static_folder, path)
-    else:
-        return send_from_directory(app.static_folder, 'app.tsx')
+    return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == "__main__":
     with app.app_context():

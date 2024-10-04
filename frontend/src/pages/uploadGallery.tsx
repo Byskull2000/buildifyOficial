@@ -2,7 +2,6 @@
 import React from 'react';
 import UploadPhoto from '../components/upload';
 import Gallery from '../components/gallery';
-import axios from 'axios';
 
 const UploadGallery: React.FC = () => {
     const handleUploadSuccess = () => {
