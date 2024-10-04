@@ -93,4 +93,4 @@ hacer lo siguiente
 - Camacho Vargas Jhoel Freddy
 - Grájeda Herrera Diego Gualberto
 - García Llanqui Jhunior Remberto
-- Limachi García Pablo Hans
+- Limachi Martinez Pablo Hans
