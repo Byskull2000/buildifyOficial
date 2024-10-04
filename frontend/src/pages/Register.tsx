@@ -1,10 +1,61 @@
+"use client";
 import { useState } from "react";
 import fondologin from "../assets/fondoRegisterF.jpg"
 import logo from "../assets/Buildify.png"
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 const page = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
+    const [nombre,setNombre] = useState("");
+    const [telefono, setTelefono] = useState ("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordS, setPasswordS] = useState("");
+    const [error, setError] = useState("");
+    const navigate = useNavigate(); 
+
+
+
+    const handleSubmit = async (e:React.SyntheticEvent<HTMLFormElement>) => {
+        e.preventDefault();
+    
+    
+        const body = {
+          "nombre_usuario": nombre,
+          "correo_electronico": email,
+          "contrasenia": password,
+          "fecha_creacion": Date.now+"",
+        };
+    
+    
+        try {
+          const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
+          const res = await fetch(URL_BACKEND + "/api/RegistrarUsuario", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+          });
+    
+          if (!res.ok) {
+            const errorResponse = await res.json();
+            setError(errorResponse.message || "Error al registrar usuario");
+            return;
+          }
+    
+          const { data } = await res.json();
+          console.log("data: ", data);
+    
+    
+          //navigate("/");
+    
+        } catch (e) {
+          console.error(e);
+          setError("Error en la conexión con el servidor");
+        }
+    };
+
     return (
         <div >
             <div className="flex h-screen">
@@ -19,23 +70,24 @@ const page = () => {
                             <h1 className="text-3xl font-bold text-black">Buildify</h1>
                         </div>
                         <h1 className="text-2xl font-semibold mb-6 text-black text-left w-full lg:ml-[-10px]">Regístrate ahora</h1>
-                        <form action="#" method="POST" className="space-y-4">
+                        <form onSubmit={handleSubmit} method="POST" className="space-y-4">
                             <div>
                                 <label htmlFor="name" className="block text-sm font-medium text-gray-500 ml-2">Nombre</label>
-                                <input placeholder="Nombre completo" type="text" id="name" name="name" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
+                                <input value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Nombre completo" type="text" id="name" name="name" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
                             </div>
                             <div>
                                 <label htmlFor="phone" className="block text-sm font-medium text-gray-500 ml-2">Número de celular</label>
-                                <input placeholder="Número de teléfono" type="tel" id="phone" name="phone" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
+                                <input value={telefono} onChange={e => setTelefono(e.target.value)} placeholder="Número de teléfono" type="tel" id="phone" name="phone" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
                             </div>
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-500 ml-2">Inicio de sesión</label>
-                                <input placeholder="Correo electrónico" type="text" id="email" name="email" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
+                                <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Correo electrónico" type="text" id="email" name="email" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
                             </div>
                             <div>
                                 <label htmlFor="password" className="block text-sm font-medium text-gray-500 ml-2">Contraseña</label>
                                 <div className="relative">
                                     <input
+                                        value={password} onChange={e => setPassword(e.target.value)} 
                                         placeholder="Ingresa tu contraseña"
                                         type={showPassword ? "text" : "password"}
                                         id="password"
@@ -63,6 +115,7 @@ const page = () => {
                                 <label htmlFor="password" className="block text-sm font-medium text-gray-500 ml-2">Repite tu contraseña</label>
                                 <div className="relative">
                                     <input
+                                        value={passwordS} onChange={e => setPasswordS(e.target.value)} 
                                         placeholder="Ingresa tu contraseña"
                                         type={showPassword2 ? "text" : "password"}
                                         id="password"
