@@ -5,24 +5,85 @@ import { Link } from 'react-router-dom';
 const page = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
+    const [passwordVerificar, setPasswordVerificar] = useState('');
+    const [password, setPassword] = useState('');
+    const [hasUpperCase, setHasUpperCase] = useState(false);
+    const [hasNumber, setHasNumber] = useState(false);
+    const [passwordLength, setPasswordLength] = useState(false);
+    const [passwordsMatch, setPasswordsMatch] = useState(false);
+
+    const handleSubmit = async (e:React.SyntheticEvent<HTMLFormElement>) => {
+        if (passwordVerificar !== password) {
+            console.error('Las contraseñas no son iguales');
+            return;
+        }
+        if (!validatePassword(password)) {
+            console.error('La contraseña debe contener al menos una letra mayúscula y un número');
+            return;
+        }
+    }
+
+
+
+
+    const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newPassword = event.target.value;
+        setPassword(newPassword);
+
+
+        const upperCaseRegex = /[A-Z]/;
+        setHasUpperCase(upperCaseRegex.test(newPassword));
+
+
+        const numberRegex = /\d/;
+        setHasNumber(numberRegex.test(newPassword));
+
+
+        setPasswordLength(newPassword.length >= 8);
+    };
+
+    const handlePasswordVerifyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const confirmPassword = event.target.value;
+        setPasswordVerificar(confirmPassword);
+
+        if (confirmPassword === password) {
+            setPasswordsMatch(true);
+        } else {
+            setPasswordsMatch(false);
+        }
+    };
+
+    const validatePassword = (password: string) => {
+        const upperCaseCheck = /[A-Z]/.test(password);
+        const numberCheck = /\d/.test(password);
+        const lengthCheck = password.length >= 8;
+        setHasUpperCase(upperCaseCheck);
+        setHasNumber(numberCheck);
+        setPasswordLength(lengthCheck);
+        return upperCaseCheck && numberCheck && lengthCheck;
+    };
+
+
     return (
         <div >
             <div className="flex h-screen">
                 <div className="hidden lg:flex items-center justify-center flex-1 relative bg-white text-black w-2/3">
                     <img src={fondologin} alt="ImagenDelLogin" className="absolute inset-0 w-full h-full object-cover" />
                 </div>
-
-                <div className="w-full bg-white lg:w-1/3 flex items-center justify-center">
+                <div className="w-full bg-white lg:w-1/3 flex items-center justify-center mt-16">
                     <div className="max-w-md w-full p-6">
-                        <div className="flex items-center lg:ml-[-16px] lg:mb-16">
+                        <div className="flex items-center lg:ml-[-16px] lg:mb-16 mt-10">
                             <img src={logo} alt="Buildify Logo" width={50} height={50} className="mr-2" />
                             <h1 className="text-3xl font-bold text-black">Buildify</h1>
                         </div>
-                        <h1 className="text-2xl font-semibold mb-6 text-black text-left w-full lg:ml-[-10px]">Regístrate ahora</h1>
-                        <form action="#" method="POST" className="space-y-4">
+                        <h1 className="mt-[-10px] text-2xl font-semibold mb-6 text-black text-left w-full lg:ml-[-10px]">Regístrate ahora</h1>
+                        <form action="#" onSubmit={handleSubmit} method="POST" className="space-y-4">
                             <div>
                                 <label htmlFor="name" className="block text-sm font-medium text-gray-500 ml-2">Nombre</label>
-                                <input placeholder="Nombre completo" type="text" id="name" name="name" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
+                                <input placeholder="Nombre completo"
+                                    type="text" id="name" name="name"
+                                    className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                    required />
                             </div>
                             <div>
                                 <label htmlFor="phone" className="block text-sm font-medium text-gray-500 ml-2">Número de celular</label>
@@ -30,7 +91,8 @@ const page = () => {
                             </div>
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-500 ml-2">Inicio de sesión</label>
-                                <input placeholder="Correo electrónico" type="text" id="email" name="email" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
+                                <input placeholder="Correo electrónico" type="text" id="email" name="email" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                    required />
                             </div>
                             <div>
                                 <label htmlFor="password" className="block text-sm font-medium text-gray-500 ml-2">Contraseña</label>
@@ -41,6 +103,8 @@ const page = () => {
                                         id="password"
                                         name="password"
                                         className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                        required
+                                        onChange={handlePasswordChange}
                                     />
                                     <button
                                         type="button"
@@ -58,6 +122,15 @@ const page = () => {
                                         )}
                                     </button>
                                 </div>
+                                <p className={`text-sm mt-1 ${hasUpperCase ? 'text-green-500' : 'text-red-500'}`}>
+                                    {hasUpperCase ? '✓' : '✗'} La contraseña debe tener al menos una mayúscula
+                                </p>
+                                <p className={`text-sm mt-1 ${hasNumber ? 'text-green-500' : 'text-red-500'}`}>
+                                    {hasNumber ? '✓' : '✗'} La contraseña debe tener al menos un número
+                                </p>
+                                <p className={`text-sm mt-1 ${passwordLength ? 'text-green-500' : 'text-red-500'}`}>
+                                    {passwordLength ? '✓' : '✗'} La contraseña debe tener al menos 8 caracteres
+                                </p>
                             </div>
                             <div>
                                 <label htmlFor="password" className="block text-sm font-medium text-gray-500 ml-2">Repite tu contraseña</label>
@@ -68,6 +141,8 @@ const page = () => {
                                         id="password"
                                         name="password"
                                         className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                        required
+                                        onChange={handlePasswordVerifyChange}
                                     />
                                     <button
                                         type="button"
@@ -85,7 +160,13 @@ const page = () => {
                                         )}
                                     </button>
                                 </div>
+                                {hasUpperCase && hasNumber && passwordLength && (
+                                    <p className={`text-sm mt-1 ${passwordsMatch ? 'text-green-500' : 'text-red-500'}`}>
+                                        {passwordsMatch ? '✓ Las contraseñas coinciden' : '✗ Las contraseñas no coinciden'}
+                                    </p>
+                                )}
                             </div>
+
                             <div>
                                 <button type="submit" className="mb-2 py-2 w-full bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">Registrarme</button>
                             </div>

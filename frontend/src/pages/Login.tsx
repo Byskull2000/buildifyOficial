@@ -15,10 +15,6 @@ const Page = () => {
   const handleSubmit = async (e:React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!email || !password) {
-      setError("Por favor, completa todos los campos");
-      return;
-    }
 
     const body = {
       "correo_electronico": email,
@@ -76,7 +72,11 @@ const Page = () => {
             <form onSubmit={handleSubmit} method="POST" className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-500 ml-2">Inicio de sesión</label>
-                <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Correo electrónico" type="text" id="email" name="email" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
+                <input value={email} onChange={e => setEmail(e.target.value)} 
+                                     placeholder="Correo electrónico" type="text" 
+                                     id="email" name="email" 
+                                     className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                     required />
               </div>
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-500 ml-2">Contraseña</label>
@@ -88,6 +88,7 @@ const Page = () => {
                     id="password"
                     name="password"
                     className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                    required
                   />
                   <button
                     type="button"

@@ -108,7 +108,7 @@ def login():
     user = Usuario.query.filter_by(correo_electronico=correo_electronico).first()
     
     if not user:
-        return jsonify({'message': "Usuario no encontrado"}), 404
+        return jsonify({"message": 'Error al iniciar sesión: Usuario o contraseña incorrectos'}), 404
     if user.contrasenia == contrasenia: 
         return jsonify({'data': {
             'id_usuario': user.id_usuario,
@@ -122,7 +122,7 @@ def login():
         } 
                     }), 200    
     else:   
-        return jsonify({"message": 'Contraseña incorrecta'}), 401
+        return jsonify({"message": 'Error al iniciar sesión: Usuario o contraseña incorrectos'}), 401
 
 
 # Ruta para actualizar la zona de trabajo de un usuario
