@@ -8,6 +8,8 @@ from PIL import Image
 import io
 from flask_cors import CORS
 from flask_migrate import Migrate
+from sqlalchemy.sql import func
+
 
 
 
@@ -26,7 +28,7 @@ app.config['MAX_CONTENT_LENGTH'] = 5 * 1080 * 1080
 
 #CONEXION PARA PRUEBAS EN BASE LOCAL
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:nilson123@localhost:3306/fotos'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/buildify'
 
 
 
@@ -46,7 +48,7 @@ class Usuario(db.Model):
     nombre_usuario = db.Column(db.String(80), nullable=False)
     correo_electronico = db.Column(db.String(100), nullable=False)
     contrasenia = db.Column(db.String(50), nullable=False)
-    fecha_creacion = db.Column(db.DateTime, nullable=True)
+    fecha_creacion = db.Column(db.DateTime,default=func.now(), nullable=True)
     ultimo_login = db.Column(db.DateTime, nullable=True)
     estado_usuario = db.Column(db.String(15), nullable=True)
     zona_trabajo = db.Column(db.String(50), nullable=True)
@@ -91,7 +93,6 @@ def agregar_usuario():
         nombre_usuario=data['nombre_usuario'],
         correo_electronico=data['correo_electronico'],
         contrasenia=data['contrasenia'],
-        fecha_creacion=data.get('fecha_creacion'),  # Puede ser opcional
         ultimo_login=data.get('ultimo_login'),      # Puede ser opcional
         estado_usuario=data.get('estado_usuario'),  # Puede ser opcional
         zona_trabajo=data.get('zona_trabajo'),      # Puede ser opcional
