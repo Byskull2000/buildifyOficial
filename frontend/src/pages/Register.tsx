@@ -1,27 +1,36 @@
 "use client";
 import { useState } from "react";
+import { useEffect } from 'react';
 import fondologin from "../assets/fondoRegisterF.jpg"
 import logo from "../assets/Buildify.png"
 import { Link, useNavigate } from 'react-router-dom';
 const page = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
-    const [nombre,setNombre] = useState("");
-    const [telefono, setTelefono] = useState ("");
+    const [nombre, setNombre] = useState("");
+    const [telefono, setTelefono] = useState("");
     const [email, setEmail] = useState("");
     const [passwordS, setPasswordS] = useState("");
     const [password, setPassword] = useState('');
     const [error, setError] = useState("");
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
     const [hasUpperCase, setHasUpperCase] = useState(false);
     const [hasNumber, setHasNumber] = useState(false);
     const [passwordLength, setPasswordLength] = useState(false);
     const [passwordsMatch, setPasswordsMatch] = useState(false);
 
+    //Quitar uso de la rueda del mouse porque se ve feo
+    useEffect(() => {
+        const handleWheel = (e: WheelEvent) => {
+            e.preventDefault();
+        };
+        window.addEventListener('wheel', handleWheel, { passive: false });
+        return () => {
+            window.removeEventListener('wheel', handleWheel);
+        };
+    }, []);
 
-
-
-    const handleSubmit = async (e:React.SyntheticEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (passwordS !== password) {
             console.error('Las contraseñas no son iguales');
@@ -31,40 +40,39 @@ const page = () => {
             console.error('La contraseña debe contener al menos una letra mayúscula y un número');
             return;
         }
-    
+
         const body = {
-          "nombre_usuario": nombre,
-          "correo_electronico": email,
-          "contrasenia": password,
-          "fecha_creacion": Date.now+"",
+            "nombre_usuario": nombre,
+            "correo_electronico": email,
+            "contrasenia": password,
+            "fecha_creacion": Date.now + "",
         };
-    
-    
+
+
         try {
-          const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
-          const res = await fetch(URL_BACKEND + "/api/RegistrarUsuario", {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(body),
-          });
-    
-          if (!res.ok) {
-            const errorResponse = await res.json();
-            setError(errorResponse.message || "Error al registrar usuario");
-            return;
-          }
-    
-          const { data } = await res.json();
-          console.log("data: ", data);
+            const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
+            const res = await fetch(URL_BACKEND + "/api/RegistrarUsuario", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body),
+            });
+
+            if (!res.ok) {
+                const errorResponse = await res.json();
+                setError(errorResponse.message || "Error al registrar usuario");
+                return;
+            }
+
+            const { data } = await res.json();
+            console.log("data: ", data);
 
         } catch (e) {
-          console.error(e);
-          setError("Error en la conexión con el servidor");
+            console.error(e);
+            setError("Error en la conexión con el servidor");
         }
     };
-    
     const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newPassword = event.target.value;
         setPassword(newPassword);
@@ -103,6 +111,7 @@ const page = () => {
     };
 
     return (
+
         <div >
             <div className="flex h-screen">
                 <div className="hidden lg:flex items-center justify-center flex-1 relative bg-white text-black w-2/3">
@@ -114,7 +123,7 @@ const page = () => {
                             <img src={logo} alt="Buildify Logo" width={50} height={50} className="mr-2" />
                             <h1 className="text-3xl font-bold text-black">Buildify</h1>
                         </div>
-                        <h1 className="mt-[-10px] text-2xl font-semibold mb-6 text-black text-left w-full lg:ml-[-10px]">Regístrate ahora</h1>
+                        <h1 className="lg:mt-[-20px] text-2xl font-semibold mb-6 text-black text-left w-full lg:ml-[-10px]">Regístrate ahora</h1>
                         <form onSubmit={handleSubmit} method="POST" className="space-y-4">
                             <div>
                                 <label htmlFor="name" className="block text-sm font-medium text-gray-500 ml-2">Nombre</label>
@@ -132,7 +141,7 @@ const page = () => {
                                 <label htmlFor="password" className="block text-sm font-medium text-gray-500 ml-2">Contraseña</label>
                                 <div className="relative">
                                     <input
-                                        value={password} 
+                                        value={password}
                                         placeholder="Ingresa tu contraseña"
                                         type={showPassword ? "text" : "password"}
                                         id="password"

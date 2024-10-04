@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 import { useState } from "react";
 import fondologin from "../assets/fondoLoginF.jpg"
 import logo from "../assets/Buildify.png"
@@ -12,6 +13,15 @@ const Page = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate(); 
 
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+        e.preventDefault();
+    };
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+        window.removeEventListener('wheel', handleWheel);
+    };
+}, []);
   const handleSubmit = async (e:React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
 
