@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useEffect } from 'react';
 import fondologin from "../assets/fondoRegisterF.jpg"
 import logo from "../assets/Buildify.png"
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 const page = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
@@ -13,7 +13,6 @@ const page = () => {
     const [passwordS, setPasswordS] = useState("");
     const [password, setPassword] = useState('');
     const [error, setError] = useState("");
-    const navigate = useNavigate();
     const [hasUpperCase, setHasUpperCase] = useState(false);
     const [hasNumber, setHasNumber] = useState(false);
     const [passwordLength, setPasswordLength] = useState(false);
@@ -65,7 +64,8 @@ const page = () => {
                 return;
             }
 
-            console.log(await res.json())
+            const { data } = await res.json();
+            console.log("data: ", data);
              
 
         } catch (e) {
@@ -127,11 +127,11 @@ const page = () => {
                         <form onSubmit={handleSubmit} method="POST" className="space-y-4">
                             <div>
                                 <label htmlFor="name" className="block text-sm font-medium text-gray-500 ml-2">Nombre</label>
-                                <input value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Nombre completo" type="text" id="name" name="name" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
+                                <input value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Nombre completo" type="text" id="name" name="name" pattern="[A-Za-z\s]+" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
                             </div>
                             <div>
                                 <label htmlFor="phone" className="block text-sm font-medium text-gray-500 ml-2">Número de celular</label>
-                                <input value={telefono} onChange={e => setTelefono(e.target.value)} placeholder="Número de teléfono" type="tel" id="phone" name="phone" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
+                                <input value={telefono} onChange={e => setTelefono(e.target.value)} onKeyDown={(e) => (e.key === 'e' || e.key === '-' || e.key === '+') && e.preventDefault()} placeholder="Número de teléfono" type="number" id="phone" name="phone" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
                             </div>
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-500 ml-2">Inicio de sesión</label>
@@ -226,7 +226,7 @@ const page = () => {
                                     </svg> Continuar con Google </button>
                             </div>
                         </form>
-
+                        {error && <p style={{ color: 'red' }}>{error}</p>}
                         <div className="mt-4 text-sm text-center lg:mb-36">
                             <p className="text-gray-600">Ya tienes una cuenta?
                                 <Link

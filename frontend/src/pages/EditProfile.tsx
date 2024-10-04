@@ -2,6 +2,20 @@ import imgEjemploPerfil from '../assets/ejemploPerfil.jpg';
 import { Link } from 'react-router-dom';
 import { MdLocationOn } from 'react-icons/md'; // Importar el ícono del mapa
 
+const usuario =
+{
+    correo_electronico: "pablo@pablo.com",
+    estado_usuario: null,
+    telefono: 77777777,
+    fecha_creacion: null, id_usuario: 1,
+    imagen_perfil: null,
+    nombre_usuario: "Pablo",
+    ultimo_login: null,
+    zona_trabajo: "Avenida sexta / 1944 "
+};
+
+
+
 
 const page = () => {
     return (
@@ -59,16 +73,17 @@ const page = () => {
                                     <div className="mb-2 sm:mb-6">
                                         <label
                                             className="block mb-2 text-sm font-medium  text-black ">Nombre</label>
-                                        <input type="text" id="profession"
+                                        <input type="text" id="nombre"
                                             className="bg-yellow-100 border border-orange-200 text-sm rounded-lg block w-full p-2.5 "
-                                            placeholder="Tu nombre" required />
+                                            placeholder="Tu nombre" required value={usuario.nombre_usuario} pattern="[A-Za-z\s]+" />
                                     </div>
                                     <div className="mb-2 sm:mb-6">
                                         <label
                                             className="block mb-2 text-sm font-medium  ">Numero de teléfono</label>
-                                        <input type="email" id="email"
+                                        <input type="number" id="email"
                                             className="bg-yellow-100  border border-orange-200 text-sm rounded-lg  block w-full p-2.5 "
-                                            placeholder="Ej: 7777777" required />
+                                            placeholder="Ej: 7777777" required value={usuario.telefono}
+                                            onKeyDown={(e) => (e.key === 'e' || e.key === '-' || e.key === '+') && e.preventDefault()} />
                                     </div>
 
                                     <div className="mb-2 sm:mb-6">
@@ -77,7 +92,7 @@ const page = () => {
                                         <div className="flex">
                                             <input type="text" id="location"
                                                 className="bg-yellow-100 border border-orange-200 text-black text-sm rounded-lg w-full p-2.5 "
-                                                placeholder="Tu ubicacion" required />
+                                                placeholder="Tu ubicacion" required value={usuario.zona_trabajo} />
                                             <button className="ml-2 p-2 bg-yellow-100 border hover:bg-yellow-500 border-orange-200 rounded-lg">
                                                 <MdLocationOn className="text-xl text-black" />
                                             </button>
