@@ -2,6 +2,7 @@ import imgEjemploPerfil from '../assets/ejemploPerfil.jpg';
 import { Link } from 'react-router-dom';
 import { MdLocationOn } from 'react-icons/md'; // Importar el ícono del mapa
 
+
 const page = () => {
     return (
         <>
