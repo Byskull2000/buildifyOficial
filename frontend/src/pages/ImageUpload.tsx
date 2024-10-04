@@ -5,36 +5,35 @@ import { Button, CircularProgress, Snackbar, Dialog, DialogTitle, DialogContent,
 import MuiAlert from '@mui/material/Alert';
 import { styled } from '@mui/material/styles';
 
-const Alert = styled(MuiAlert)(() => ({
+    const Alert = styled(MuiAlert)(() => ({
     '& .MuiAlert-icon': {
         fontSize: 20,
     },
-}));
+    }));
 
-const ImageUploader: React.FC = () => {
-    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [loadingMessage, setLoadingMessage] = useState('');
-    const [snackOpen, setSnackOpen] = useState(false);
-    const [snackMessage, setSnackMessage] = useState('');
-    const [error, setError] = useState<string | null>(null);
-    const [open, setOpen] = useState(false);
-    const [zoomLevels, setZoomLevels] = useState<number[]>([]);
-    const [expandedImage, setExpandedImage] = useState<string | null>(null);
-    const [galleryOpen, setGalleryOpen] = useState(false);
-    const [images, setImages] = useState<string[]>([]);
+    const ImageUploader: React.FC = () => {
+        const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+        const [loading, setLoading] = useState(false);
+        const [loadingMessage, setLoadingMessage] = useState('');
+        const [snackOpen, setSnackOpen] = useState(false);
+        const [snackMessage, setSnackMessage] = useState('');
+        const [error, setError] = useState<string | null>(null);
+        const [open, setOpen] = useState(false);
+        const [zoomLevels, setZoomLevels] = useState<number[]>([]);
+        const [expandedImage, setExpandedImage] = useState<string | null>(null);
+        const [galleryOpen, setGalleryOpen] = useState(false);
+        const [images, setImages] = useState<string[]>([]);
 
     const onDrop = (acceptedFiles: File[]) => {
         const newFiles: File[] = [];
 
-        acceptedFiles.forEach(file => {
-            const formatError = validarFormato(file);
-            if (formatError) {
-                setError(formatError);
-                return;
-            }
+            acceptedFiles.forEach(file => {
+                const formatError = validarFormato(file);
+                if (formatError) {
+                    setError(formatError);
+                    return;
+                }
 
-            // Verificar dimensiones de la imagen
             validarDimensiones(file).then(dimensionError => {
                 if (dimensionError) {
                     setError(dimensionError);
@@ -47,13 +46,13 @@ const ImageUploader: React.FC = () => {
         });
     };
 
-    const validarFormato = (file: File): string | null => {
-        const allowedFormats = ['image/jpg', 'image/jpeg', 'image/png'];
-        if (!allowedFormats.includes(file.type)) {
-            return 'Formato Incorrecto';
-        }
-        return null;
-    };
+        const validarFormato = (file: File): string | null => {
+            const allowedFormats = ['image/jpg', 'image/jpeg', 'image/png'];
+            if (!allowedFormats.includes(file.type)) {
+                return 'Formato Incorrecto';
+            }
+            return null;
+        };
 
     const validarDimensiones = (file: File): Promise<string | null> => {
         return new Promise((resolve) => {
@@ -303,10 +302,10 @@ const ImageUploader: React.FC = () => {
                                     width: '100px', 
                                     height: '100px', 
                                     objectFit: 'cover', 
-                                    pointerEvents: 'none' // Deshabilita eventos de puntero, incluido el clic derecho
+                                    pointerEvents: 'none' 
                                 }} 
                                 alt={`Gallery ${index}`} 
-                                onContextMenu={preventDefault} // Prevenir el menú contextual
+                                onContextMenu={preventDefault} 
                             />
                         ))}
                     </div>
