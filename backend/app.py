@@ -46,8 +46,9 @@ class Usuario(db.Model):
     __tablename__ = 'Usuario'
     id_usuario = db.Column(db.Integer, primary_key=True)
     nombre_usuario = db.Column(db.String(80), nullable=False)
-    correo_electronico = db.Column(db.String(100), nullable=False)
-    contrasenia = db.Column(db.String(50), nullable=False)
+    correo_electronico = db.Column(db.String(100), nullable=False, unique=True)
+    numero_telefono = db.Column(db.String(13), nullable=False, unique=True)
+    contrasenia = db.Column(db.String(50), nullable=False, unique=True)
     fecha_creacion = db.Column(db.DateTime,default=func.now(), nullable=True)
     ultimo_login = db.Column(db.DateTime, nullable=True)
     estado_usuario = db.Column(db.String(15), nullable=True)
@@ -77,7 +78,7 @@ def obtener_usuarios():
         'id_usuario': u.id_usuario,
         'nombre_usuario': u.nombre_usuario,
         'correo_electronico': u.correo_electronico,
-        'contrasenia': u.contrasenia,
+        'numero_telefono': u.numero_telefono,
         'fecha_creacion': u.fecha_creacion,
         'ultimo_login': u.ultimo_login,
         'estado_usuario': u.estado_usuario,
@@ -93,14 +94,20 @@ def agregar_usuario():
         nombre_usuario=data['nombre_usuario'],
         correo_electronico=data['correo_electronico'],
         contrasenia=data['contrasenia'],
+        numero_telefono=data['numero_telefono'],
+        fecha_creacion=data.get('fecha_creacion'),
         ultimo_login=data.get('ultimo_login'),      # Puede ser opcional
         estado_usuario=data.get('estado_usuario'),  # Puede ser opcional
         zona_trabajo=data.get('zona_trabajo'),      # Puede ser opcional
         imagen_perfil=data.get('imagen_perfil')     # Puede ser opcional
     )
-    db.session.add(nuevo_usuario)  # Agregar el usuario a la sesión
-    db.session.commit()              # Confirmar los cambios en la base de datos
-    return jsonify({'message': 'Usuario agregado exitosamente', 'id_usuario': nuevo_usuario.id_usuario}), 201
+    try:
+        db.session.add(nuevo_usuario)
+        db.session.commit()  # Confirmar los cambios en la base de datos
+        return jsonify({'message': 'Usuario agregado exitosamente', 'id_usuario': nuevo_usuario.id_usuario}), 201
+    except Exception as e:
+        db.session.rollback()  # Revertir si hay algún error
+        return jsonify({'error': str(e)}), 400
 
 @app.route('/api/login',methods=['POST'])
 def login():
