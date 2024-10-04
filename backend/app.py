@@ -24,11 +24,11 @@ app.config['MAX_CONTENT_LENGTH'] = 5 * 1080 * 1080
 
 
 #CONEXION PARA PRUEBAS EN PYTHONANYWHERE
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
 
 #CONEXION PARA PRUEBAS EN BASE LOCAL
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/buildify'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/buildify'
 
 
 
@@ -167,9 +167,9 @@ def actualizar_nombre(id_usuario):
 def actualizar_telefono(id_usuario):
     data = request.get_json()
     usuario = Usuario.query.get_or_404(id_usuario)
-    usuario.telefono = data.get('telefono', usuario.telefono)
+    usuario.numero_telefono = data.get('numero_telefono', usuario.numero_telefono)
     db.session.commit()
-    return jsonify({"message": "Teléfono actualizado", "telefono": usuario.telefono})
+    return jsonify({"message": "Teléfono actualizado", "telefono": usuario.numero_telefono})
 
 
 #convertir fotos en binario para almacenar en la BD
