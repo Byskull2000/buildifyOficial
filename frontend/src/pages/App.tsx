@@ -2,6 +2,7 @@
 import NavBar from '../components/NavBar';
 import PopupRegristro from '../components/RegistroRapidoPP';
 import ImageUpload from '../pages/ImageUpload';
+import { Link } from 'react-router-dom';
 function App() {
     return (
         <>
@@ -9,6 +10,7 @@ function App() {
                 <NavBar/>
                 <PopupRegristro></PopupRegristro>
                 <ImageUpload></ImageUpload>
+                <Link to="/editProfile"className="text-blue-500 hover:underline">Edicion de perfil</Link>
             </div>
         </>
     );
