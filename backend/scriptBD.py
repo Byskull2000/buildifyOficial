@@ -63,6 +63,21 @@ TABLES['Usuario_Cuenta_Authenticacion'] = ('''
         ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;''')
 
+#tabla fotos y relacion con el usuario
+TABLES['Fotos'] = ('''
+    CREATE TABLE `Fotos` (
+      `id_foto` INT NOT NULL AUTO_INCREMENT,
+      `filename` VARCHAR(100) NOT NULL,
+      `data` LONGBLOB NOT NULL,
+      `id_usuario` INT,
+      PRIMARY KEY (`id_foto`),
+      CONSTRAINT `fk_foto_usuario`
+        FOREIGN KEY (`id_usuario`) 
+        REFERENCES `Usuario` (`id_usuario`)
+        ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+''')
+
 # Ejecutar la creación de tablas
 for tabla_nombre in TABLES:
     tabla_sql = TABLES[tabla_nombre]

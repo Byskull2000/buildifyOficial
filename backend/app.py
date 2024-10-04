@@ -4,39 +4,32 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from base64 import b64encode
+from PIL import Image
+import io
 
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/jhoelcamacho$buildify'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
-app.config['SECRET_KEY'] = 'supersecretkey'
-app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/uploads')
-<<<<<<< HEAD
-=======
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/jhoelcamacho$buildify'
+#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
+#app.config['SECRET_KEY'] = 'supersecretkey'
+#app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/uploads')
+
 #CONEXION PARA PRUEBAS EN PYTHONANYWHERE
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
 
 #CONEXION PARA PRUEBAS EN BASE LOCAL
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/buildify'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:nilson123@localhost:3306/Fotos'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
 app.config['SECRET_KEY'] = 'supersecretkey' 
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1080 * 1080
->>>>>>> ddbdfa2403d27de7a5591543bdfab3b9bf2aff27
-
+app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/uploads')#subir archivos
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 app.config['MAX_PHOTOS'] = 10
 CORS(app)
 
 db = SQLAlchemy(app)
 
-<<<<<<< HEAD
-=======
-
-class Foto(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    filename = db.Column(db.String(100), nullable=False)
-    data = db.Column(db.LargeBinary, nullable=False)
 
 # Modelo para la tabla Usuario
 class Usuario(db.Model):
@@ -56,6 +49,8 @@ class Usuario(db.Model):
 class Foto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(100), nullable=False)
+    data = db.Column(db.LargeBinary,nullable=False)
+    id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario'), nullable=False)
     
 # Ruta para devolver los nombres de los campos de la tabla Usuario
 @app.route('/api/usuarios/campos', methods=['GET'])
@@ -160,8 +155,8 @@ def actualizar_telefono(id_usuario):
     return jsonify({"message": "Teléfono actualizado", "telefono": usuario.telefono})
 
 
->>>>>>> ddbdfa2403d27de7a5591543bdfab3b9bf2aff27
-@app.template_filter('b64encode')  #convertir a binario las fotos
+#convertir fotos en binario para almacenar en la BD
+@app.template_filter('b64encode')
 def b64encode_filter(data):
     if data is None:
         return ""  
@@ -173,44 +168,44 @@ def api():
     integrantes = ["Pablo, Diego, Jhunior, Eleonor,Fernanda","Bruno","Jhoel","Kike","Nilson"]
     return jsonify({'integrantes':integrantes})
 
+#subir fotos
 @app.route('/api/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
-        flash('No hay archivo en la solicitud', 'error')
         return jsonify({'error': 'No hay archivo en la solicitud'}), 400
 
-    file = request.files['file']
-    if file.filename == '':
-        flash('No se ha seleccionado ningún archivo', 'error')
-        return jsonify({'error': 'No se ha seleccionado ningún archivo'}), 400
-    
-    if len(file) > 10:
+    files = request.files.getlist('file')  
+    if len(files) > app.config['MAX_PHOTOS']:
         return jsonify({'error': 'Solo se pueden subir hasta 10 fotos'}), 400
-    
-    if not validar_formato(file.filename):
-        return jsonify({'error': 'Formato no valido. Solo se permiten imagenes PNG o JPG'}), 400
-    
-    img = Image.open(file)
-    if img.size != (1080, 1080):
-        return jsonify({'error','la imagen debe ser de 1080x1080 pixeles'}), 400
-    
 
-    if file:
-        file.seek(0)
+    for file in files:
+        if file.filename == '':
+            return jsonify({'error': 'No se ha seleccionado ningún archivo'}), 400
+        
+        if not validar_formato(file.filename):
+            return jsonify({'error': 'Formato no valido. Solo se permiten imagenes PNG o JPG'}), 400
+        
+        try:
+            img = Image.open(file)
+            if img.size != (1080, 1080):
+                return jsonify({'error': 'La imagen debe ser de 1080x1080 píxeles'}), 400
+        except Exception as e:
+            return jsonify({'error': str(e)}), 400
+
         filename = secure_filename(file.filename)
         file_data = file.read()
 
         nueva_foto = Foto(filename=filename, data=file_data)
         db.session.add(nueva_foto)
-        db.session.commit()
 
-        flash('Imagen subida correctamente', 'success')
-        return jsonify({'success': 'Imagen subida correctamente'}), 200
+    db.session.commit()
+    return jsonify({'success': 'Imágenes subidas correctamente'}), 200
 
 def validar_formato(filename):
     validar_extension = {'png', 'jpg'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in validar_extension
 
+#galeria de fotos
 def mostrar_fotos():
     fotos = Foto.query.all()
     fotos_data = [{'id': foto.id, 'filename': foto.filename, 'data': b64encode(foto.data).decode('utf-8')} for foto in fotos]
@@ -219,13 +214,13 @@ def mostrar_fotos():
 #######################################################################
 # el codigo de abajo sirve para poder ejecutar react en python anywhere
 
-@app.route('/', defaults={'path': ''})
+@app.route('/')
 @app.route('/<path:path>')
-def serve_react_app(path):
+def serve_react_app(path=''):
     if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
         return send_from_directory(app.static_folder, path)
     else:
-        return send_from_directory(app.static_folder, 'app.tsx')
+        return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == "__main__":
     with app.app_context():
