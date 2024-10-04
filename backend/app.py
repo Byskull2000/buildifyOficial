@@ -6,30 +6,38 @@ from werkzeug.utils import secure_filename
 from base64 import b64encode
 from PIL import Image
 import io
+from flask_cors import CORS
+from flask_migrate import Migrate
+
 
 
 app = Flask(__name__, static_folder='static', static_url_path='')
 
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/jhoelcamacho$buildify'
-#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
-#app.config['SECRET_KEY'] = 'supersecretkey'
-#app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/uploads')
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
+app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/uploads')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
+app.config['SECRET_KEY'] = 'supersecretkey' 
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1080 * 1080
+
 
 #CONEXION PARA PRUEBAS EN PYTHONANYWHERE
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
 
 #CONEXION PARA PRUEBAS EN BASE LOCAL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:nilson123@localhost:3306/Fotos'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False 
-app.config['SECRET_KEY'] = 'supersecretkey' 
-app.config['MAX_CONTENT_LENGTH'] = 5 * 1080 * 1080
-app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static/uploads')#subir archivos
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:nilson123@localhost:3306/fotos'
+
+
+
+# Asegúrate de que el directorio de subida exista
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 app.config['MAX_PHOTOS'] = 10
 CORS(app)
 
 db = SQLAlchemy(app)
 
+migrate = Migrate(app,db)
 
 # Modelo para la tabla Usuario
 class Usuario(db.Model):
@@ -48,10 +56,11 @@ class Usuario(db.Model):
 # Modelo de base de datos para las fotos
 class Foto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario'), nullable=False)
     filename = db.Column(db.String(100), nullable=False)
     data = db.Column(db.LargeBinary,nullable=False)
-    id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario'), nullable=False)
     
+  
 # Ruta para devolver los nombres de los campos de la tabla Usuario
 @app.route('/api/usuarios/campos', methods=['GET'])
 def obtener_campos_usuario():
@@ -101,7 +110,7 @@ def login():
     user = Usuario.query.filter_by(correo_electronico=correo_electronico).first()
     
     if not user:
-        return jsonify({'message': "Usuario no encontrado"}), 404
+        return jsonify({"message": 'Error al iniciar sesión: Usuario o contraseña incorrectos'}), 404
     if user.contrasenia == contrasenia: 
         return jsonify({'data': {
             'id_usuario': user.id_usuario,
@@ -115,7 +124,7 @@ def login():
         } 
                     }), 200    
     else:   
-        return jsonify({"message": 'Contraseña incorrecta'}), 401
+        return jsonify({"message": 'Error al iniciar sesión: Usuario o contraseña incorrectos'}), 401
 
 
 # Ruta para actualizar la zona de trabajo de un usuario
@@ -214,13 +223,20 @@ def mostrar_fotos():
 #######################################################################
 # el codigo de abajo sirve para poder ejecutar react en python anywhere
 
-@app.route('/')
-@app.route('/<path:path>')
-def serve_react_app(path=''):
-    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
-        return send_from_directory(app.static_folder, path)
-    else:
-        return send_from_directory(app.static_folder, 'index.html')
+
+#@app.route('/')
+#@app.route('/<path:path>')
+#def serve_react_app(path=''):
+    #if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        #return send_from_directory(app.static_folder, path)
+    #else:
+        #return send_from_directory(app.static_folder, 'index.html')
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path>')
+def serve_react_app(path):
+    return send_from_directory(app.static_folder, 'index.html')
+
 
 if __name__ == "__main__":
     with app.app_context():

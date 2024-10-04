@@ -1,12 +1,70 @@
 "use client";
+import { useEffect } from "react";
 import { useState } from "react";
 import fondologin from "../assets/fondoLoginF.jpg"
 import logo from "../assets/Buildify.png"
-import { Link } from 'react-router-dom';
-
+import { Link, useNavigate } from 'react-router-dom';
 
 const Page = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate(); 
+
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+        e.preventDefault();
+    };
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+        window.removeEventListener('wheel', handleWheel);
+    };
+}, []);
+  const handleSubmit = async (e:React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+
+    const body = {
+      "correo_electronico": email,
+      "contrasenia": password,
+    };
+
+
+    try {
+      const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
+      const res = await fetch(URL_BACKEND + "/api/login", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!res.ok) {
+        const errorResponse = await res.json();
+        setError(errorResponse.message || "Error al iniciar sesión");
+        return;
+      }
+
+      const { data } = await res.json();
+      console.log("data: ", data);
+
+   
+      if (rememberMe) {
+        localStorage.setItem("user", JSON.stringify(data));
+      }else {
+        sessionStorage.setItem("user", JSON.stringify(data));
+      }
+
+      navigate("/");
+
+    } catch (e) {
+      console.error(e);
+      setError("Error en la conexión con el servidor");
+    }
+  };
   return (
     <div>
       <div className="flex h-screen">
@@ -21,20 +79,26 @@ const Page = () => {
               <h1 className="text-3xl font-bold text-black">Buildify</h1>
             </div>
             <h1 className="text-2xl font-semibold mb-6 text-black text-left w-full lg:ml-[-10px]">Bienvenido de nuevo</h1>
-            <form action="#" method="POST" className="space-y-4">
+            <form onSubmit={handleSubmit} method="POST" className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-500 ml-2">Inicio de sesión</label>
-                <input placeholder="Correo electrónico" type="text" id="email" name="email" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
+                <input value={email} onChange={e => setEmail(e.target.value)} 
+                                     placeholder="Correo electrónico" type="text" 
+                                     id="email" name="email" 
+                                     className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                     required />
               </div>
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-500 ml-2">Contraseña</label>
                 <div className="relative">
                   <input
+                  value={password} onChange={e => setPassword(e.target.value)} 
                     placeholder="Ingresa tu contraseña"
                     type={showPassword ? "text" : "password"}
                     id="password"
                     name="password"
                     className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                    required
                   />
                   <button
                     type="button"
@@ -55,19 +119,21 @@ const Page = () => {
               </div>
               <div className="flex items-center justify-between">
                 <label className="inline-flex items-center cursor-pointer">
-                  <input type="checkbox" value="" className="sr-only peer" />
+                  <input type="checkbox" onChange={e => setRememberMe(e.target.checked)} className="sr-only peer" />
                   <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
                   <span className="ms-3 text-sm font-medium text-gray-900">Recuerdame</span>
                 </label>
                 <span className="text-sm text-blue-500 cursor-pointer ml-2">¿Olvidaste tu contraseña?</span>
               </div>
+              {error && <p style={{ color: 'red' }}>{error}</p>}
               <div>
-                <button type="submit" className="mb-2 py-2 w-full bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">Iniciar sesión</button>
+                <button  className="mb-2 py-2 w-full bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">Iniciar sesión</button>
               </div>
               <hr className="border-gray-200" />
               <div className="w-full mb-2 lg:mb-0 mt-5">
                 <button type="button" className="py-3 w-full flex justify-center items-center gap-2 bg-stone-800 text-sm text-gray-100 p-2 rounded-lg hover:bg-stone-950 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-950 transition-colors duration-300">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-4" id="google">
+
                     <path fill="#fbbb00" d="M113.47 309.408 95.648 375.94l-65.139 1.378C11.042 341.211 0 299.9 0 256c0-42.451 10.324-82.483 28.624-117.732h.014L86.63 148.9l25.404 57.644c-5.317 15.501-8.215 32.141-8.215 49.456.002 18.792 3.406 36.797 9.651 53.408z"></path>
                     <path fill="#518ef8" d="M507.527 208.176C510.467 223.662 512 239.655 512 256c0 18.328-1.927 36.206-5.598 53.451-12.462 58.683-45.025 109.925-90.134 146.187l-.014-.014-73.044-3.727-10.338-64.535c29.932-17.554 53.324-45.025 65.646-77.911h-136.89V208.176h245.899z"></path>
                     <path fill="#28b446" d="m416.253 455.624.014.014C372.396 490.901 316.666 512 256 512c-97.491 0-182.252-54.491-225.491-134.681l82.961-67.91c21.619 57.698 77.278 98.771 142.53 98.771 28.047 0 54.323-7.582 76.87-20.818l83.383 68.262z"></path>

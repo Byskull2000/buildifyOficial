@@ -79,6 +79,13 @@ iniciar
 
     <http://localhost:5000>
 
+## ***En Caso de trabajar con un ORM En el backend ***
+hacer lo siguiente
+
+1. flask db init  # Solo la primera vez
+2. flask db migrate -m "Creacion de Tabla Usuario" # el usuario es un ejemplo
+3. flask db upgrade
+
 ## Integrantes
 
 - Anturiano Eulate Eleonor Camile
@@ -86,4 +93,4 @@ iniciar
 - Camacho Vargas Jhoel Freddy
 - Grájeda Herrera Diego Gualberto
 - García Llanqui Jhunior Remberto
-- Limachi García Pablo Hans
+- Limachi Martinez Pablo Hans
