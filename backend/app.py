@@ -104,7 +104,18 @@ def agregar_usuario():
     try:
         db.session.add(nuevo_usuario)
         db.session.commit()  # Confirmar los cambios en la base de datos
-        return jsonify({'message': 'Usuario agregado exitosamente', 'id_usuario': nuevo_usuario.id_usuario}), 201
+        usuario_creado = {
+            "id": nuevo_usuario.id_usuario,
+            "nombre_usuario": nuevo_usuario.nombre_usuario,
+            "correo_electronico": nuevo_usuario.correo_electronico,
+            "ultimo_login": nuevo_usuario.ultimo_login,
+            "estado_usuario": nuevo_usuario.estado_usuario,
+            "zona_trabajo": nuevo_usuario.zona_trabajo,
+            "imagen_perfil": nuevo_usuario.imagen_perfil,
+            "numero_telefono": nuevo_usuario.numero_telefono
+        }
+        
+        return jsonify({"message": "Usuario creado correctamente", "data": usuario_creado}), 201
     except Exception as e:
         db.session.rollback()  # Revertir si hay algún error
         return jsonify({'error': str(e)}), 400

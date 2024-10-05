@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useEffect } from 'react';
 import fondologin from "../assets/fondoRegisterF.jpg"
 import logo from "../assets/Buildify.png"
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 const page = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
@@ -17,6 +17,9 @@ const page = () => {
     const [hasNumber, setHasNumber] = useState(false);
     const [passwordLength, setPasswordLength] = useState(false);
     const [passwordsMatch, setPasswordsMatch] = useState(false);
+    const navigate = useNavigate(); 
+
+
 
     //Quitar uso de la rueda del mouse porque se ve feo
     useEffect(() => {
@@ -44,7 +47,6 @@ const page = () => {
             "nombre_usuario": nombre,
             "correo_electronico": email,
             "contrasenia": password,
-            "fecha_creacion": Date.now + "",
         };
 
 
@@ -66,6 +68,10 @@ const page = () => {
 
             const { data } = await res.json();
             console.log("data: ", data);
+
+             localStorage.setItem("user", JSON.stringify(data));
+             
+            navigate("/");
              
 
         } catch (e) {
