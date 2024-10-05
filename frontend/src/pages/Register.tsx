@@ -47,6 +47,7 @@ const page = () => {
             "nombre_usuario": nombre,
             "correo_electronico": email,
             "contrasenia": password,
+            "numero_telefono": telefono
         };
 
 
@@ -69,7 +70,7 @@ const page = () => {
             const { data } = await res.json();
             console.log("data: ", data);
 
-             localStorage.setItem("user", JSON.stringify(data));
+            localStorage.setItem("user", JSON.stringify(data));
              
             navigate("/");
              

@@ -117,7 +117,9 @@ def agregar_usuario():
         
         return jsonify({"message": "Usuario creado correctamente", "data": usuario_creado}), 201
     except Exception as e:
+        print("Error", str(e))
         db.session.rollback()  # Revertir si hay algún error
+        
         return jsonify({'error': str(e)}), 400
 
 @app.route('/api/login',methods=['POST'])
@@ -138,6 +140,7 @@ def login():
             'fecha_creacion': user.fecha_creacion,
             'ultimo_login': user.ultimo_login,
             'estado_usuario': user.estado_usuario,
+            'numero_telefono': user.numero_telefono,
             'zona_trabajo': user.zona_trabajo,
             'imagen_perfil': user.imagen_perfil.decode('utf-8') if user.imagen_perfil else None
         } 
