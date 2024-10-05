@@ -17,7 +17,7 @@ const page = () => {
             localStorage.getItem("user") ||
             sessionStorage.getItem("user") ||
             null;
-        if(data){
+        if (data) {
             const user = JSON.parse(data);
             setId(user.id_usuario || "");
             setNombre(user.nombre_usuario || "");
@@ -28,7 +28,7 @@ const page = () => {
     }, []);
 
     // Función para manejar el submit del formulario
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>)  => {
         e.preventDefault();
 
         const updatedProfile = {
@@ -98,7 +98,7 @@ const page = () => {
                             href="#"
                             className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full  "
                         >
-                            Algo aca xd
+                            Campo a futuro
                         </a>
                     </div>
                 </aside>
@@ -134,77 +134,82 @@ const page = () => {
                                     </div>
                                 </div>
 
-                                <div className="items-center mt-8 sm:mt-14 text-[#202142]">
-                                    <div className="mb-2 sm:mb-6">
-                                        <label className="block mb-2 text-sm font-medium  text-black ">
-                                            Nombre
-                                        </label>
-                                        <input
-                                            type="text"
-                                            id="nombre"
-                                            className="bg-yellow-100 border border-orange-200 text-sm rounded-lg block w-full p-2.5 "
-                                            placeholder="Tu nombre"
-                                            required
-                                            value={nombre_usuario}
-                                            pattern="[A-Za-z\s]+"
-                                        />
-                                    </div>
-                                    <div className="mb-2 sm:mb-6">
-                                        <label className="block mb-2 text-sm font-medium  ">
-                                            Numero de teléfono
-                                        </label>
-                                        <input
-                                            type="number"
-                                            id="email"
-                                            className="bg-yellow-100  border border-orange-200 text-sm rounded-lg  block w-full p-2.5 "
-                                            placeholder="Ej: 7777777"
-                                            required
-                                            value={telefono}
-                                            onKeyDown={(e) =>
-                                                (e.key === "e" ||
-                                                    e.key === "-" ||
-                                                    e.key === "+") &&
-                                                e.preventDefault()
-                                            }
-                                        />
-                                    </div>
-
-                                    <div className="mb-2 sm:mb-6">
-                                        <label className="block mb-2 text-sm font-medium ">
-                                            Ubicacion
-                                        </label>
-                                        <div className="flex">
+                                <form onSubmit={handleSubmit} method="PUT">
+                                    <div className="items-center mt-8 sm:mt-14 text-[#202142]">
+                                        <div className="mb-2 sm:mb-6">
+                                            <label className="block mb-2 text-sm font-medium  text-black ">
+                                                Nombre
+                                            </label>
                                             <input
                                                 type="text"
-                                                id="location"
-                                                className="bg-yellow-100 border border-orange-200 text-black text-sm rounded-lg w-full p-2.5 "
-                                                placeholder="Tu ubicacion"
+                                                id="nombre"
+                                                className="bg-yellow-100 border border-orange-200 text-sm rounded-lg block w-full p-2.5 "
+                                                placeholder="Tu nombre"
                                                 required
-                                                value={zona_trabajo}
+                                                value={nombre_usuario}
+                                                pattern="[A-Za-z\s]+"
+                                                onChange={e => setNombre(e.target.value)}
                                             />
-                                            <button className="ml-2 p-2 bg-yellow-100 border hover:bg-yellow-500 border-orange-200 rounded-lg">
-                                                <MdLocationOn className="text-xl text-black" />
+                                        </div>
+                                        <div className="mb-2 sm:mb-6">
+                                            <label className="block mb-2 text-sm font-medium  ">
+                                                Numero de teléfono
+                                            </label>
+                                            <input
+                                                type="number"
+                                                id="email"
+                                                className="bg-yellow-100  border border-orange-200 text-sm rounded-lg  block w-full p-2.5 "
+                                                placeholder="Ej: 7777777"
+                                                required
+                                                value={telefono}
+                                                onKeyDown={(e) =>
+                                                    (e.key === "e" ||
+                                                        e.key === "-" ||
+                                                        e.key === "+") &&
+                                                    e.preventDefault()
+                                                }
+                                                onChange={e => setTelefono(e.target.value)}
+                                            />
+                                        </div>
+
+                                        <div className="mb-2 sm:mb-6">
+                                            <label className="block mb-2 text-sm font-medium ">
+                                                Ubicacion
+                                            </label>
+                                            <div className="flex">
+                                                <input
+                                                    type="text"
+                                                    id="location"
+                                                    className="bg-yellow-100 border border-orange-200 text-black text-sm rounded-lg w-full p-2.5 "
+                                                    placeholder="Tu ubicacion"
+                                                    required
+                                                    value={zona_trabajo}
+                                                    onChange={e => setZonaTrabajo(e.target.value)}
+                                                />
+                                                <button className="ml-2 p-2 bg-yellow-100 border hover:bg-yellow-500 border-orange-200 rounded-lg">
+                                                    <MdLocationOn className="text-xl text-black" />
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex justify-end">
+                                            <button
+                                                type="submit"
+                                                className="text-white border-orange-300 bg-[#FED35F] hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                                            >
+                                                Guardar
                                             </button>
+                                            <Link to="/">
+                                                <button
+                                                    type="button"
+                                                    className="ml-4 text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                                                >
+                                                    Cancelar
+                                                </button>
+                                            </Link>
                                         </div>
                                     </div>
-
-                                    <div className="flex justify-end">
-                                        <button
-                                            type="submit"
-                                            className="text-white border-orange-300 bg-[#FED35F] hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                                        >
-                                            Guardar
-                                        </button>
-                                        <Link to="/">
-                                            <button
-                                                type="button"
-                                                className="ml-4 text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                                            >
-                                                Cancelar
-                                            </button>
-                                        </Link>
-                                    </div>
-                                </div>
+                                </form>
                             </div>
                         </div>
                     </div>
