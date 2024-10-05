@@ -24,11 +24,11 @@ app.config['MAX_CONTENT_LENGTH'] = 5 * 1080 * 1080
 
 
 #CONEXION PARA PRUEBAS EN PYTHONANYWHERE
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
 
 #CONEXION PARA PRUEBAS EN BASE LOCAL
 
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/buildify'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/buildify'
 
 
 
@@ -47,7 +47,7 @@ class Usuario(db.Model):
     id_usuario = db.Column(db.Integer, primary_key=True)
     nombre_usuario = db.Column(db.String(80), nullable=False)
     correo_electronico = db.Column(db.String(100), nullable=False, unique=True)
-    numero_telefono = db.Column(db.String(13), nullable=False, unique=True)
+    numero_telefono = db.Column(db.String(25), nullable=False, unique=True)
     contrasenia = db.Column(db.String(50), nullable=False, unique=True)
     fecha_creacion = db.Column(db.DateTime,default=func.now(), nullable=True)
     ultimo_login = db.Column(db.DateTime, nullable=True)
@@ -190,7 +190,9 @@ def actualizar_telefono(id_usuario):
 def actualizar_perfil(id_usuario):
     try:
         data = request.get_json()
+        
         usuario = Usuario.query.get_or_404(id_usuario)
+        print("usuario", usuario)
         
         # Verificar y actualizar el nombre
         if 'nombre_usuario' in data and data['nombre_usuario'] != usuario.nombre_usuario:
@@ -222,6 +224,7 @@ def actualizar_perfil(id_usuario):
         }), 200
     
     except Exception as e:
+        print(e)
         # Manejo de errores
         return jsonify({
             'message': 'Error al actualizar el perfil del usuario',

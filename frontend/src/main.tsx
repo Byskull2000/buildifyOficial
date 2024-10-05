@@ -1,7 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './pages/App.tsx'
-import ImageUpload from './pages/ImageUpload.tsx';
 import ImagenPrueba from './pages/ImagenPrueba.tsx';
 import Login from './pages/Login.tsx'
 import './index.css'
@@ -20,12 +19,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/login" element={<Login/>} />
         <Route path="/register" element={<Register/>} />
         <Route path="/registroRapido" element={<RegistroRapido/>} />
-        <Route path="/subirImagenes" element={<ImageUpload/>} />
-<<<<<<< HEAD
         <Route path="/imagenprueba" element={<ImagenPrueba/>}/>
-=======
         <Route path="/editProfile" element={<EditProfile/>} />
->>>>>>> 4032a93df3ea796b8ba775a4a4cd096499bac636
       </Routes>
     </Router>
     </GoogleOAuthProvider>

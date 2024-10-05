@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 const page = () => {
     const [nombre_usuario, setNombre] = useState("");
-    const [telefono, setTelefono] = useState("");
+    const [numero_telefono, setTelefono] = useState("")
     const [zona_trabajo, setZonaTrabajo] = useState("");
     const [imagen_perfil, setImagenPerfil] = useState("");
     const [id, setId] = useState("");
@@ -20,11 +20,12 @@ const page = () => {
             null;
         if (data) {
             const user = JSON.parse(data);
+            console.log(user.numero_telefono);
             setId(user.id_usuario || "");
             setNombre(user.nombre_usuario || "");
-            setTelefono(user.telefono || "");
+            setTelefono(user.numero_telefono || "");
             setZonaTrabajo(user.zona_trabajo || "");
-            //setImagenPerfil(user.imagen_perfil || imgEjemploPerfil);
+            setImagenPerfil(user.imagen_perfil || imgEjemploPerfil);
         }
     }, []);
 
@@ -34,7 +35,7 @@ const page = () => {
 
         const updatedProfile = {
             nombre_usuario,
-            numero_telefono: telefono,
+            numero_telefono,
             zona_trabajo,
         };
 
@@ -118,7 +119,7 @@ const page = () => {
                                     {/*Aca se carga la imagen de perfil */}
                                     <img
                                         className="object-cover w-40 h-40 p-1 rounded-full ring-2 ring-orange-300"
-                                        src={imagen_perfil}
+                                        src={imagen_perfil }
                                         alt="Avatar redondeado"
                                     />
 
@@ -155,26 +156,19 @@ const page = () => {
                                                 onChange={e => setNombre(e.target.value)}
                                             />
                                         </div>
-                                        <div className="mb-2 sm:mb-6">
-                                            <label className="block mb-2 text-sm font-medium  ">
-                                                Numero de teléfono
-                                            </label>
-                                            <input
-                                                type="number"
-                                                id="email"
-                                                className="bg-yellow-100  border border-orange-200 text-sm rounded-lg  block w-full p-2.5 "
-                                                placeholder="Ej: 7777777"
-                                                required
-                                                value={telefono}
-                                                onKeyDown={(e) =>
-                                                    (e.key === "e" ||
-                                                        e.key === "-" ||
-                                                        e.key === "+") &&
-                                                    e.preventDefault()
-                                                }
-                                                onChange={e => setTelefono(e.target.value)}
-                                            />
-                                        </div>
+                                        <input
+    type="tel"
+    id="telefono"
+    className="bg-yellow-100 border border-orange-200 text-sm rounded-lg block w-full p-2.5"
+    placeholder="Ej: +591 12345678"
+    required
+    value={numero_telefono}
+    onChange={e => {
+        const valor = e.target.value.replace(/[^+\d\s-]/g, ''); // Permite solo +, dígitos, espacios y guiones
+        setTelefono(valor);
+    }}
+/>
+
 
                                         <div className="mb-2 sm:mb-6">
                                             <label className="block mb-2 text-sm font-medium ">
