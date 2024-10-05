@@ -3,15 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { MdLocationOn } from "react-icons/md"; // Importar el ícono del mapa
 import { useEffect, useState } from "react";
 
-
 const page = () => {
     const [nombre_usuario, setNombre] = useState("");
-    const [numero_telefono, setTelefono] = useState("")
+    const [numero_telefono, setTelefono] = useState("");
     const [zona_trabajo, setZonaTrabajo] = useState("");
     const [imagen_perfil, setImagenPerfil] = useState("");
     const [id, setId] = useState("");
-    const navigate = useNavigate(); 
-
+    const navigate = useNavigate();
 
     useEffect(() => {
         const data =
@@ -30,7 +28,7 @@ const page = () => {
     }, []);
 
     // Función para manejar el submit del formulario
-    const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>)  => {
+    const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const updatedProfile = {
@@ -54,10 +52,14 @@ const page = () => {
             const data = await response.json();
             if (response.ok) {
                 alert("Perfil actualizado exitosamente");
-                console.log("data: ", data);
 
-                localStorage.setItem("user", JSON.stringify(data));
-                
+                console.log("data: ");
+                if (sessionStorage.getItem("user")) {
+                    sessionStorage.setItem("user", JSON.stringify(data.data));
+                } else {
+                    localStorage.setItem("user", JSON.stringify(data.data));
+                }
+
                 navigate("/");
             } else {
                 console.error("Error al actualizar el perfil", data);
@@ -119,7 +121,7 @@ const page = () => {
                                     {/*Aca se carga la imagen de perfil */}
                                     <img
                                         className="object-cover w-40 h-40 p-1 rounded-full ring-2 ring-orange-300"
-                                        src={imagen_perfil }
+                                        src={imagen_perfil}
                                         alt="Avatar redondeado"
                                     />
 
@@ -153,22 +155,27 @@ const page = () => {
                                                 required
                                                 value={nombre_usuario}
                                                 pattern="[A-Za-z\s]+"
-                                                onChange={e => setNombre(e.target.value)}
+                                                onChange={(e) =>
+                                                    setNombre(e.target.value)
+                                                }
                                             />
                                         </div>
                                         <input
-    type="tel"
-    id="telefono"
-    className="bg-yellow-100 border border-orange-200 text-sm rounded-lg block w-full p-2.5"
-    placeholder="Ej: +591 12345678"
-    required
-    value={numero_telefono}
-    onChange={e => {
-        const valor = e.target.value.replace(/[^+\d\s-]/g, ''); // Permite solo +, dígitos, espacios y guiones
-        setTelefono(valor);
-    }}
-/>
-
+                                            type="tel"
+                                            id="telefono"
+                                            className="bg-yellow-100 border border-orange-200 text-sm rounded-lg block w-full p-2.5"
+                                            placeholder="Ej: +591 12345678"
+                                            required
+                                            value={numero_telefono}
+                                            onChange={(e) => {
+                                                const valor =
+                                                    e.target.value.replace(
+                                                        /[^+\d\s-]/g,
+                                                        ""
+                                                    ); // Permite solo +, dígitos, espacios y guiones
+                                                setTelefono(valor);
+                                            }}
+                                        />
 
                                         <div className="mb-2 sm:mb-6">
                                             <label className="block mb-2 text-sm font-medium ">
@@ -182,7 +189,11 @@ const page = () => {
                                                     placeholder="Tu ubicacion"
                                                     required
                                                     value={zona_trabajo}
-                                                    onChange={e => setZonaTrabajo(e.target.value)}
+                                                    onChange={(e) =>
+                                                        setZonaTrabajo(
+                                                            e.target.value
+                                                        )
+                                                    }
                                                 />
                                                 <button className="ml-2 p-2 bg-yellow-100 border hover:bg-yellow-500 border-orange-200 rounded-lg">
                                                     <MdLocationOn className="text-xl text-black" />
