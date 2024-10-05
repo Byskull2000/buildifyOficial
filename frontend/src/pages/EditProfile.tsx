@@ -18,7 +18,6 @@ const page = () => {
             null;
         if (data) {
             const user = JSON.parse(data);
-            console.log(user.numero_telefono);
             setId(user.id_usuario || "");
             setNombre(user.nombre_usuario || "");
             setTelefono(user.numero_telefono || "");
@@ -38,8 +37,8 @@ const page = () => {
         };
 
         try {
-            const response = await fetch(
-                `http://localhost:5000/api/usuarios/${id}/perfil`, // Asegúrate de que la URL coincida con tu backend
+            const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
+            const response = await fetch(URL_BACKEND + `/api/usuarios/${id}/perfil`, // Asegúrate de que la URL coincida con tu backend
                 {
                     method: "PUT",
                     headers: {

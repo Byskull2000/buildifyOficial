@@ -223,7 +223,6 @@ def actualizar_perfil(id_usuario):
         # Manejo de errores
         return jsonify({
             'message': 'Error al actualizar el perfil del usuario',
-            'error': str(e)
         }), 400
 
 
