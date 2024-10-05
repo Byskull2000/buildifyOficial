@@ -13,7 +13,7 @@ const Page = () => {
             <br></br> 
             
             <Link
-                to="/subirImagenes"  
+                to="/imagenprueba"  
                 className="text-blue-500 hover:underline"
             >
                 Subir Foto

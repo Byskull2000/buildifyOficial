@@ -56,7 +56,6 @@ class Usuario(db.Model):
 # Modelo de base de datos para las fotos
 class Foto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    #id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario'), nullable=False)
     filename = db.Column(db.String(100), nullable=False)
     data = db.Column(db.LargeBinary,nullable=False)
     
@@ -172,51 +171,56 @@ def b64encode_filter(data):
     return b64encode(data).decode('utf-8')
 
 # Aqui se pondran los endpoints de las API que se vayan a crear siempre deben empezar con la ruta /api/
-@app.route('/api/integrantes')
-def api():
-    integrantes = ["Pablo, Diego, Jhunior, Eleonor,Fernanda","Bruno","Jhoel","Kike","Nilson"]
-    return jsonify({'integrantes':integrantes})
 
-#subir fotos
-@app.route('/api/upload', methods=['POST'])
-def upload_file():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No hay archivo en la solicitud'}), 400
-
-    files = request.files.getlist('file')  
-    if len(files) > app.config['MAX_PHOTOS']:
-        return jsonify({'error': 'Solo se pueden subir hasta 10 fotos'}), 400
-
-    for file in files:
-        if file.filename == '':
-            return jsonify({'error': 'No se ha seleccionado ningún archivo'}), 400
-        
-        if not validar_formato(file.filename):
-            return jsonify({'error': 'Formato no valido. Solo se permiten imagenes PNG o JPG'}), 400
-        
-        try:
-            img = Image.open(file)
-            if img.size != (1080, 1080):
-                return jsonify({'error': 'La imagen debe ser de 1080x1080 píxeles'}), 400
-        except Exception as e:
-            return jsonify({'error': str(e)}), 400
-
-        filename = secure_filename(file.filename)
-        file_data = file.read()
-
-        nueva_foto = Foto(filename=filename, data=file_data)
-        db.session.add(nueva_foto)
-
-    db.session.commit()
-    return jsonify({'success': 'Imágenes subidas correctamente'}), 200
 
 def validar_formato(filename):
     validar_extension = {'png', 'jpg'}
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in validar_extension
 
+# Subir fotos
+@app.route('/api/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No se encontró el archivo en la solicitud. Por favor, selecciona un archivo para subir.'}), 400
+
+    files = request.files.getlist('file')
+    if len(files) > app.config['MAX_PHOTOS']:
+        return jsonify({'error': 'Has superado el límite de 10 fotos. Por favor, sube menos fotos.'}), 400
+
+    uploaded_files = []
+    
+    for file in files:
+        if file.filename == '':
+            return jsonify({'error': 'No has seleccionado ningún archivo. Por favor, selecciona un archivo para continuar.'}), 400
+        
+        if not validar_formato(file.filename):
+            return jsonify({'error': 'Formato no válido. Solo se permiten imágenes PNG o JPG.'}), 400
+
+        try:
+            img = Image.open(file)
+            img.verify()  # Verifica que el archivo sea una imagen
+            if img.size != (1080, 1080):
+                return jsonify({'error': 'La imagen debe tener dimensiones de 1080x1080 píxeles.'}), 400
+            
+            img_bytes = io.BytesIO()
+            img.save(img_bytes, format='PNG' if img.format == 'PNG' else 'JPEG')  # Guarda en un formato válido
+            img_bytes = img_bytes.getvalue()
+
+            filename = secure_filename(file.filename)
+            nueva_foto = Foto(filename=filename, data=img_bytes)
+            db.session.add(nueva_foto)
+            uploaded_files.append(filename)  # Agregar el nombre del archivo subido a la lista
+
+        except Exception as e:
+            return jsonify({'error': f'Error al procesar la imagen "{file.filename}": {str(e)}'}), 400
+
+    db.session.commit()
+    return jsonify({'success': f'Imágenes {", ".join(uploaded_files)} subidas correctamente.'}), 200
+
 #galeria de fotos
+@app.route('/api/galeria', methods=['GET'])
 def mostrar_fotos():
-    fotos = Foto.query.all()
+    fotos = Foto.query.all()  # Recupera todas las fotos de la base de datos
     fotos_data = [{'id': foto.id, 'filename': foto.filename, 'data': b64encode(foto.data).decode('utf-8')} for foto in fotos]
     return jsonify({'fotos': fotos_data}), 200
 

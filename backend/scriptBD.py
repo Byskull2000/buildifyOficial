@@ -66,7 +66,7 @@ TABLES['Usuario_Cuenta_Authenticacion'] = ('''
 #tabla fotos y relacion con el usuario
 TABLES['Fotos'] = ('''
     CREATE TABLE `Fotos` (
-      `id_foto` INT NOT NULL AUTO_INCREMENT,
+      `id` INT NOT NULL AUTO_INCREMENT,
       `filename` VARCHAR(100) NOT NULL,
       `data` LONGBLOB NOT NULL,
       PRIMARY KEY (`id_foto`),
