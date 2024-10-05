@@ -9,6 +9,7 @@ import { BrowserRouter as Router,Routes, Route } from 'react-router-dom'
 import Register from './pages/Register.tsx'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import RegistroRapido from './pages/RegistroRapido.tsx'
+import EditProfile from './pages/EditProfile.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -20,7 +21,11 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/register" element={<Register/>} />
         <Route path="/registroRapido" element={<RegistroRapido/>} />
         <Route path="/subirImagenes" element={<ImageUpload/>} />
+<<<<<<< HEAD
         <Route path="/imagenprueba" element={<ImagenPrueba/>}/>
+=======
+        <Route path="/editProfile" element={<EditProfile/>} />
+>>>>>>> 4032a93df3ea796b8ba775a4a4cd096499bac636
       </Routes>
     </Router>
     </GoogleOAuthProvider>

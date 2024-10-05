@@ -63,7 +63,7 @@ TABLES['Usuario_Cuenta_Authenticacion'] = ('''
         ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;''')
 
-#tabla fotos y relacion con el usuario
+#tabla fotos 
 TABLES['Fotos'] = ('''
     CREATE TABLE `Fotos` (
       `id` INT NOT NULL AUTO_INCREMENT,

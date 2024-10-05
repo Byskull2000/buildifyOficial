@@ -13,11 +13,13 @@ const page = () => {
     const [passwordS, setPasswordS] = useState("");
     const [password, setPassword] = useState('');
     const [error, setError] = useState("");
-    const navigate = useNavigate();
     const [hasUpperCase, setHasUpperCase] = useState(false);
     const [hasNumber, setHasNumber] = useState(false);
     const [passwordLength, setPasswordLength] = useState(false);
     const [passwordsMatch, setPasswordsMatch] = useState(false);
+    const navigate = useNavigate(); 
+
+
 
     //Quitar uso de la rueda del mouse porque se ve feo
     useEffect(() => {
@@ -45,7 +47,7 @@ const page = () => {
             "nombre_usuario": nombre,
             "correo_electronico": email,
             "contrasenia": password,
-            "fecha_creacion": Date.now + "",
+            "numero_telefono": telefono
         };
 
 
@@ -67,7 +69,7 @@ const page = () => {
 
             const { data } = await res.json();
             console.log("data: ", data);
-            navigate("/");  //
+             
 
         } catch (e) {
             console.error(e);
@@ -128,11 +130,11 @@ const page = () => {
                         <form onSubmit={handleSubmit} method="POST" className="space-y-4">
                             <div>
                                 <label htmlFor="name" className="block text-sm font-medium text-gray-500 ml-2">Nombre</label>
-                                <input value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Nombre completo" type="text" id="name" name="name" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
+                                <input value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Nombre completo" type="text" id="name" name="name" pattern="[A-Za-z\s]+" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
                             </div>
                             <div>
                                 <label htmlFor="phone" className="block text-sm font-medium text-gray-500 ml-2">Número de celular</label>
-                                <input value={telefono} onChange={e => setTelefono(e.target.value)} placeholder="Número de teléfono" type="tel" id="phone" name="phone" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
+                                <input value={telefono} onChange={e => setTelefono(e.target.value)} onKeyDown={(e) => (e.key === 'e' || e.key === '-' || e.key === '+') && e.preventDefault()} placeholder="Número de teléfono" type="number" id="phone" name="phone" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
                             </div>
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-500 ml-2">Inicio de sesión</label>
@@ -212,7 +214,7 @@ const page = () => {
                                     </p>
                                 )}
                             </div>
-                            //{error && <p style={{ color: 'red' }}>{error}</p>}
+                            
                             <div>
                                 <button type="submit" className="mb-2 py-2 w-full bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">Registrarme</button>
                             </div>
@@ -227,7 +229,7 @@ const page = () => {
                                     </svg> Continuar con Google </button>
                             </div>
                         </form>
-
+                        {error && <p style={{ color: 'red' }}>{error}</p>}
                         <div className="mt-4 text-sm text-center lg:mb-36">
                             <p className="text-gray-600">Ya tienes una cuenta?
                                 <Link

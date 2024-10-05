@@ -8,6 +8,8 @@ from PIL import Image
 import io
 from flask_cors import CORS
 from flask_migrate import Migrate
+from sqlalchemy.sql import func
+
 
 
 
@@ -22,11 +24,11 @@ app.config['MAX_CONTENT_LENGTH'] = 5 * 1080 * 1080
 
 
 #CONEXION PARA PRUEBAS EN PYTHONANYWHERE
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
 
 #CONEXION PARA PRUEBAS EN BASE LOCAL
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:nilson123@localhost:3306/fotos'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/buildify'
 
 
 
@@ -44,9 +46,10 @@ class Usuario(db.Model):
     __tablename__ = 'Usuario'
     id_usuario = db.Column(db.Integer, primary_key=True)
     nombre_usuario = db.Column(db.String(80), nullable=False)
-    correo_electronico = db.Column(db.String(100), nullable=False)
-    contrasenia = db.Column(db.String(50), nullable=False)
-    fecha_creacion = db.Column(db.DateTime, nullable=True)
+    correo_electronico = db.Column(db.String(100), nullable=False, unique=True)
+    numero_telefono = db.Column(db.String(13), nullable=False, unique=True)
+    contrasenia = db.Column(db.String(50), nullable=False, unique=True)
+    fecha_creacion = db.Column(db.DateTime,default=func.now(), nullable=True)
     ultimo_login = db.Column(db.DateTime, nullable=True)
     estado_usuario = db.Column(db.String(15), nullable=True)
     zona_trabajo = db.Column(db.String(50), nullable=True)
@@ -74,7 +77,7 @@ def obtener_usuarios():
         'id_usuario': u.id_usuario,
         'nombre_usuario': u.nombre_usuario,
         'correo_electronico': u.correo_electronico,
-        'contrasenia': u.contrasenia,
+        'numero_telefono': u.numero_telefono,
         'fecha_creacion': u.fecha_creacion,
         'ultimo_login': u.ultimo_login,
         'estado_usuario': u.estado_usuario,
@@ -90,15 +93,33 @@ def agregar_usuario():
         nombre_usuario=data['nombre_usuario'],
         correo_electronico=data['correo_electronico'],
         contrasenia=data['contrasenia'],
-        fecha_creacion=data.get('fecha_creacion'),  # Puede ser opcional
+        numero_telefono="+591 "+data['numero_telefono'],
+        fecha_creacion=data.get('fecha_creacion'),
         ultimo_login=data.get('ultimo_login'),      # Puede ser opcional
         estado_usuario=data.get('estado_usuario'),  # Puede ser opcional
         zona_trabajo=data.get('zona_trabajo'),      # Puede ser opcional
         imagen_perfil=data.get('imagen_perfil')     # Puede ser opcional
     )
-    db.session.add(nuevo_usuario)  # Agregar el usuario a la sesión
-    db.session.commit()              # Confirmar los cambios en la base de datos
-    return jsonify({'message': 'Usuario agregado exitosamente', 'id_usuario': nuevo_usuario.id_usuario}), 201
+    try:
+        db.session.add(nuevo_usuario)
+        db.session.commit()  # Confirmar los cambios en la base de datos
+        usuario_creado = {
+            "id_usuario": nuevo_usuario.id_usuario,
+            "nombre_usuario": nuevo_usuario.nombre_usuario,
+            "correo_electronico": nuevo_usuario.correo_electronico,
+            "ultimo_login": nuevo_usuario.ultimo_login,
+            "estado_usuario": nuevo_usuario.estado_usuario,
+            "zona_trabajo": nuevo_usuario.zona_trabajo,
+            "imagen_perfil": nuevo_usuario.imagen_perfil,
+            "numero_telefono": nuevo_usuario.numero_telefono
+        }
+        
+        return jsonify({"message": "Usuario creado correctamente", "data": usuario_creado}), 201
+    except Exception as e:
+        print("Error", str(e))
+        db.session.rollback()  # Revertir si hay algún error
+        
+        return jsonify({'error': str(e)}), 400
 
 @app.route('/api/login',methods=['POST'])
 def login():
@@ -118,6 +139,7 @@ def login():
             'fecha_creacion': user.fecha_creacion,
             'ultimo_login': user.ultimo_login,
             'estado_usuario': user.estado_usuario,
+            'numero_telefono': user.numero_telefono,
             'zona_trabajo': user.zona_trabajo,
             'imagen_perfil': user.imagen_perfil.decode('utf-8') if user.imagen_perfil else None
         } 
@@ -158,9 +180,54 @@ def actualizar_nombre(id_usuario):
 def actualizar_telefono(id_usuario):
     data = request.get_json()
     usuario = Usuario.query.get_or_404(id_usuario)
-    usuario.telefono = data.get('telefono', usuario.telefono)
+    usuario.numero_telefono = data.get('numero_telefono', usuario.numero_telefono)
     db.session.commit()
-    return jsonify({"message": "Teléfono actualizado", "telefono": usuario.telefono})
+    return jsonify({"message": "Teléfono actualizado", "telefono": usuario.numero_telefono})
+
+
+# Ruta para actualizar el perfil del usuario
+@app.route('/api/usuarios/<int:id_usuario>/perfil', methods=['PUT'])
+def actualizar_perfil(id_usuario):
+    try:
+        data = request.get_json()
+        usuario = Usuario.query.get_or_404(id_usuario)
+        
+        # Verificar y actualizar el nombre
+        if 'nombre_usuario' in data and data['nombre_usuario'] != usuario.nombre_usuario:
+            usuario.nombre_usuario = data['nombre_usuario']
+        
+        # Verificar y actualizar la zona de trabajo
+        if 'zona_trabajo' in data and data['zona_trabajo'] != usuario.zona_trabajo:
+            usuario.zona_trabajo = data['zona_trabajo']
+        
+        # Verificar y actualizar el teléfono
+        if 'numero_telefono' in data and data['numero_telefono'] != usuario.numero_telefono:
+            usuario.numero_telefono = "+591 "+ data['numero_telefono']
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Perfil actualizado correctamente',
+            'data': {
+                'id_usuario': usuario.id_usuario,
+                'nombre_usuario': usuario.nombre_usuario,
+                'correo_electronico': usuario.correo_electronico,
+                'fecha_creacion': usuario.fecha_creacion,
+                'ultimo_login': usuario.ultimo_login,
+                'estado_usuario': usuario.estado_usuario,
+                'numero_telefono': usuario.numero_telefono,
+                'zona_trabajo': usuario.zona_trabajo,
+                'imagen_perfil': usuario.imagen_perfil.decode('utf-8') if usuario.imagen_perfil else None
+            }
+        }), 200
+    
+    except Exception as e:
+        # Manejo de errores
+        return jsonify({
+            'message': 'Error al actualizar el perfil del usuario',
+            'error': str(e)
+        }), 400
+
 
 
 #convertir fotos en binario para almacenar en la BD

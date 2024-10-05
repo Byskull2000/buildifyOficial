@@ -1,8 +1,8 @@
 // Todas las imagenes deben estar en /src/assets
 import NavBar from '../components/NavBar';
 import PopupRegristro from '../components/RegistroRapidoPP';
-//import ImageUpload from '../pages/ImageUpload';
 import ImagenPrueba from '../pages/ImagenPrueba';
+import { Link } from 'react-router-dom';
 function App() {
     return (
         <>
@@ -10,6 +10,8 @@ function App() {
                 <NavBar/>
                 <PopupRegristro></PopupRegristro>
                 <ImagenPrueba></ImagenPrueba>
+                <Link to="/editProfile"className="text-blue-500 hover:underline">Edicion de perfil</Link>
+
             </div>
         </>
     );
