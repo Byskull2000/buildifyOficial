@@ -17,7 +17,7 @@ const page = () => {
     const [hasNumber, setHasNumber] = useState(false);
     const [passwordLength, setPasswordLength] = useState(false);
     const [passwordsMatch, setPasswordsMatch] = useState(false);
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
 
 
@@ -116,7 +116,6 @@ const page = () => {
     };
 
     return (
-
         <div >
             <div className="flex h-screen">
                 <div className="hidden lg:flex items-center justify-center flex-1 relative bg-white text-black w-2/3">
@@ -136,7 +135,25 @@ const page = () => {
                             </div>
                             <div>
                                 <label htmlFor="phone" className="block text-sm font-medium text-gray-500 ml-2">Número de celular</label>
-                                <input value={telefono} onChange={e => setTelefono(e.target.value)} onKeyDown={(e) => (e.key === 'e' || e.key === '-' || e.key === '+') && e.preventDefault()} placeholder="Número de teléfono" type="number" id="phone" name="phone" className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300" />
+                                <div className="flex space-x-2">
+                                    <select
+                                        defaultValue="+591"
+                                        className="bg-gray-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                    >
+                                        <option value="+591">+591</option>
+
+                                    </select>
+                                    <input
+                                        value={telefono}
+                                        onChange={e => setTelefono(e.target.value)}
+                                        onKeyDown={(e) => (e.key === 'e' || e.key === '-' || e.key === '+') && e.preventDefault()}
+                                        placeholder="Número de teléfono"
+                                        type="number"
+                                        id="phone"
+                                        name="phone"
+                                        className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                    />
+                                </div>
                             </div>
                             <div>
                                 <label htmlFor="email" className="block text-sm font-medium text-gray-500 ml-2">Inicio de sesión</label>
