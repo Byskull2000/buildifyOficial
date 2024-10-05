@@ -1,5 +1,5 @@
 import imgEjemploPerfil from "../assets/ejemploPerfil.jpg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MdLocationOn } from "react-icons/md"; // Importar el ícono del mapa
 import { useEffect, useState } from "react";
 
@@ -10,6 +10,7 @@ const page = () => {
     const [zona_trabajo, setZonaTrabajo] = useState("");
     const [imagen_perfil, setImagenPerfil] = useState("");
     const [id, setId] = useState("");
+    const navigate = useNavigate(); 
 
 
     useEffect(() => {
@@ -23,7 +24,7 @@ const page = () => {
             setNombre(user.nombre_usuario || "");
             setTelefono(user.telefono || "");
             setZonaTrabajo(user.zona_trabajo || "");
-            setImagenPerfil(user.imagen_perfil || imgEjemploPerfil);
+            //setImagenPerfil(user.imagen_perfil || imgEjemploPerfil);
         }
     }, []);
 
@@ -35,7 +36,6 @@ const page = () => {
             nombre_usuario,
             numero_telefono: telefono,
             zona_trabajo,
-            imagen_perfil,
         };
 
         try {
@@ -53,7 +53,11 @@ const page = () => {
             const data = await response.json();
             if (response.ok) {
                 alert("Perfil actualizado exitosamente");
-                // Aquí puedes actualizar el estado local o redirigir al usuario
+                console.log("data: ", data);
+
+                localStorage.setItem("user", JSON.stringify(data));
+                
+                navigate("/");
             } else {
                 console.error("Error al actualizar el perfil", data);
             }

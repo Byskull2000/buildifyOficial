@@ -205,10 +205,6 @@ def actualizar_perfil(id_usuario):
         if 'numero_telefono' in data and data['numero_telefono'] != usuario.numero_telefono:
             usuario.numero_telefono = "+591 "+ data['numero_telefono']
         
-        # Verificar y actualizar la imagen de perfil
-        if 'imagen_perfil' in data and data['imagen_perfil'] != usuario.imagen_perfil:
-            usuario.imagen_perfil = data['imagen_perfil']
-        
         db.session.commit()
         
         return jsonify({
