@@ -24,11 +24,11 @@ app.config['MAX_CONTENT_LENGTH'] = 5 * 1080 * 1080
 
 
 #CONEXION PARA PRUEBAS EN PYTHONANYWHERE
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
 
 #CONEXION PARA PRUEBAS EN BASE LOCAL
 
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/buildify'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/buildify'
 
 
 
@@ -94,7 +94,7 @@ def agregar_usuario():
         nombre_usuario=data['nombre_usuario'],
         correo_electronico=data['correo_electronico'],
         contrasenia=data['contrasenia'],
-        numero_telefono=data['numero_telefono'],
+        numero_telefono="+591 "+data['numero_telefono'],
         fecha_creacion=data.get('fecha_creacion'),
         ultimo_login=data.get('ultimo_login'),      # Puede ser opcional
         estado_usuario=data.get('estado_usuario'),  # Puede ser opcional
@@ -105,7 +105,7 @@ def agregar_usuario():
         db.session.add(nuevo_usuario)
         db.session.commit()  # Confirmar los cambios en la base de datos
         usuario_creado = {
-            "id": nuevo_usuario.id_usuario,
+            "id_usuario": nuevo_usuario.id_usuario,
             "nombre_usuario": nuevo_usuario.nombre_usuario,
             "correo_electronico": nuevo_usuario.correo_electronico,
             "ultimo_login": nuevo_usuario.ultimo_login,
@@ -184,6 +184,55 @@ def actualizar_telefono(id_usuario):
     usuario.numero_telefono = data.get('numero_telefono', usuario.numero_telefono)
     db.session.commit()
     return jsonify({"message": "Teléfono actualizado", "telefono": usuario.numero_telefono})
+
+
+# Ruta para actualizar el perfil del usuario
+@app.route('/api/usuarios/<int:id_usuario>/perfil', methods=['PUT'])
+def actualizar_perfil(id_usuario):
+    try:
+        data = request.get_json()
+        usuario = Usuario.query.get_or_404(id_usuario)
+        
+        # Verificar y actualizar el nombre
+        if 'nombre_usuario' in data and data['nombre_usuario'] != usuario.nombre_usuario:
+            usuario.nombre_usuario = data['nombre_usuario']
+        
+        # Verificar y actualizar la zona de trabajo
+        if 'zona_trabajo' in data and data['zona_trabajo'] != usuario.zona_trabajo:
+            usuario.zona_trabajo = data['zona_trabajo']
+        
+        # Verificar y actualizar el teléfono
+        if 'numero_telefono' in data and data['numero_telefono'] != usuario.numero_telefono:
+            usuario.numero_telefono = "+591 "+ data['numero_telefono']
+        
+        # Verificar y actualizar la imagen de perfil
+        if 'imagen_perfil' in data and data['imagen_perfil'] != usuario.imagen_perfil:
+            usuario.imagen_perfil = data['imagen_perfil']
+        
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Perfil actualizado correctamente',
+            'data': {
+                'id_usuario': usuario.id_usuario,
+                'nombre_usuario': usuario.nombre_usuario,
+                'correo_electronico': usuario.correo_electronico,
+                'fecha_creacion': usuario.fecha_creacion,
+                'ultimo_login': usuario.ultimo_login,
+                'estado_usuario': usuario.estado_usuario,
+                'numero_telefono': usuario.numero_telefono,
+                'zona_trabajo': usuario.zona_trabajo,
+                'imagen_perfil': usuario.imagen_perfil.decode('utf-8') if usuario.imagen_perfil else None
+            }
+        }), 200
+    
+    except Exception as e:
+        # Manejo de errores
+        return jsonify({
+            'message': 'Error al actualizar el perfil del usuario',
+            'error': str(e)
+        }), 400
+
 
 
 #convertir fotos en binario para almacenar en la BD

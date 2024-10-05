@@ -9,6 +9,7 @@ const page = () => {
     const [telefono, setTelefono] = useState("");
     const [zona_trabajo, setZonaTrabajo] = useState("");
     const [imagen_perfil, setImagenPerfil] = useState("");
+    const [id, setId] = useState("");
 
 
     useEffect(() => {
@@ -18,12 +19,48 @@ const page = () => {
             null;
         if(data){
             const user = JSON.parse(data);
+            setId(user.id_usuario || "");
             setNombre(user.nombre_usuario || "");
             setTelefono(user.telefono || "");
             setZonaTrabajo(user.zona_trabajo || "");
             setImagenPerfil(user.imagen_perfil || imgEjemploPerfil);
         }
     }, []);
+
+    // Función para manejar el submit del formulario
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const updatedProfile = {
+            nombre_usuario,
+            numero_telefono: telefono,
+            zona_trabajo,
+            imagen_perfil,
+        };
+
+        try {
+            const response = await fetch(
+                `http://localhost:5000/api/usuarios/${id}/perfil`, // Asegúrate de que la URL coincida con tu backend
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(updatedProfile),
+                }
+            );
+
+            const data = await response.json();
+            if (response.ok) {
+                alert("Perfil actualizado exitosamente");
+                // Aquí puedes actualizar el estado local o redirigir al usuario
+            } else {
+                console.error("Error al actualizar el perfil", data);
+            }
+        } catch (error) {
+            console.error("Error en la solicitud", error);
+        }
+    };
 
     return (
         <>
