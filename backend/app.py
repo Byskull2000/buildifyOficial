@@ -99,8 +99,19 @@ def agregar_usuario():
         imagen_perfil=data.get('imagen_perfil')     # Puede ser opcional
     )
     db.session.add(nuevo_usuario)  # Agregar el usuario a la sesión
-    db.session.commit()              # Confirmar los cambios en la base de datos
-    return jsonify({'message': 'Usuario agregado exitosamente', 'id_usuario': nuevo_usuario.id_usuario}), 201
+    db.session.commit()            # Confirmar los cambios en la base de datos
+    
+    usuario_creado = {
+        "id": nuevo_usuario.id_usuario,
+        "nombre_usuario": nuevo_usuario.nombre_usuario,
+        "correo_electronico": nuevo_usuario.correo_electronico,
+        "ultimo_login": nuevo_usuario.ultimo_login,
+        "estado_usuario": nuevo_usuario.estado_usuario,
+        "zona_trabajo": nuevo_usuario.zona_trabajo,
+        "imagen_perfil": nuevo_usuario.imagen_perfil
+    }
+    
+    return jsonify({"message": "Usuario creado correctamente", "data": usuario_creado}), 201
 
 @app.route('/api/login',methods=['POST'])
 def login():
