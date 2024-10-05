@@ -93,7 +93,7 @@ def agregar_usuario():
         nombre_usuario=data['nombre_usuario'],
         correo_electronico=data['correo_electronico'],
         contrasenia=data['contrasenia'],
-        numero_telefono="+591 "+data['numero_telefono'],
+        numero_telefono=data['numero_telefono'],
         fecha_creacion=data.get('fecha_creacion'),
         ultimo_login=data.get('ultimo_login'),      # Puede ser opcional
         estado_usuario=data.get('estado_usuario'),  # Puede ser opcional
@@ -194,17 +194,12 @@ def actualizar_perfil(id_usuario):
         usuario = Usuario.query.get_or_404(id_usuario)
         print("usuario", usuario)
         
-        # Verificar y actualizar el nombre
-        if 'nombre_usuario' in data and data['nombre_usuario'] != usuario.nombre_usuario:
-            usuario.nombre_usuario = data['nombre_usuario']
-        
-        # Verificar y actualizar la zona de trabajo
-        if 'zona_trabajo' in data and data['zona_trabajo'] != usuario.zona_trabajo:
-            usuario.zona_trabajo = data['zona_trabajo']
-        
-        # Verificar y actualizar el teléfono
-        if 'numero_telefono' in data and data['numero_telefono'] != usuario.numero_telefono:
-            usuario.numero_telefono = "+591 "+ data['numero_telefono']
+        usuario.nombre_usuario = data['nombre_usuario']
+    
+        usuario.zona_trabajo = data['zona_trabajo']
+    
+
+        usuario.numero_telefono = data['numero_telefono']
         
         db.session.commit()
         
