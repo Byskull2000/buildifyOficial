@@ -2,3 +2,8 @@ backend/.venv
 backend/venv
 backend/__pycache__
 backend/migrations
+
+*.pyc
+*.pyo
+**/__pycache__
+*.tsbuildinfo
