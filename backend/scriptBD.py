@@ -64,13 +64,14 @@ TABLES['Usuario_Cuenta_Authenticacion'] = ('''
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;''')
 
 #tabla fotos 
-TABLES['Fotos'] = ('''
-    CREATE TABLE `Fotos` (
+TABLES['Foto'] = ('''
+    CREATE TABLE `Foto` (
       `id_foto` INT NOT NULL AUTO_INCREMENT,
       `filename` VARCHAR(100) NOT NULL,
       `data` LONGBLOB NOT NULL,
       PRIMARY KEY (`id_foto`),
       CONSTRAINT `fk_foto_usuario`
+      FOREIGN KEY (`id_usuario`) REFERENCES `Usuario` (`id_usuario`)
         ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ''')
@@ -81,7 +82,7 @@ TABLES['Ubicacion'] = ('''
         `id_ubicacion` INT NOT NULL AUTO_INCREMENT,
         `latitud` VARCHAR(50) NOT NULL,
         `longitud` VARCHAR(50) NOT NULL,
-        PRIMARY KEY (`id_ubicacion`),
+        PRIMARY KEY (`id_ubicacion`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ''')
 
