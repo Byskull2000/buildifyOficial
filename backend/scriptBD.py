@@ -4,9 +4,9 @@ from mysql.connector import errorcode
 print("Conectando...")
 try:
     conn = mysql.connector.connect(
-           host='jhoelcamacho.mysql.pythonanywhere-services.com',
-           user='jhoelcamacho',
-           password='mysqlroot'
+           host='SyntaxError404.mysql.pythonanywhere-services.com',
+           user='SyntaxError404',
+           password='nohayerrores'
       )
 except mysql.connector.Error as err:
       if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
@@ -16,9 +16,9 @@ except mysql.connector.Error as err:
 
 cursor = conn.cursor()
 
-cursor.execute("DROP DATABASE IF EXISTS `jhoelcamacho$buildify`;")
-cursor.execute("CREATE DATABASE `jhoelcamacho$buildify`;")
-cursor.execute("USE `jhoelcamacho$buildify`;")
+cursor.execute("DROP DATABASE IF EXISTS `SyntaxError404$buildify`;")
+cursor.execute("CREATE DATABASE `SyntaxError404$buildify`;")
+cursor.execute("USE `SyntaxError404$buildify`;")
 
 # Crear las tablas
 TABLES = {}
@@ -66,12 +66,22 @@ TABLES['Usuario_Cuenta_Authenticacion'] = ('''
 #tabla fotos 
 TABLES['Fotos'] = ('''
     CREATE TABLE `Fotos` (
-      `id` INT NOT NULL AUTO_INCREMENT,
+      `id_foto` INT NOT NULL AUTO_INCREMENT,
       `filename` VARCHAR(100) NOT NULL,
       `data` LONGBLOB NOT NULL,
       PRIMARY KEY (`id_foto`),
       CONSTRAINT `fk_foto_usuario`
         ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+''')
+
+#tabla Ubicacion
+TABLES['Ubicacion'] = ('''
+    CREATE TABLE `Ubicacion` (
+        `id_ubicacion` INT NOT NULL AUTO_INCREMENT,
+        `latitud` VARCHAR(50) NOT NULL,
+        `longitud` VARCHAR(50) NOT NULL,
+        PRIMARY KEY (`id_ubicacion`),
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ''')
 
