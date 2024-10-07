@@ -69,10 +69,7 @@ TABLES['Foto'] = ('''
       `id_foto` INT NOT NULL AUTO_INCREMENT,
       `filename` VARCHAR(100) NOT NULL,
       `data` LONGBLOB NOT NULL,
-      PRIMARY KEY (`id_foto`),
-      CONSTRAINT `fk_foto_usuario`
-      FOREIGN KEY (`id_usuario`) REFERENCES `Usuario` (`id_usuario`)
-        ON DELETE CASCADE
+      PRIMARY KEY (`id_foto`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ''')
 
