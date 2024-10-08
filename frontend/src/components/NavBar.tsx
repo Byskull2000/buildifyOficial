@@ -12,13 +12,13 @@ const NavBar = () => {
 
     return (
         <div>
-            <nav className="bg-white border-gray-200 font-nunito flex justify-around p-4">
-                <div className="flex items-center w-full">
-                    <Link to="/" className="flex items-center">
+            <nav className="bg-white border-gray-200 font-nunito flex justify-around w-full sm:px-4 py-4">
+                <div className="flex items-center justify-between gap-2 ">
+                    <Link to="/" className="flex items-center ">
                         <img
                             src={buildifyLogo}
                             alt="Buildify Logo"
-                            className="h-14 mr-2"
+                            className="h-14 w-14 mr-2"
                         />
                         <span className="self-center text-2xl font-semibold hidden whitespace-nowrap sm:block">
                             Buildify
@@ -60,7 +60,7 @@ const NavBar = () => {
                     </div>
                 </div>
                 <div
-                    className={`flex w-full justify-around items-center ${
+                    className={`flex  justify-center gap-2 items-center ${
                         openSearch ? "hidden" : ""
                     }`}
                 >
@@ -123,11 +123,14 @@ const NavBar = () => {
                     </Link>
                 </div>
                 <div
-                    className="flex items-center w-full justify-around  md:flex md:w-auto md:order-1"
-                    id="navbar-search"
+                    className={`flex  justify-end gap-2 items-center ${
+                        openSearch ? "hidden" : ""
+                    }`}
                 >
                     {user ? (
                         <>
+                        <button>
+
                             <svg
                                 width="23"
                                 height="23"
@@ -141,8 +144,11 @@ const NavBar = () => {
                                     stroke="#707070"
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
-                                />
+                                    />
                             </svg>
+                            </button>
+                            <button>
+
                             <svg
                                 width="28"
                                 height="28"
@@ -155,14 +161,15 @@ const NavBar = () => {
                                     fill="#707070"
                                 />
                             </svg>
+                                </button>
 
-                            <p>
+                            <button>
                                 <img
                                     src={user.imagen_perfil || imgProfile}
                                     alt="imagen de perfil"
-                                    className="h-8 rounded-full"
+                                    className="h-8 w-8 rounded-full"
                                 />
-                            </p>
+                            </button>
                         </>
                     ) : (
                         <ul className="font-nunito flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white">
