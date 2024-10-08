@@ -79,6 +79,7 @@ TABLES['Ubicacion'] = ('''
         `id_ubicacion` INT NOT NULL AUTO_INCREMENT,
         `latitud` VARCHAR(50) NOT NULL,
         `longitud` VARCHAR(50) NOT NULL,
+        `Descripcion_ubicacion` VARCHAR(50) NOT NULL, 
         PRIMARY KEY (`id_ubicacion`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ''')
