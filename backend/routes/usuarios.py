@@ -6,7 +6,7 @@ usuarios = Blueprint('usuarios', __name__)
 # Ruta para actualizar el perfil del usuario
 
 
-@usuarios.route("/api/<int:id_usuario>/perfil", methods=["PUT"])
+@usuarios.route("/api/usuarios/<int:id_usuario>/perfil", methods=["PUT"])
 def actualizar_perfil(id_usuario):
     try:
         data = request.get_json()
