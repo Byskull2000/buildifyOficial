@@ -5,12 +5,12 @@ from sqlalchemy.sql import func
 
 
 class Usuario(db.Model):
-    __tablename__ = 'Usuario'
+    __tablename__ = 'usuario'
     id_usuario = db.Column(db.Integer, primary_key=True)
     nombre_usuario = db.Column(db.String(80), nullable=False)
     correo_electronico = db.Column(db.String(100), nullable=False, unique=True)
-    numero_telefono = db.Column(db.String(25), nullable=False, unique=True)
-    contrasenia = db.Column(db.String(50), nullable=False, unique=True)
+    numero_telefono = db.Column(db.String(20), nullable=False, unique=True)
+    contrasenia = db.Column(db.String(50), nullable=False)
     fecha_creacion = db.Column(db.DateTime, default=func.now(), nullable=True)
     ultimo_login = db.Column(db.DateTime, nullable=True)
     estado_usuario = db.Column(db.String(15), nullable=True)
