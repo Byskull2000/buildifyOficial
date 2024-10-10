@@ -5,7 +5,7 @@ import fondologin from "../assets/fondoRegisterF.jpg";
 import logo from "../assets/Buildify.png";
 import { Link, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
-const page = () => {
+const Page = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
     const [nombre, setNombre] = useState("");
@@ -84,6 +84,7 @@ const page = () => {
         }
         setLoading(false);
     };
+
     const handlePasswordChange = (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
@@ -450,4 +451,4 @@ const page = () => {
         </div>
     );
 };
-export default page;
+export default Page;

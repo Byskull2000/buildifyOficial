@@ -80,10 +80,15 @@ iniciar
     <http://localhost:5000>
 
 ## ***En Caso de trabajar con un ORM En el backend***
+
 hacer lo siguiente
-### cargar la base de datos existente:
+
+### cargar la base de datos existente
+
 `flask db upgrade`
+
 ### agregar tablas o modificaciones de tablas
+
 1. crear el modelo en models
 2. registrar el modelo en app.py
 3. crear una migracion con un mensaje
