@@ -79,12 +79,25 @@ iniciar
 
     <http://localhost:5000>
 
-## ***En Caso de trabajar con un ORM En el backend ***
+## ***En Caso de trabajar con un ORM En el backend***
+
 hacer lo siguiente
 
-1. flask db init  # Solo la primera vez
-2. flask db migrate -m "Creacion de Tabla Usuario" # el usuario es un ejemplo
-3. flask db upgrade
+### cargar la base de datos existente
+
+`flask db upgrade`
+
+### agregar tablas o modificaciones de tablas
+
+1. crear el modelo en models
+2. registrar el modelo en app.py
+3. crear una migracion con un mensaje
+
+    `flask db migrate -m "Creacion de Tabla Usuario"`
+
+4. actualizar la base de datos
+
+    `flask db upgrade`
 
 ## Integrantes
 
