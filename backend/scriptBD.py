@@ -89,7 +89,7 @@ TABLES['Tipo_Material'] = ('''
     CREATE TABLE `Tipo_Material` (
       `id_tipoMaterial` INT NOT NULL AUTO_INCREMENT,
       `nombre_tipo_material` VARCHAR(50) NOT NULL,
-      `descripcion_tipoMat` VARCHAR(255),
+      `descripcion_tipoMaterial` VARCHAR(255),
       PRIMARY KEY (`id_tipoMaterial`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ''')
@@ -102,8 +102,8 @@ TABLES['Interes'] = ('''
       `id_tipoMaterial` INT NOT NULL,
       PRIMARY KEY (`id_interes`),
       CONSTRAINT `fk_tipo_material`
-        FOREIGN KEY (`id_tipoMat`) 
-        REFERENCES `Tipo_Material` (`id_tipoMat`)
+        FOREIGN KEY (`id_tipoMaterial`) 
+        REFERENCES `Tipo_Material` (`id_tipoMaterial`)
         ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ''')
