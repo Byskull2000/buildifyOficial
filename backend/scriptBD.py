@@ -84,6 +84,47 @@ TABLES['Ubicacion'] = ('''
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ''')
 
+#tabla Tipo_Material
+TABLES['Tipo_Material'] = ('''
+    CREATE TABLE `Tipo_Material` (
+      `id_tipoMaterial` INT NOT NULL AUTO_INCREMENT,
+      `nombre_tipo_material` VARCHAR(50) NOT NULL,
+      `descripcion_tipoMat` VARCHAR(255),
+      PRIMARY KEY (`id_tipoMaterial`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+''')
+
+#tabla Interes
+TABLES['Interes'] = ('''
+    CREATE TABLE `Interes` (
+      `id_interes` INT NOT NULL AUTO_INCREMENT,
+      `cant_interes` INT NOT NULL,
+      `id_tipoMaterial` INT NOT NULL,
+      PRIMARY KEY (`id_interes`),
+      CONSTRAINT `fk_tipo_material`
+        FOREIGN KEY (`id_tipoMat`) 
+        REFERENCES `Tipo_Material` (`id_tipoMat`)
+        ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+''')
+
+# Relación entre Usuario y Interes (tabla intermedia)
+TABLES['Usuario_Interes'] = ('''
+    CREATE TABLE `Usuario_Interes` (
+      `id_usuario` INT,
+      `id_interes` INT,
+      PRIMARY KEY (`id_usuario`, `id_interes`),
+      CONSTRAINT `fk_usuario_interes`
+        FOREIGN KEY (`id_usuario`) 
+        REFERENCES `Usuario` (`id_usuario`)
+        ON DELETE CASCADE,
+      CONSTRAINT `fk_interes`
+        FOREIGN KEY (`id_interes`) 
+        REFERENCES `Interes` (`id_interes`)
+        ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+''')
+
 # Ejecutar la creación de tablas
 for tabla_nombre in TABLES:
     tabla_sql = TABLES[tabla_nombre]
