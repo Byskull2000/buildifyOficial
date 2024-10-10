@@ -1,22 +1,13 @@
 import React, { useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 
-// Configuración para íconos personalizados de Leaflet
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-});
-
-const App: React.FC = () => {
+const Ubicaciones: React.FC = () => {
   const [coordenadas, setCoordenadas] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
+  const [direccion, setDireccion] = useState<string | null>(null); // Estado para la dirección
   const [mostrarMapa, setMostrarMapa] = useState(false);
 
   const handleMapClick = (lat: number, lng: number) => {
@@ -47,6 +38,8 @@ const App: React.FC = () => {
         );
 
         if (response.ok) {
+          const data = await response.json();
+          setDireccion(data.direccion || ""); // Actualiza el estado con la dirección recibida
           alert("¡Ubicación guardada con éxito!");
         } else {
           alert("Hubo un error al guardar la ubicación");
@@ -95,10 +88,15 @@ const App: React.FC = () => {
           >
             Guardar Ubicación
           </button>
+          {direccion && (
+            <p className="mt-4 text-lg font-semibold text-gray-500">
+              Dirección: {direccion}
+            </p>
+          )}
         </>
       )}
     </div>
   );
 };
 
-export default App;
+export default Ubicaciones;
