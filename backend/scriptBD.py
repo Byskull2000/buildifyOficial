@@ -98,7 +98,7 @@ TABLES['Tipo_Material'] = ('''
 TABLES['Interes'] = ('''
     CREATE TABLE `Interes` (
       `id_interes` INT NOT NULL AUTO_INCREMENT,
-      `cant_interes` INT NOT NULL,
+      `fecha_seleccion` DATE,
       `id_tipoMaterial` INT NOT NULL,
       PRIMARY KEY (`id_interes`),
       CONSTRAINT `fk_tipo_material`
