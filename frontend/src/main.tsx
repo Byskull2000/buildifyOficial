@@ -9,7 +9,7 @@ import Register from "./pages/Register.tsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import RegistroRapido from "./pages/RegistroRapido.tsx";
 import EditProfile from "./pages/EditProfile.tsx";
-import Ubicaciones from "./pages/Ubicaciones.tsx";
+import Ubicaciones from "./pages/DireccionesEntrega.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

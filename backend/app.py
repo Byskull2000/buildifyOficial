@@ -11,6 +11,7 @@ from routes.usuarios import usuarios
 from routes.fotos import fotos
 from routes.react import react
 from routes.ubicaciones import ubicaciones
+from routes.direcciones_entrega import direcciones_entrega
 
 
 app = Flask(__name__)
@@ -20,6 +21,7 @@ app.register_blueprint(usuarios)
 app.register_blueprint(fotos)
 app.register_blueprint(react)
 app.register_blueprint(ubicaciones)
+app.register_blueprint(direcciones_entrega)  
 
 
 # CONEXION PARA PRUEBAS EN PYTHONANYWHERE

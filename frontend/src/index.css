@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.mapa-cuadrado {
+  width: 300px; /* Ajusta el tamaño según sea necesario */
+  height: 300px; /* Asegura que el mapa sea cuadrado */
+  border-radius: 8px;
+  overflow: hidden;
+}

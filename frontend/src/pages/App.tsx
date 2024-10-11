@@ -3,7 +3,7 @@ import NavBar from "../components/NavBar";
 import PopupRegristro from "../components/RegistroRapidoPP";
 import ImagenPrueba from "../pages/ImagenPrueba";
 import { Link } from "react-router-dom";
-import Ubicaciones from "./Ubicaciones";
+import DireccionesEntrega from "./DireccionesEntrega";
 function App() {
   return (
     <>
@@ -14,7 +14,7 @@ function App() {
         <Link to="/editProfile" className="text-blue-500 hover:underline">
           Edicion de perfil
         </Link>
-        <Ubicaciones />
+        <DireccionesEntrega />
       </div>
     </>
   );
