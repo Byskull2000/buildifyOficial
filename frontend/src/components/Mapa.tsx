@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { Ubicacion } from "../pages/DireccionesEntrega";
 
 interface MapaProps {
+  ubicaciones: Ubicacion[];
   onUbicacionSeleccionada: (lat: number, lng: number) => void;
 }
 

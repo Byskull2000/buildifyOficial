@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import DireccionForm from "../components/DireccionForm";
 import Mapa from "../components/Mapa";
 
-interface Ubicacion {
+export interface Ubicacion {
   lat: number;
   lng: number;
 }
@@ -57,7 +57,10 @@ const DireccionesEntrega: React.FC = () => {
         </button>
       ) : (
         <div className="flex space-x-4">
-          <DireccionForm onGuardar={guardarUbicacion} />
+          <DireccionForm 
+    onGuardar={guardarUbicacion} 
+    coordenadasSeleccionadas={coordenadasSeleccionadas} // Asegúrate de que esta variable esté definida  
+          />
           <div>
             <Mapa
               ubicaciones={ubicaciones}
