@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
 interface MapaProps {
-  ubicaciones: { lat: number; lng: number }[];
   onUbicacionSeleccionada: (lat: number, lng: number) => void;
 }
 
@@ -17,14 +16,18 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-const Mapa: React.FC<MapaProps> = ({
-  ubicaciones,
-  onUbicacionSeleccionada,
-}) => {
+const Mapa: React.FC<MapaProps> = ({ onUbicacionSeleccionada }) => {
+  const [ubicacion, setUbicacion] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+
   const MapEvents = () => {
     useMapEvents({
       click(e) {
-        onUbicacionSeleccionada(e.latlng.lat, e.latlng.lng);
+        const nuevaUbicacion = { lat: e.latlng.lat, lng: e.latlng.lng };
+        setUbicacion(nuevaUbicacion);
+        onUbicacionSeleccionada(nuevaUbicacion.lat, nuevaUbicacion.lng);
       },
     });
     return null;
@@ -34,15 +37,13 @@ const Mapa: React.FC<MapaProps> = ({
     <MapContainer
       center={[-17.3936, -66.157]}
       zoom={13}
-      className="mapa-cuadrado"
+      className="w-80 h-80 rounded-lg"
     >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution="© OpenStreetMap contributors"
       />
-      {ubicaciones.map((ubicacion, index) => (
-        <Marker key={index} position={[ubicacion.lat, ubicacion.lng]} />
-      ))}
+      {ubicacion && <Marker position={[ubicacion.lat, ubicacion.lng]} />}
       <MapEvents />
     </MapContainer>
   );

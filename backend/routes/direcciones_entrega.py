@@ -1,4 +1,5 @@
 # routes/direcciones_entrega.py
+
 from flask import Blueprint, request, jsonify
 from models.direccion_entrega import DireccionEntrega
 from utils.db import db
@@ -14,9 +15,11 @@ def guardar_direccion_entrega():
     latitud_entrega = data.get('lat')
     longitud_entrega = data.get('lng')
 
+    # Verificar que todos los datos requeridos están presentes
     if not (nombre_destinatario and descrip_direcEntrega and telefono and latitud_entrega and longitud_entrega):
         return jsonify({'message': 'Datos incompletos'}), 400
 
+    # Crear una nueva instancia del modelo DireccionEntrega
     nueva_direccion = DireccionEntrega(
         nombre_destinatario=nombre_destinatario,
         descrip_direcEntrega=descrip_direcEntrega,
@@ -25,6 +28,7 @@ def guardar_direccion_entrega():
         longitud_entrega=longitud_entrega
     )
     
+    # Intentar guardar la nueva dirección en la base de datos
     try:
         db.session.add(nueva_direccion)
         db.session.commit()

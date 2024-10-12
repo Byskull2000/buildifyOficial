@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface DireccionFormProps {
   onGuardar: (
@@ -6,29 +6,49 @@ interface DireccionFormProps {
     direccion: string,
     telefono: string
   ) => Promise<void>;
+  coordenadasSeleccionadas: { lat: number; lng: number } | null;
 }
 
-const DireccionForm: React.FC<DireccionFormProps> = ({ onGuardar }) => {
+const DireccionForm: React.FC<DireccionFormProps> = ({
+  onGuardar,
+  coordenadasSeleccionadas,
+}) => {
   const [nombre, setNombre] = useState("");
   const [direccion, setDireccion] = useState("");
   const [telefono, setTelefono] = useState("");
   const [mensaje, setMensaje] = useState<string | null>(null);
+  const [formValido, setFormValido] = useState(false);
+
+  // Validación del formulario
+  useEffect(() => {
+    const todosCamposLlenos =
+      nombre.trim() !== "" &&
+      direccion.trim() !== "" &&
+      telefono.trim() !== "" &&
+      coordenadasSeleccionadas !== null;
+    setFormValido(todosCamposLlenos);
+  }, [nombre, direccion, telefono, coordenadasSeleccionadas]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMensaje(null); // Limpiar mensaje anterior
 
-    try {
-      await onGuardar(nombre, direccion, telefono);
-      setMensaje("¡Dirección guardada con éxito!"); // Solo si la operación fue exitosa
-    } catch (error) {
-      setMensaje("Error al guardar la dirección. Inténtalo de nuevo."); // Si hay un error
+    if (!formValido) {
+      setMensaje(
+        "Por favor, completa todos los campos y selecciona una ubicación en el mapa."
+      );
+      return;
     }
 
-    // Limpiar formulario después de la operación
-    setNombre("");
-    setDireccion("");
-    setTelefono("");
+    try {
+      await onGuardar(nombre, direccion, telefono);
+      setMensaje("¡Dirección guardada con éxito!");
+      setNombre("");
+      setDireccion("");
+      setTelefono("");
+    } catch (error) {
+      setMensaje("Error al guardar la dirección. Inténtalo de nuevo.");
+    }
   };
 
   return (
@@ -44,21 +64,26 @@ const DireccionForm: React.FC<DireccionFormProps> = ({ onGuardar }) => {
 
       <input
         className="block w-full p-2 mb-2 rounded"
-        placeholder="Direccion"
+        placeholder="Dirección"
         value={direccion}
         onChange={(e) => setDireccion(e.target.value)}
       />
 
       <input
         className="block w-full p-2 mb-2 rounded"
-        placeholder="Telefono"
+        placeholder="Teléfono"
         value={telefono}
         onChange={(e) => setTelefono(e.target.value)}
       />
 
       <button
         type="submit"
-        className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600 transition"
+        disabled={!formValido}
+        className={`px-4 py-2 rounded text-white transition ${
+          formValido
+            ? "bg-orange-500 hover:bg-orange-600"
+            : "bg-gray-400 cursor-not-allowed"
+        }`}
       >
         Guardar Dirección
       </button>
