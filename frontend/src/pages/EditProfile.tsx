@@ -1,8 +1,10 @@
+"use client";
 import imgEjemploPerfil from "../assets/ejemploPerfil.jpg";
 import { Link, useNavigate } from "react-router-dom";
-import { MdLocationOn } from "react-icons/md"; // Importar el ícono del mapa
+import { MdLocationOn } from "react-icons/md";
 import { useEffect, useState } from "react";
 import Loading from "../components/Loading";
+import Cropper from "react-easy-crop";
 
 const Page = () => {
     const [nombre_usuario, setNombre] = useState("");
@@ -17,6 +19,9 @@ const Page = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [error, setError] = useState("");
+    const [imagenRecortada, setImagenRecortada] = useState<Blob | null>(null);
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
 
     useEffect(() => {
         const data =
@@ -49,7 +54,108 @@ const Page = () => {
         }
     };
 
-    // Función para manejar el submit del formulario
+    const createImage = (url: string): Promise<HTMLImageElement> => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = url;
+            img.crossOrigin = "anonymous"; // To avoid CORS issues
+            img.onload = () => resolve(img);
+            img.onerror = (err) => reject(err);
+        });
+    };
+
+    const getCroppedImg = async (
+        imageSrc: string,
+        crop: { x: number; y: number; width: number; height: number }
+    ) => {
+        // Función para generar un hash basado en SHA-256
+        async function generateHash(input: string) {
+            const textEncoder = new TextEncoder();
+            const encodedData = textEncoder.encode(input);
+            const hashBuffer = await crypto.subtle.digest(
+                "SHA-256",
+                encodedData
+            );
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray
+                .map((b) => b.toString(16).padStart(2, "0"))
+                .join("");
+            return hashHex;
+        }
+        const image = await createImage(imageSrc);
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        if (!ctx) return null;
+
+        const scaleX = image.naturalWidth / image.width;
+        const scaleY = image.naturalHeight / image.height;
+
+        canvas.width = crop.width;
+        canvas.height = crop.height;
+
+        ctx.drawImage(
+            image,
+            crop.x * scaleX,
+            crop.y * scaleY,
+            crop.width * scaleX,
+            crop.height * scaleY,
+            0,
+            0,
+            crop.width,
+            crop.height
+        );
+        const timestamp = new Date().toISOString();
+        const hash = await generateHash(`${id}-${timestamp}`);
+
+        return new Promise<File | null>((resolve) => {
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    // Asignar nombre al archivo con el hash generado
+                    const fileName = `${hash}.webp `;
+
+                    // Convertir el blob en un archivo con el nombre generado
+                    const file = new File([blob], fileName, {
+                        type: "image/webp",
+                    });
+                    resolve(file);
+                } else {
+                    resolve(null);
+                }
+            }, "image/webp");
+        });
+    };
+
+    const onCropComplete = async (
+        croppedArea: { x: number; y: number; width: number; height: number },
+        croppedAreaPixels: {
+            x: number;
+            y: number;
+            width: number;
+            height: number;
+        }
+    ) => {
+        console.log(croppedArea);
+        const croppedImage = await getCroppedImg(
+            imagen_perfil,
+            croppedAreaPixels
+        );
+        setImagenRecortada(croppedImage); // Guardar la imagen recortada para mostrarla
+    };
+
+    const handleSaveImage = async () => {
+        if (imagenRecortada) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                if (reader.result) {
+                    setImagenPerfil(reader.result.toString());
+                }
+            };
+            reader.readAsDataURL(imagenRecortada);
+        }
+        setImagenSeleccionada(null);
+    };
+
     const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
@@ -59,8 +165,8 @@ const Page = () => {
         formData.append("numero_telefono", numero_telefono);
         formData.append("zona_trabajo", zona_trabajo);
 
-        if (imagenSeleccionada) {
-            formData.append("imagen_perfil", imagenSeleccionada);
+        if (imagenRecortada) {
+            formData.append("imagen_perfil", imagenRecortada);
         }
 
         try {
@@ -143,44 +249,87 @@ const Page = () => {
                                     Editar perfil
                                 </h2>
                                 <div className="grid max-w-2xl mx-auto mt-8">
-                                    <div className="flex flex-col items-center space-y-5 sm:flex-row sm:space-y-0">
-                                        {/*Aca se carga la imagen de perfil */}
-                                        <img
-                                            className="object-cover w-40 h-40 p-1 rounded-full ring-2 ring-orange-300"
-                                            src={
-                                                imagen_perfil ||
-                                                imgEjemploPerfil
-                                            }
-                                            alt="Avatar"
-                                        />
-                                        <div className="flex flex-col space-y-5 sm:ml-8">
-                                            <label
-                                                htmlFor="file_avatar"
-                                                className="py-3.5 px-7 text-base font-medium text-white focus:outline-none rounded-lg border border-yellow-300 bg-[#FED35F] hover:bg-yellow-500  focus:z-10 focus:ring-4 focus:ring-orange-600"
-                                            >
-                                                Cambiar foto de perfil
-                                                <input
-                                                    id="file_avatar"
-                                                    type="file"
-                                                    className="hidden"
-                                                    onChange={handleImageChange}
+                                    {imagenSeleccionada ? (
+                                        <div>
+                                            <div className="relative w-full h-80 bg-black">
+                                                <Cropper
+                                                    image={imagen_perfil}
+                                                    crop={crop}
+                                                    zoom={zoom}
+                                                    aspect={1 / 1}
+                                                    onCropChange={setCrop}
+                                                    onCropComplete={
+                                                        onCropComplete
+                                                    }
+                                                    onZoomChange={setZoom}
+                                                    cropShape="round"
                                                 />
-                                            </label>
-                                            <button
-                                                type="button"
-                                                className="py-3.5 px-7 text-base font-medium text-black focus:outline-none bg-white rounded-lg border hover:bg-slate-100      "
-                                                onClick={() => {
-                                                    setImagenSeleccionada(null);
-                                                    setImagenPerfil(
-                                                        imagen_original
-                                                    );
-                                                }}
-                                            >
-                                                Eliminar foto de perfil
-                                            </button>
+                                            </div>
+                                            <div className="flex justify-around my-2">
+                                                <button
+                                                    className="py-3.5 px-7 text-base font-medium text-white focus:outline-none rounded-lg border border-yellow-300 bg-[#FED35F] hover:bg-yellow-500  focus:z-10 focus:ring-4 focus:ring-orange-600"
+                                                    onClick={handleSaveImage}
+                                                >
+                                                    Guardar Imagen
+                                                </button>
+                                                <button
+                                                    className="py-3.5 px-7 text-base font-medium text-black focus:outline-none bg-white rounded-lg border hover:bg-slate-100"
+                                                    onClick={() => {
+                                                        setImagenSeleccionada(
+                                                            null
+                                                        );
+                                                        setImagenPerfil(
+                                                            imagen_original
+                                                        );
+                                                    }}
+                                                >
+                                                    Restaurar Imagen
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-
+                                    ) : (
+                                        <div className="flex flex-col items-center space-y-5 sm:flex-row sm:space-y-0">
+                                            {/*Aca se carga la imagen de perfil */}
+                                            <img
+                                                className="object-cover w-40 h-40 p-1 rounded-full ring-2 ring-orange-300"
+                                                src={
+                                                    imagen_perfil ||
+                                                    imgEjemploPerfil
+                                                }
+                                                alt="Avatar"
+                                            />
+                                            <div className="flex flex-col space-y-5 sm:ml-8">
+                                                <label
+                                                    htmlFor="file_avatar"
+                                                    className="py-3.5 px-7 text-base font-medium text-white focus:outline-none rounded-lg border border-yellow-300 bg-[#FED35F] hover:bg-yellow-500  focus:z-10 focus:ring-4 focus:ring-orange-600"
+                                                >
+                                                    Cambiar foto de perfil
+                                                    <input
+                                                        id="file_avatar"
+                                                        type="file"
+                                                        className="hidden"
+                                                        onChange={
+                                                            handleImageChange
+                                                        }
+                                                    />
+                                                </label>
+                                                <button
+                                                    type="button"
+                                                    className="py-3.5 px-7 text-base font-medium text-black focus:outline-none bg-white rounded-lg border hover:bg-slate-100      "
+                                                    onClick={() => {
+                                                        setImagenSeleccionada(
+                                                            null
+                                                        );
+                                                        setImagenPerfil(
+                                                            imagen_original
+                                                        );
+                                                    }}
+                                                >
+                                                    Eliminar foto de perfil
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                     <form onSubmit={handleSubmit} method="PUT">
                                         <div className="items-center mt-8 sm:mt-14 text-[#202142]">
                                             <label className="block mb-2 text-sm font-medium  text-black">
