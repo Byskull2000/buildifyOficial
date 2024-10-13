@@ -20,14 +20,13 @@ const DireccionesEntrega: React.FC = () => {
     direccion: string,
     telefono: string
   ) => {
+    const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
     if (coordenadasSeleccionadas) {
       const { lat, lng } = coordenadasSeleccionadas;
       const data = { nombre, direccion, telefono, lat, lng };
 
       try {
-        const response = await fetch(
-          "https://SyntasError404.pythonanywhere.com/api/guardar-direccion-entrega",
-          {
+        const response = await fetch(URL_BACKEND + "/api/guardar-direccion-entrega",{
             method: "POST",
             headers: {
               "Content-Type": "application/json",

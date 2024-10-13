@@ -24,7 +24,6 @@ const DireccionForm: React.FC<DireccionFormProps> = ({
   const [formValido, setFormValido] = useState(false);
 
   useEffect(() => {
-    // Actualiza el campo de dirección cuando se selecciona una nueva ubicación en el mapa
     setDireccionEditable(direccion);
   }, [direccion]);
 
