@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import DireccionForm from "../components/DireccionForm";
-import Mapa from "../components/Mapa";
+// src/pages/DireccionesEntrega.tsx
+
+import React, { useState } from 'react';
+import DireccionForm from '../components/DireccionForm';
+import Mapa from '../components/Mapa';
 
 interface Ubicacion {
   lat: number;
@@ -8,42 +10,42 @@ interface Ubicacion {
 }
 
 const DireccionesEntrega: React.FC = () => {
-  const [ubicaciones, setUbicaciones] = useState<Ubicacion[]>([]);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [coordenadasSeleccionadas, setCoordenadasSeleccionadas] =
-    useState<Ubicacion | null>(null);
+  const [coordenadasSeleccionadas, setCoordenadasSeleccionadas] = useState<Ubicacion | null>(null);
+  const [direccionSeleccionada, setDireccionSeleccionada] = useState('');
 
-  const guardarUbicacion = async (
-    nombre: string,
-    direccion: string,
-    telefono: string
-  ) => {
+  const guardarUbicacion = async (nombre: string, direccion: string, telefono: string) => {
+    const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
     if (coordenadasSeleccionadas) {
       const { lat, lng } = coordenadasSeleccionadas;
       const data = { nombre, direccion, telefono, lat, lng };
 
-      const response = await fetch(
-        "https://SyntaxError404.pythonanywhere.com/api/guardar-direccion-entrega",
-        {
+      try {
+        const response = await fetch(URL_BACKEND + "/api/guardar-direccion-entrega", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(data),
-        }
-      );
+        });
 
-      if (!response.ok) {
-        throw new Error("Error al guardar");
+        if (!response.ok) throw new Error('Error al guardar');
+      } catch (error) {
+        throw new Error('Error al guardar la dirección de entrega');
       }
     } else {
-      throw new Error("Coordenadas no seleccionadas");
+      throw new Error('Por favor, selecciona una ubicación en el mapa.');
     }
   };
 
   const agregarUbicacion = (lat: number, lng: number) => {
-    setUbicaciones((prev) => [...prev, { lat, lng }]);
     setCoordenadasSeleccionadas({ lat, lng });
+  };
+
+  const cerrarFormulario = () => {
+    setMostrarFormulario(false);
+    setCoordenadasSeleccionadas(null);
+    setDireccionSeleccionada('');
   };
 
   return (
@@ -56,19 +58,23 @@ const DireccionesEntrega: React.FC = () => {
           Agregar Ubicación de Entrega
         </button>
       ) : (
-        <div className="flex space-x-4">
-          <DireccionForm onGuardar={guardarUbicacion} />
-          <div>
-            <Mapa
-              ubicaciones={ubicaciones}
-              onUbicacionSeleccionada={agregarUbicacion}
+        <div className="flex flex-col items-center space-y-4">
+          <button
+            onClick={cerrarFormulario}
+            className="bg-red-500 text-white px-3 py-1 rounded"
+          >
+            Cerrar
+          </button>
+          <div className="flex space-x-4">
+            <DireccionForm 
+              onGuardar={guardarUbicacion} 
+              coordenadasSeleccionadas={coordenadasSeleccionadas}
+              direccion={direccionSeleccionada}
             />
-            {coordenadasSeleccionadas && (
-              <p className="mt-2 text-gray-700 font-semibold">
-                Latitud: {coordenadasSeleccionadas.lat.toFixed(6)}, Longitud:{" "}
-                {coordenadasSeleccionadas.lng.toFixed(6)}
-              </p>
-            )}
+            <Mapa 
+              onUbicacionSeleccionada={agregarUbicacion} 
+              onDireccionObtenida={setDireccionSeleccionada}
+            />
           </div>
         </div>
       )}
