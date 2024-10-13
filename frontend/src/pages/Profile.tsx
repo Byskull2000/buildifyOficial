@@ -2,19 +2,22 @@ import imgEjemploPerfil from "../assets/ejemploPerfil.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-const page = () => {
+const Page = () => {
     const [nombre_usuario, setNombre] = useState("");
     const [numero_telefono, setTelefono] = useState("");
     const [zona_trabajo, setZonaTrabajo] = useState("");
     const [imagen_perfil, setImagenPerfil] = useState("");
     const [id, setId] = useState("");
+    const [correo, setCorreo] = useState("");
     const navigate = useNavigate();
+    const [ubicacion, setUbicacion] = useState("");
 
     useEffect(() => {
         const data =
             localStorage.getItem("user") ||
             sessionStorage.getItem("user") ||
             null;
+        console.log(data);
         if (data) {
             const user = JSON.parse(data);
             setId(user.id_usuario || "");
@@ -22,6 +25,8 @@ const page = () => {
             setTelefono(user.numero_telefono || "");
             setZonaTrabajo(user.zona_trabajo || "");
             setImagenPerfil(user.imagen_perfil || imgEjemploPerfil);
+            setCorreo(user.correo_electronico)
+            setUbicacion(user.zona_trabajo)
         }
     }, []);
 
@@ -126,7 +131,9 @@ const page = () => {
 
                                     <div className="flex flex-col space-y-5 sm:ml-8">
                                         {/*Aca cargar el nomnbre*/}
-                                        <h1 className="font-bold text-2xl">Pablo Hans Limachi Martinez</h1>
+                                        <h1 className="font-bold text-2xl">
+                                            {nombre_usuario}
+                                        </h1>
                                     </div>
                                 </div>
 
@@ -137,7 +144,7 @@ const page = () => {
                                                 Correo electrónico
                                             </label>
                                             {/*Aca cargar el correo*/}
-                                            <label className="text-md mt-2 mb-8">correodeejemplo123@gmail.com</label>
+                                            <label className="text-md mt-2 mb-8">{correo}</label>
                                         </div>
                                         <hr className="border-gray-200 my-4" />
                                         <div>
@@ -145,7 +152,7 @@ const page = () => {
                                                 Teléfono
                                             </label>
                                             {/*Aca cargar el telefono*/}
-                                            <label className="text-md mt-2 mb-8 text-black">+591 78787878</label>
+                                            <label className="text-md mt-2 mb-8 text-black">{numero_telefono}</label>
                                         </div>
                                         <hr className="border-gray-200 my-4" />
                                         <div className="mt-6 sm:mb-6">
@@ -153,7 +160,7 @@ const page = () => {
                                                 Ubicacion
                                             </label>
                                             {/*Aca cargar la ubicacion, redirigir a la ubicacion desde aca o mostrar el mapa desde aca, cargar el mapa igualmente*/}
-                                            <label className="text-md mt-2 mb-8 hover:underline hover:text-blue-400 text-gray-700">Acera norte, Calle Mayor Rocha, Calle 25 de Mayo y, Cochabamba</label>
+                                            <label className="text-md mt-2 mb-8 hover:underline hover:text-blue-400 text-gray-700">{ubicacion}</label>
                                         </div>
                                     </div>
                                 </form>
@@ -166,4 +173,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default Page;

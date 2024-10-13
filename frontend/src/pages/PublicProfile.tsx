@@ -2,23 +2,25 @@ import imgEjemploPerfil from "../assets/ejemploPerfil.jpg";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import NavBar from "../components/NavBar";
-const page = () => {
+const Page = () => {
     const [nombre_usuario, setNombre] = useState("");
-    const [numero_telefono, setTelefono] = useState("");
+    //const [numero_telefono, setTelefono] = useState("");
     const [zona_trabajo, setZonaTrabajo] = useState("");
     const [imagen_perfil, setImagenPerfil] = useState("");
-    const [id, setId] = useState("");
+    //const [id, setId] = useState("");
 
     useEffect(() => {
         const data =
             localStorage.getItem("user") ||
             sessionStorage.getItem("user") ||
             null;
+        console.log(data)
         if (data) {
             const user = JSON.parse(data);
-            setId(user.id_usuario || "");
+            console.log(user);
+      //      setId(user.id_usuario || "");
             setNombre(user.nombre_usuario || "");
-            setTelefono(user.numero_telefono || "");
+        //    setTelefono(user.numero_telefono || "");
             setZonaTrabajo(user.zona_trabajo || "");
             setImagenPerfil(user.imagen_perfil || imgEjemploPerfil);
         }
@@ -56,7 +58,7 @@ const page = () => {
 
                                     <div className="flex flex-col space-y-2 ml-8 -mt-10 mb-10">
                                         {/* Nombre */}
-                                        <h1 className="font-bold text-2xl whitespace-nowrap">Pablo Hans Limachi Martinez</h1>
+                                        <h1 className="font-bold text-2xl whitespace-nowrap">{nombre_usuario}</h1>
 
                                         {/* Ubicación */}
                                         <div className="mt-4 sm:mt-0 flex items-center space-x-2">
@@ -64,7 +66,7 @@ const page = () => {
                                                 <path fill="#FFD43B" d="M215.7 499.2C267 435 384 279.4 384 192C384 86 298 0 192 0S0 86 0 192c0 87.4 117 243 168.3 307.2c12.3 15.3 35.1 15.3 47.4 0zM192 128a64 64 0 1 1 0 128 64 64 0 1 1 0-128z" />
                                             </svg>
                                             <label className="text-sm hover:underline hover:text-blue-400 text-gray-700">
-                                                Acera norte, Calle Mayor Rocha
+                                                {zona_trabajo}
                                             </label>
                                         </div>
 
@@ -117,4 +119,4 @@ const page = () => {
     );
 };
 
-export default page;
+export default Page;

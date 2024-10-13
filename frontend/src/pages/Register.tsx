@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import fondologin from "../assets/fondoRegisterF.jpg";
 import logo from "../assets/Buildify.png";
 import { Link, useNavigate } from "react-router-dom";
+import Loading from "../components/Loading";
+
 const Page = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
@@ -122,6 +124,8 @@ const Page = () => {
 
     return (
         <div>
+            {loading ? <Loading/>:
+            
             <div className="flex h-screen">
                 <div className="hidden lg:flex items-center justify-center flex-1 relative bg-white text-black w-2/3">
                     <img
@@ -428,7 +432,9 @@ const Page = () => {
                     </div>
                 </div>
             </div>
+            }
         </div>
+
     );
 };
 export default Page;

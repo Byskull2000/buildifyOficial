@@ -214,13 +214,13 @@ const Page = () => {
                         </h2>
                         {/*Areas de la seccion de perfil*/}
                         <a
-                            href="#"
+                            href="/profile"
                             className="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full"
                         >
                             Perfil publico
                         </a>
                         <a
-                            href="#"
+                            href="/editProfile"
                             className="flex items-center px-3 py-2.5 font-bold bg-white  text-yellow-500 border rounded-full"
                         >
                             Editar perfil
