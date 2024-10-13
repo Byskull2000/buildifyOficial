@@ -7,7 +7,7 @@ static_file = Blueprint("static_file", __name__,
 @static_file.route('/api/fotos/<filename>', methods=['GET'])
 def  obtener_fotos(filename):
     try:
-        print(static_file.static_folder,'filename')
+        print(static_file.static_folder,f'image/{filename}')
         return send_from_directory(static_file.static_folder, f'image/{filename}')
     except FileNotFoundError:
         return jsonify({'message': 'Archivo no encontrado'}), 404

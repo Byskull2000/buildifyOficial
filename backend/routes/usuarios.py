@@ -21,12 +21,14 @@ def actualizar_perfil(id_usuario):
         if "imagen_perfil" in request.files:
             imagen_perfil = request.files["imagen_perfil"]
             if imagen_perfil.filename != "":
-
                 filename = secure_filename(imagen_perfil.filename)
-                filepath = os.path.join("static/image", filename)
+                filepath = os.path.join('static', 'image', filename)
+                print(f"Guardando imagen en: {filepath}")  # Log para depuración
                 imagen_perfil.save(filepath)
+                print(f"Imagen guardada en: {filepath}")
                 usuario.imagen_perfil = f"{request.host_url}/api/fotos/{filename}"
-                print(usuario.imagen_perfil)
+                print(f"URL de la imagen de perfil: {usuario.imagen_perfil}")
+
         db.session.commit()
 
         return (
