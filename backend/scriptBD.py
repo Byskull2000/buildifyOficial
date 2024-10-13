@@ -4,9 +4,9 @@ from mysql.connector import errorcode
 print("Conectando...")
 try:
     conn = mysql.connector.connect(
-           host='jhoelcamacho.mysql.pythonanywhere-services.com',
-           user='jhoelcamacho',
-           password='mysqlroot'
+           host='SyntaxError404.mysql.pythonanywhere-services.com',
+           user='SyntaxError404',
+           password='nohayerrores'
       )
 except mysql.connector.Error as err:
       if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
@@ -16,9 +16,9 @@ except mysql.connector.Error as err:
 
 cursor = conn.cursor()
 
-cursor.execute("DROP DATABASE IF EXISTS `jhoelcamacho$buildify`;")
-cursor.execute("CREATE DATABASE `jhoelcamacho$buildify`;")
-cursor.execute("USE `jhoelcamacho$buildify`;")
+cursor.execute("DROP DATABASE IF EXISTS `SyntaxError404$buildify`;")
+cursor.execute("CREATE DATABASE `SyntaxError404$buildify`;")
+cursor.execute("USE `SyntaxError404$buildify`;")
 
 # Crear las tablas
 TABLES = {}
@@ -64,14 +64,66 @@ TABLES['Usuario_Cuenta_Authenticacion'] = ('''
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;''')
 
 #tabla fotos 
-TABLES['Fotos'] = ('''
-    CREATE TABLE `Fotos` (
-      `id` INT NOT NULL AUTO_INCREMENT,
+TABLES['Foto'] = ('''
+    CREATE TABLE `Foto` (
+      `id_foto` INT NOT NULL AUTO_INCREMENT,
       `filename` VARCHAR(100) NOT NULL,
       `data` LONGBLOB NOT NULL,
-      PRIMARY KEY (`id_foto`),
-      CONSTRAINT `fk_foto_usuario`
+      PRIMARY KEY (`id_foto`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+''')
+
+#tabla Ubicacion
+TABLES['Ubicacion'] = ('''
+    CREATE TABLE `Ubicacion` (
+        `id_ubicacion` INT NOT NULL AUTO_INCREMENT,
+        `latitud` VARCHAR(50) NOT NULL,
+        `longitud` VARCHAR(50) NOT NULL,
+        `Descripcion_ubicacion` VARCHAR(50) NOT NULL, 
+        PRIMARY KEY (`id_ubicacion`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+''')
+
+#tabla Tipo_Material
+TABLES['Tipo_Material'] = ('''
+    CREATE TABLE `Tipo_Material` (
+      `id_tipoMaterial` INT NOT NULL AUTO_INCREMENT,
+      `nombre_tipo_material` VARCHAR(50) NOT NULL,
+      `descripcion_tipoMaterial` VARCHAR(255),
+      PRIMARY KEY (`id_tipoMaterial`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+''')
+
+#tabla Interes
+TABLES['Interes'] = ('''
+    CREATE TABLE `Interes` (
+      `id_interes` INT NOT NULL AUTO_INCREMENT,
+      `fecha_seleccion` DATE,
+      `id_tipoMaterial` INT NOT NULL,
+      `id_usuario` INT NOT NULL,
+      PRIMARY KEY (`id_interes`),
+      CONSTRAINT `fk_tipo_material`
+        FOREIGN KEY (`id_tipoMaterial`) 
+        REFERENCES `Tipo_Material` (`id_tipoMaterial`)
+        ON DELETE CASCADE,
+      CONSTRAINT `fk_usuario_interes`
+        FOREIGN KEY (`id_usuario`)
+        REFERENCES `Usuario` (`id_usuario`)
         ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+''')
+
+# Tabla Direccion_Entrega
+TABLES['Direccion_Entrega'] = ('''
+    CREATE TABLE `Direccion_Entrega` (
+      `id_direccionEntrega` INT NOT NULL AUTO_INCREMENT,
+      `nombre_destinatario` VARCHAR(100) NOT NULL,
+      `descrip_direcEntrega` VARCHAR(255) NOT NULL,
+      `telefono` INT NOT NULL,
+      `latitud_entrega` VARCHAR(50),
+      `longitud_entrega` VARCHAR(50),
+      `fecha_registro_entrega` DATETIME,
+      PRIMARY KEY (`id_direccionEntrega`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ''')
 
