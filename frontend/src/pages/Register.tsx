@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import fondologin from "../assets/fondoRegisterF.jpg";
 import logo from "../assets/Buildify.png";
 import { Link, useNavigate } from "react-router-dom";
+import PasswordStrengthBar from "react-password-strength-bar";
 const page = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
@@ -36,13 +37,6 @@ const page = () => {
             console.error("Las contraseñas no son iguales");
             return;
         }
-        if (!validatePassword(password)) {
-            console.error(
-                "La contraseña debe contener al menos una letra mayúscula y un número"
-            );
-            return;
-        }
-
         const body = {
             nombre_usuario: nombre,
             correo_electronico: email,
@@ -77,43 +71,8 @@ const page = () => {
             setError("Error en la conexión con el servidor");
         }
     };
-    const handlePasswordChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        const newPassword = event.target.value;
-        setPassword(newPassword);
 
-        const upperCaseRegex = /[A-Z]/;
-        setHasUpperCase(upperCaseRegex.test(newPassword));
 
-        const numberRegex = /\d/;
-        setHasNumber(numberRegex.test(newPassword));
-
-        setPasswordLength(newPassword.length >= 8);
-    };
-
-    const handlePasswordVerifyChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        const confirmPassword = event.target.value;
-        setPasswordS(confirmPassword);
-
-        if (confirmPassword === password) {
-            setPasswordsMatch(true);
-        } else {
-            setPasswordsMatch(false);
-        }
-    };
-
-    const validatePassword = (password: string) => {
-        const upperCaseCheck = /[A-Z]/.test(password);
-        const numberCheck = /\d/.test(password);
-        const lengthCheck = password.length >= 8;
-        setHasUpperCase(upperCaseCheck);
-        setHasNumber(numberCheck);
-        setPasswordLength(lengthCheck);
-        return upperCaseCheck && numberCheck && lengthCheck;
-    };
 
     return (
         <div>
@@ -215,7 +174,7 @@ const page = () => {
                                     className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                                 />
                             </div>
-                            <div>
+                            <div className="mb-[-20px]">
                                 <label
                                     htmlFor="password"
                                     className="block text-sm font-medium text-gray-500 ml-2"
@@ -225,21 +184,17 @@ const page = () => {
                                 <div className="relative">
                                     <input
                                         value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
                                         placeholder="Ingresa tu contraseña"
-                                        type={
-                                            showPassword ? "text" : "password"
-                                        }
+                                        type={showPassword ? "text" : "password"}
                                         id="password"
                                         name="password"
-                                        className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                        className="mb-2 bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                                         required
-                                        onChange={handlePasswordChange}
                                     />
                                     <button
                                         type="button"
-                                        onClick={() =>
-                                            setShowPassword(!showPassword)
-                                        }
+                                        onClick={() => setShowPassword(!showPassword)}
                                         className="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-500"
                                     >
                                         {showPassword ? (
@@ -267,38 +222,9 @@ const page = () => {
                                         )}
                                     </button>
                                 </div>
-                                <p
-                                    className={`text-sm mt-1 ${
-                                        hasUpperCase
-                                            ? "text-green-500"
-                                            : "text-red-500"
-                                    }`}
-                                >
-                                    {hasUpperCase ? "✓" : "✗"} La contraseña
-                                    debe tener al menos una mayúscula
-                                </p>
-                                <p
-                                    className={`text-sm mt-1 ${
-                                        hasNumber
-                                            ? "text-green-500"
-                                            : "text-red-500"
-                                    }`}
-                                >
-                                    {hasNumber ? "✓" : "✗"} La contraseña debe
-                                    tener al menos un número
-                                </p>
-                                <p
-                                    className={`text-sm mt-1 ${
-                                        passwordLength
-                                            ? "text-green-500"
-                                            : "text-red-500"
-                                    }`}
-                                >
-                                    {passwordLength ? "✓" : "✗"} La contraseña
-                                    debe tener al menos 8 caracteres
-                                </p>
+                                <PasswordStrengthBar password={password} />
                             </div>
-                            <div>
+                            <div className="mt-[-20px]">
                                 <label
                                     htmlFor="password"
                                     className="block text-sm font-medium text-gray-500 ml-2"
@@ -316,7 +242,6 @@ const page = () => {
                                         name="password"
                                         className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                                         required
-                                        onChange={handlePasswordVerifyChange}
                                     />
                                     <button
                                         type="button"
@@ -354,11 +279,10 @@ const page = () => {
                                     hasNumber &&
                                     passwordLength && (
                                         <p
-                                            className={`text-sm mt-1 ${
-                                                passwordsMatch
+                                            className={`text-sm mt-1 ${passwordsMatch
                                                     ? "text-green-500"
                                                     : "text-red-500"
-                                            }`}
+                                                }`}
                                         >
                                             {passwordsMatch
                                                 ? "✓ Las contraseñas coinciden"
