@@ -1,7 +1,9 @@
+import os
 from flask import Blueprint, jsonify, request
 from utils.db import db
 from models.usuario import Usuario
 from sqlalchemy.exc import IntegrityError
+from werkzeug.utils import secure_filename
 
 
 usuarios = Blueprint("usuarios", __name__)
@@ -11,17 +13,20 @@ usuarios = Blueprint("usuarios", __name__)
 @usuarios.route("/api/usuarios/<int:id_usuario>/perfil", methods=["PUT"])
 def actualizar_perfil(id_usuario):
     try:
-        data = request.get_json()
-
         usuario = Usuario.query.get_or_404(id_usuario)
-        print("usuario", usuario)
+        usuario.nombre_usuario = request.form.get("nombre_usuario")
+        usuario.zona_trabajo = request.form.get("zona_trabajo")
+        usuario.numero_telefono = request.form.get("numero_telefono")
 
-        usuario.nombre_usuario = data["nombre_usuario"]
+        if "imagen_perfil" in request.files:
+            imagen_perfil = request.files["imagen_perfil"]
+            if imagen_perfil.filename != "":
 
-        usuario.zona_trabajo = data["zona_trabajo"]
-
-        usuario.numero_telefono = data["numero_telefono"]
-
+                filename = secure_filename(imagen_perfil.filename)
+                filepath = os.path.join("static/image", filename)
+                imagen_perfil.save(filepath)
+                usuario.imagen_perfil = f"{request.host_url}{filepath}"
+                print(usuario.imagen_perfil)
         db.session.commit()
 
         return (
@@ -37,19 +42,14 @@ def actualizar_perfil(id_usuario):
                         "estado_usuario": usuario.estado_usuario,
                         "numero_telefono": usuario.numero_telefono,
                         "zona_trabajo": usuario.zona_trabajo,
-                        "imagen_perfil": (
-                            usuario.imagen_perfil.decode("utf-8")
-                            if usuario.imagen_perfil
-                            else None
-                        ),
+                        "imagen_perfil": usuario.imagen_perfil,
                     },
                 }
             ),
             200,
         )
     except IntegrityError as e:
-        print(str(e))
-        return jsonify({"message": "Error de integridad"})
+        return jsonify({"message": "El telefono ya se encuentra registrado"})
 
     except Exception as e:
         print(e)
@@ -87,9 +87,7 @@ def obtener_usuarios():
                 "ultimo_login": u.ultimo_login,
                 "estado_usuario": u.estado_usuario,
                 "zona_trabajo": u.zona_trabajo,
-                "imagen_perfil": (
-                    u.imagen_perfil.decode("utf-8") if u.imagen_perfil else None
-                ),
+                "imagen_perfil": u.imagen_perfil,
             }
             for u in usuarios
         ]
@@ -177,11 +175,7 @@ def login():
                         "estado_usuario": user.estado_usuario,
                         "numero_telefono": user.numero_telefono,
                         "zona_trabajo": user.zona_trabajo,
-                        "imagen_perfil": (
-                            user.imagen_perfil.decode("utf-8")
-                            if user.imagen_perfil
-                            else None
-                        ),
+                        "imagen_perfil": user.imagen_perfil,
                     }
                 }
             ),

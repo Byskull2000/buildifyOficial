@@ -100,28 +100,30 @@ TABLES['Interes'] = ('''
       `id_interes` INT NOT NULL AUTO_INCREMENT,
       `fecha_seleccion` DATE,
       `id_tipoMaterial` INT NOT NULL,
+      `id_usuario` INT NOT NULL,
       PRIMARY KEY (`id_interes`),
       CONSTRAINT `fk_tipo_material`
         FOREIGN KEY (`id_tipoMaterial`) 
         REFERENCES `Tipo_Material` (`id_tipoMaterial`)
+        ON DELETE CASCADE,
+      CONSTRAINT `fk_usuario_interes`
+        FOREIGN KEY (`id_usuario`)
+        REFERENCES `Usuario` (`id_usuario`)
         ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ''')
 
-# Relación entre Usuario y Interes (tabla intermedia)
-TABLES['Usuario_Interes'] = ('''
-    CREATE TABLE `Usuario_Interes` (
-      `id_usuario` INT,
-      `id_interes` INT,
-      PRIMARY KEY (`id_usuario`, `id_interes`),
-      CONSTRAINT `fk_usuario_interes`
-        FOREIGN KEY (`id_usuario`) 
-        REFERENCES `Usuario` (`id_usuario`)
-        ON DELETE CASCADE,
-      CONSTRAINT `fk_interes`
-        FOREIGN KEY (`id_interes`) 
-        REFERENCES `Interes` (`id_interes`)
-        ON DELETE CASCADE
+# Tabla Direccion_Entrega
+TABLES['Direccion_Entrega'] = ('''
+    CREATE TABLE `Direccion_Entrega` (
+      `id_direccionEntrega` INT NOT NULL AUTO_INCREMENT,
+      `nombre_destinatario` VARCHAR(100) NOT NULL,
+      `descrip_direcEntrega` VARCHAR(255) NOT NULL,
+      `telefono` INT NOT NULL,
+      `latitud_entrega` VARCHAR(50),
+      `longitud_entrega` VARCHAR(50),
+      `fecha_registro_entrega` DATETIME,
+      PRIMARY KEY (`id_direccionEntrega`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ''')
 

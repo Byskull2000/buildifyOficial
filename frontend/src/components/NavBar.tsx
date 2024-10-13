@@ -3,6 +3,7 @@ import { useState } from "react";
 import buildifyLogo from "../assets/Buildify.png";
 import { Link } from "react-router-dom";
 import imgProfile from "../assets/ejemploPerfil.jpg";
+import logoMobile from "../assets/logo_mobile.png"
 
 const NavBar = () => {
     const [openSearch, setOpenSearch] = useState(false);
@@ -12,28 +13,64 @@ const NavBar = () => {
 
     return (
         <div>
-            <nav className="bg-white border-gray-200 font-nunito flex justify-around w-full sm:px-4 py-4">
-                <div className="flex items-center justify-between gap-2 ">
-                    <Link to="/" className="flex items-center ">
+            <nav
+                className={`bg-white border-gray-200 font-nunito flex justify-between w-full sm:px-4 py-4  ${
+                    openSearch ? "w-full" : "w-auto"
+                }`}
+            >
+                <div
+                    className={`flex items-center gap-2 px-2 ${
+                        openSearch ? "w-30" : ""
+                    } `}
+                >
+                    <Link
+                        to="/"
+                        className={`flex items-center  ${
+                            openSearch ? "sm:w-full" : ""
+                        } `}
+                    >
+                        
                         <img
                             src={buildifyLogo}
                             alt="Buildify Logo"
-                            className="h-14 w-14 mr-2"
+                            className={`h-14 w-14 mr-2 hidden sm:block`}
                         />
-                        <span className="self-center text-2xl font-semibold hidden whitespace-nowrap sm:block">
+                        <h1
+                            className={`
+                        self-center text-2xl font-black  whitespace-nowrap hidden sm:block ${
+                            openSearch ? "hidden" : ""
+                        }
+                        `}
+                        >
                             Buildify
-                        </span>
+                        </h1>
+
+                        <div className={`block sm:hidden w-12`}>
+                            <img src={logoMobile} alt="logo" />
+                        </div>
+                        
                     </Link>
 
-                    <div className="flex">
+                    <div className={`flex justify-start ${openSearch ? "w-full" : ""}`}>
+                        <input
+                            type="text"
+                            id="search-navbar"
+                            className={`${
+                                openSearch ? "flex" : "hidden"
+                            } sm:block md:w-56 lg:w-80 py-2 pl-6 text-sm text-gray-900 border border-gray-200 rounded-lg bg-gray-200 focus:ring-blue-500 focus:border-blue-500 md:hover:text-blue-700`}
+                            placeholder="Materiales, insumos"
+                        />
                         <button
                             className={`
-                                  z-50 flex items-center p-3
+                                  z-50 flex items-center rounded-full 
+                                  ${!openSearch && "bg-gray-200 p-2 sm:p-0 "}
                                 `}
                             onClick={() => setOpenSearch(!openSearch)}
                         >
                             <svg
-                                className="w-4 h-4 text-gray-500"
+                                className={`w-4 h-4 -ml-9  text-gray-500 ${
+                                    openSearch ? "" : "ml-0 sm:-ml-9"
+                                }`}
                                 aria-hidden="true"
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
@@ -48,21 +85,12 @@ const NavBar = () => {
                                 />
                             </svg>
                         </button>
-
-                        <input
-                            type="text"
-                            id="search-navbar"
-                            className={` sm:block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 md:hover:text-blue-700 -ml-9 pl-9 ${
-                                openSearch ? "block" : "hidden"
-                            }`}
-                            placeholder="Materiales, insumos"
-                        />
                     </div>
                 </div>
                 <div
-                    className={`flex  justify-center gap-2 items-center ${
+                    className={`${
                         openSearch ? "hidden" : ""
-                    }`}
+                    } flex p-0 md:pr-[10%] lg:pr-[20%] gap-3 md:gap-6  items-center sm:flex `}
                 >
                     <Link to={"/"} className="">
                         <svg
@@ -123,53 +151,51 @@ const NavBar = () => {
                     </Link>
                 </div>
                 <div
-                    className={`flex  justify-end gap-2 items-center ${
-                        openSearch ? "hidden" : ""
+                    className={`flex  justify-end gap-3 md:gap-8  px-2 items-center ${
+                        openSearch ? " sm:flex" : ""
                     }`}
                 >
                     {user ? (
                         <>
-                        <button>
-
-                            <svg
-                                width="23"
-                                height="23"
-                                viewBox="0 0 28 23  "
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="flex items-center"
-                            >
-                                <path
-                                    d="M22 0.988281H1V18.8436H8.84099L17.0221 23.8398L16.0327 18.8436H22V0.988281Z"
-                                    stroke="#707070"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
+                            <button>
+                                <svg
+                                    width="23"
+                                    height="23"
+                                    viewBox="0 0 28 23  "
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="flex items-center"
+                                >
+                                    <path
+                                        d="M22 0.988281H1V18.8436H8.84099L17.0221 23.8398L16.0327 18.8436H22V0.988281Z"
+                                        stroke="#707070"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
                                     />
-                            </svg>
+                                </svg>
                             </button>
                             <button>
+                                <svg
+                                    width="28"
+                                    height="28"
+                                    viewBox="0 0 28 28"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M23.8066 20.1462C23.7159 20.0368 23.6267 19.9274 23.5392 19.8219C22.3361 18.3666 21.6082 17.4884 21.6082 13.3687C21.6082 11.2359 21.098 9.48593 20.0923 8.17343C19.3507 7.20382 18.3483 6.46827 17.027 5.92468C17.01 5.91522 16.9948 5.90282 16.9822 5.88804C16.507 4.29663 15.2065 3.23077 13.7398 3.23077C12.273 3.23077 10.9731 4.29663 10.4979 5.8864C10.4852 5.90063 10.4702 5.91265 10.4536 5.92195C7.37031 7.19124 5.87188 9.62648 5.87188 13.3671C5.87188 17.4884 5.14508 18.3666 3.94086 19.8202C3.85336 19.9258 3.76422 20.033 3.67344 20.1445C3.43894 20.4273 3.29036 20.7714 3.2453 21.136C3.20023 21.5006 3.26056 21.8705 3.41914 22.2019C3.75656 22.9128 4.4757 23.3541 5.29656 23.3541H22.189C23.006 23.3541 23.7202 22.9134 24.0588 22.2057C24.218 21.8742 24.2789 21.504 24.2342 21.139C24.1896 20.774 24.0412 20.4294 23.8066 20.1462ZM13.7398 27.7308C14.53 27.7301 15.3054 27.5156 15.9836 27.11C16.6618 26.7044 17.2176 26.1227 17.592 25.4268C17.6096 25.3934 17.6183 25.3561 17.6172 25.3184C17.6162 25.2807 17.6054 25.2439 17.5859 25.2116C17.5664 25.1792 17.5389 25.1525 17.506 25.134C17.4732 25.1155 17.4361 25.1057 17.3984 25.1058H10.0823C10.0445 25.1056 10.0073 25.1153 9.97439 25.1338C9.94145 25.1523 9.91387 25.179 9.89432 25.2113C9.87477 25.2436 9.86392 25.2805 9.86284 25.3182C9.86175 25.356 9.87047 25.3934 9.88813 25.4268C10.2625 26.1226 10.8182 26.7042 11.4963 27.1098C12.1744 27.5155 12.9496 27.73 13.7398 27.7308Z"
+                                        fill="#707070"
+                                    />
+                                </svg>
+                            </button>
 
-                            <svg
-                                width="28"
-                                height="28"
-                                viewBox="0 0 28 28"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M23.8066 20.1462C23.7159 20.0368 23.6267 19.9274 23.5392 19.8219C22.3361 18.3666 21.6082 17.4884 21.6082 13.3687C21.6082 11.2359 21.098 9.48593 20.0923 8.17343C19.3507 7.20382 18.3483 6.46827 17.027 5.92468C17.01 5.91522 16.9948 5.90282 16.9822 5.88804C16.507 4.29663 15.2065 3.23077 13.7398 3.23077C12.273 3.23077 10.9731 4.29663 10.4979 5.8864C10.4852 5.90063 10.4702 5.91265 10.4536 5.92195C7.37031 7.19124 5.87188 9.62648 5.87188 13.3671C5.87188 17.4884 5.14508 18.3666 3.94086 19.8202C3.85336 19.9258 3.76422 20.033 3.67344 20.1445C3.43894 20.4273 3.29036 20.7714 3.2453 21.136C3.20023 21.5006 3.26056 21.8705 3.41914 22.2019C3.75656 22.9128 4.4757 23.3541 5.29656 23.3541H22.189C23.006 23.3541 23.7202 22.9134 24.0588 22.2057C24.218 21.8742 24.2789 21.504 24.2342 21.139C24.1896 20.774 24.0412 20.4294 23.8066 20.1462ZM13.7398 27.7308C14.53 27.7301 15.3054 27.5156 15.9836 27.11C16.6618 26.7044 17.2176 26.1227 17.592 25.4268C17.6096 25.3934 17.6183 25.3561 17.6172 25.3184C17.6162 25.2807 17.6054 25.2439 17.5859 25.2116C17.5664 25.1792 17.5389 25.1525 17.506 25.134C17.4732 25.1155 17.4361 25.1057 17.3984 25.1058H10.0823C10.0445 25.1056 10.0073 25.1153 9.97439 25.1338C9.94145 25.1523 9.91387 25.179 9.89432 25.2113C9.87477 25.2436 9.86392 25.2805 9.86284 25.3182C9.86175 25.356 9.87047 25.3934 9.88813 25.4268C10.2625 26.1226 10.8182 26.7042 11.4963 27.1098C12.1744 27.5155 12.9496 27.73 13.7398 27.7308Z"
-                                    fill="#707070"
-                                />
-                            </svg>
-                                </button>
-
-                            <button>
+                            <Link to={"/profile"} className="w-10">
                                 <img
                                     src={user.imagen_perfil || imgProfile}
                                     alt="imagen de perfil"
-                                    className="h-8 w-8 rounded-full"
+                                    className="h-10 w-10 rounded-full"
                                 />
-                            </button>
+                            </Link>
                         </>
                     ) : (
                         <ul className="font-nunito flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white">
