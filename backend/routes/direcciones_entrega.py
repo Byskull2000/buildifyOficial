@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from models import DireccionEntrega
+from models import direccion_entrega
 from utils.db import db
 
 direcciones_entrega = Blueprint('direcciones_entrega', __name__)
