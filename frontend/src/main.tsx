@@ -11,7 +11,7 @@ import RegistroRapido from "./pages/RegistroRapido.tsx";
 import EditProfile from "./pages/EditProfile.tsx";
 import Ubicaciones from "./pages/DireccionesEntrega.tsx";
 import PublicProfile from "./pages/PublicProfile.tsx";
-import Perfile from "./pages/Profile.tsx"
+import Profile from "./pages/Profile.tsx"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -26,7 +26,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/editProfile" element={<EditProfile />} />
           <Route path="/ubicaciones" element={<Ubicaciones />} />
           <Route path="/publicProfile" element={<PublicProfile />} />
-          <Route path="/perfile" element={<Perfile />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </Router>
     </GoogleOAuthProvider>

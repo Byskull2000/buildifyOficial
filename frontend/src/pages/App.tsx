@@ -18,7 +18,6 @@ function App() {
         <Link to="/publicProfile" className="text-blue-500 hover:underline">
         Perfil publico
         </Link>
-        
       </div>
     </>
   );
