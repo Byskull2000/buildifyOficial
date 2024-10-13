@@ -1,3 +1,5 @@
+// src/components/DireccionForm.tsx
+
 import React, { useState, useEffect } from "react";
 
 interface DireccionFormProps {
@@ -7,31 +9,37 @@ interface DireccionFormProps {
     telefono: string
   ) => Promise<void>;
   coordenadasSeleccionadas: { lat: number; lng: number } | null;
+  direccion: string;
 }
 
 const DireccionForm: React.FC<DireccionFormProps> = ({
   onGuardar,
   coordenadasSeleccionadas,
+  direccion,
 }) => {
   const [nombre, setNombre] = useState("");
-  const [direccion, setDireccion] = useState("");
+  const [direccionEditable, setDireccionEditable] = useState(direccion);
   const [telefono, setTelefono] = useState("");
   const [mensaje, setMensaje] = useState<string | null>(null);
   const [formValido, setFormValido] = useState(false);
 
-  // Validación del formulario
+  useEffect(() => {
+    // Actualiza el campo de dirección cuando se selecciona una nueva ubicación en el mapa
+    setDireccionEditable(direccion);
+  }, [direccion]);
+
   useEffect(() => {
     const todosCamposLlenos =
       nombre.trim() !== "" &&
-      direccion.trim() !== "" &&
+      direccionEditable.trim() !== "" &&
       telefono.trim() !== "" &&
       coordenadasSeleccionadas !== null;
     setFormValido(todosCamposLlenos);
-  }, [nombre, direccion, telefono, coordenadasSeleccionadas]);
+  }, [nombre, direccionEditable, telefono, coordenadasSeleccionadas]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMensaje(null); // Limpiar mensaje anterior
+    setMensaje(null);
 
     if (!formValido) {
       setMensaje(
@@ -41,10 +49,10 @@ const DireccionForm: React.FC<DireccionFormProps> = ({
     }
 
     try {
-      await onGuardar(nombre, direccion, telefono);
+      await onGuardar(nombre, direccionEditable, telefono);
       setMensaje("¡Dirección guardada con éxito!");
       setNombre("");
-      setDireccion("");
+      setDireccionEditable("");
       setTelefono("");
     } catch (error) {
       setMensaje("Error al guardar la dirección. Inténtalo de nuevo.");
@@ -65,8 +73,8 @@ const DireccionForm: React.FC<DireccionFormProps> = ({
       <input
         className="block w-full p-2 mb-2 rounded"
         placeholder="Dirección"
-        value={direccion}
-        onChange={(e) => setDireccion(e.target.value)}
+        value={direccionEditable}
+        onChange={(e) => setDireccionEditable(e.target.value)}
       />
 
       <input
@@ -75,6 +83,25 @@ const DireccionForm: React.FC<DireccionFormProps> = ({
         value={telefono}
         onChange={(e) => setTelefono(e.target.value)}
       />
+
+      {coordenadasSeleccionadas && (
+        <>
+          <label className="block text-white mt-2">Latitud</label>
+          <input
+            className="block w-full p-2 mb-2 rounded bg-gray-700 text-white"
+            placeholder="Latitud"
+            value={coordenadasSeleccionadas.lat.toString()}
+            readOnly
+          />
+          <label className="block text-white mt-2">Longitud</label>
+          <input
+            className="block w-full p-2 mb-2 rounded bg-gray-700 text-white"
+            placeholder="Longitud"
+            value={coordenadasSeleccionadas.lng.toString()}
+            readOnly
+          />
+        </>
+      )}
 
       <button
         type="submit"
