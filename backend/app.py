@@ -25,10 +25,10 @@ app.register_blueprint(direcciones_entrega)
 
 
 # CONEXION PARA PRUEBAS EN PYTHONANYWHERE
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://SyntaxError404:nohayerrores@SyntaxError404.mysql.pythonanywhere-services.com/SyntaxError404$default'
 
 # CONEXION PARA PRUEBAS EN BASE LOCAL
-app.config["SQLALCHEMY_DATABASE_URI"] = ("mysql+pymysql://root:root@localhost:3306/buildify")
+#app.config["SQLALCHEMY_DATABASE_URI"] = ("mysql+pymysql://root:root@localhost:3306/buildify")
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 CORS(app)
