@@ -25,7 +25,7 @@ def actualizar_perfil(id_usuario):
                 filename = secure_filename(imagen_perfil.filename)
                 filepath = os.path.join("static/image", filename)
                 imagen_perfil.save(filepath)
-                usuario.imagen_perfil = f"{request.host_url}{filepath}"
+                usuario.imagen_perfil = f"{request.host_url}/api/fotos/{filename}"
                 print(usuario.imagen_perfil)
         db.session.commit()
 
