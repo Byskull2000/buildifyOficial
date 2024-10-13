@@ -15,6 +15,9 @@ function App() {
           Edicion de perfil
         </Link>
         <DireccionesEntrega />
+        <Link to="/publicProfile" className="text-blue-500 hover:underline">
+        Perfil publico
+        </Link>
       </div>
     </>
   );
