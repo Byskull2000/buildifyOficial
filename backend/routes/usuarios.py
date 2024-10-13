@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.utils import secure_filename
 
 
-usuarios = Blueprint("usuarios", __name__)
+usuarios = Blueprint("usuarios", __name__,static_folder='../static')
 # Ruta para actualizar el perfil del usuario
 
 
@@ -22,7 +22,7 @@ def actualizar_perfil(id_usuario):
             imagen_perfil = request.files["imagen_perfil"]
             if imagen_perfil.filename != "":
                 filename = secure_filename(imagen_perfil.filename)
-                filepath = os.path.join('static', 'image', filename)
+                filepath = os.path.join(usuarios.static_folder, 'image',filename)
                 print(f"Guardando imagen en: {filepath}")  # Log para depuración
                 imagen_perfil.save(filepath)
                 print(f"Imagen guardada en: {filepath}")
