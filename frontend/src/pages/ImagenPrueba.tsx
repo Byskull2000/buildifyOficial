@@ -170,36 +170,44 @@ const ImageUploader: React.FC = () => {
         }
     };
 
+    const userStorage =
+    sessionStorage.getItem("user") || localStorage.getItem("user") || null;
+const user = userStorage ? JSON.parse(userStorage) : null;
+
     return (
         <div>
-            <button
-                onClick={() => setIsModalOpen(true)}
-                style={{
-                    padding: "10px 20px",
-                    backgroundColor: "#007bff",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    marginRight: "10px",
-                }}
-            >
-                Subir Foto
-            </button>
+            {user && (
+            <>
+                <button
+                    onClick={() => setIsModalOpen(true)}
+                    style={{
+                        padding: "10px 20px",
+                        backgroundColor: "#007bff",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                        marginRight: "10px",
+                    }}
+                >
+                    Subir Foto
+                </button>
 
-            <button
-                onClick={toggleGallery}
-                style={{
-                    padding: "10px 20px",
-                    backgroundColor: "#28a745",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                }}
-            >
-                Galería
-            </button>
+                <button
+                    onClick={toggleGallery}
+                    style={{
+                        padding: "10px 20px",
+                        backgroundColor: "#28a745",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                    }}
+                >
+                    Galería
+                </button>
+            </>
+        )}
 
             {/* Mostrar mensaje de error si hay alguno */}
             {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
