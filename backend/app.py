@@ -5,6 +5,8 @@ from utils.db import db
 
 # importacion de modelos para tablas que no tendran rutas
 # from models import ubicacion
+from models import interes
+from models import tipo_material
 
 # importacion de rutas
 from routes.usuarios import usuarios
