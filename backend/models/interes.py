@@ -2,7 +2,7 @@ from sqlalchemy.sql import func
 from utils.db import db
 
 class Interes(db.Model):
-    __tablename__ = 'interes'
+    __tablename__ = 'Interes'
 
     id_interes = db.Column(db.Integer, primary_key=True, autoincrement=True)
     fecha_seleccion = db.Column(db.DateTime, default=func.now(), nullable=True)
