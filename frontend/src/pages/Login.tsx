@@ -19,8 +19,11 @@ const Page = () => {
         const handleWheel = (e: WheelEvent) => {
             e.preventDefault();
         };
+        document.body.style.overflow = 'hidden';
         window.addEventListener("wheel", handleWheel, { passive: false });
+
         return () => {
+            document.body.style.overflow = 'auto';
             window.removeEventListener("wheel", handleWheel);
         };
     }, []);
@@ -28,7 +31,7 @@ const Page = () => {
     const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
-        
+
         const body = {
             correo_electronico: email,
             contrasenia: password,
@@ -81,21 +84,23 @@ const Page = () => {
 
                 <div className="w-full bg-white lg:w-1/3 flex items-center justify-center">
                     {loading ? (
-                       <Loading/>
+                        <Loading />
                     ) : (
                         <div className="max-w-md w-full p-6">
-                            <div className="flex items-center lg:ml-[-16px] lg:mb-16">
-                                <img
-                                    src={logo}
-                                    alt="Buildify Logo"
-                                    width={50}
-                                    height={50}
-                                    className="mr-2"
-                                />
-                                <h1 className="text-3xl font-bold text-black">
-                                    Buildify
-                                </h1>
-                            </div>
+                            <Link to="/">
+                                <div className="flex items-center lg:ml-[-16px] lg:mb-16 mt-10">
+                                    <img
+                                        src={logo}
+                                        alt="Buildify Logo"
+                                        width={50}
+                                        height={50}
+                                        className="mr-2"
+                                    />
+                                    <h1 className="text-3xl font-bold text-black">
+                                        Buildify
+                                    </h1>
+                                </div>
+                            </Link>
                             <h1 className="text-2xl font-semibold mb-6 text-black text-left w-full lg:ml-[-10px]">
                                 Bienvenido de nuevo
                             </h1>
