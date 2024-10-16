@@ -4,7 +4,9 @@ import { useEffect } from "react";
 import fondologin from "../assets/fondoRegisterF.jpg";
 import logo from "../assets/Buildify.png";
 import { Link, useNavigate } from "react-router-dom";
-const page = () => {
+import Loading from "../components/Loading";
+
+const Page = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
     const [nombre, setNombre] = useState("");
@@ -17,6 +19,7 @@ const page = () => {
     const [hasNumber, setHasNumber] = useState(false);
     const [passwordLength, setPasswordLength] = useState(false);
     const [passwordsMatch, setPasswordsMatch] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     //Quitar uso de la rueda del mouse porque se ve feo
@@ -32,8 +35,10 @@ const page = () => {
 
     const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setLoading(true);
         if (passwordS !== password) {
             console.error("Las contraseñas no son iguales");
+            setLoading(false);
             return;
         }
         if (!validatePassword(password)) {
@@ -63,6 +68,7 @@ const page = () => {
             if (!res.ok) {
                 const errorResponse = await res.json();
                 setError(errorResponse.message || "Error al registrar usuario");
+                setLoading(false);
                 return;
             }
 
@@ -76,6 +82,7 @@ const page = () => {
             console.error(e);
             setError("Error en la conexión con el servidor");
         }
+        setLoading(false);
     };
     const handlePasswordChange = (
         event: React.ChangeEvent<HTMLInputElement>
@@ -117,6 +124,8 @@ const page = () => {
 
     return (
         <div>
+            {loading ? <Loading/>:
+            
             <div className="flex h-screen">
                 <div className="hidden lg:flex items-center justify-center flex-1 relative bg-white text-black w-2/3">
                     <img
@@ -423,7 +432,9 @@ const page = () => {
                     </div>
                 </div>
             </div>
+            }
         </div>
+
     );
 };
-export default page;
+export default Page;

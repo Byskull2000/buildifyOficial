@@ -18,23 +18,35 @@
     "axios": "^1.7.7",
     "browser-image-compression": "^2.0.2",
     "canvas-to-blob": "^1.0.0",
+<<<<<<< HEAD
     "cropperjs": "^1.6.2",
+=======
+    "leaflet": "^1.9.4",
+>>>>>>> 038720d2f85f7d2ef4794053e8abafbd1989abea
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.5",
     "react-cropper": "^2.3.3",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.9",
     "react-easy-crop": "^5.1.0",
+<<<<<<< HEAD
+=======
+    "react-geocode": "^1.0.0-alpha.1",
+>>>>>>> 038720d2f85f7d2ef4794053e8abafbd1989abea
     "react-icons": "^5.3.0",
     "react-image-crop": "^11.0.7",
+    "react-leaflet": "^4.2.1",
     "react-modal": "^3.16.1",
+    "react-password-strength-bar": "^0.4.1",
     "react-router-dom": "^6.26.2",
-    "styled-components": "^6.1.13"
+    "styled-components": "^6.1.13",
+    "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@types/leaflet": "^1.9.12",
     "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.0",
+    "@types/react-dom": "^18.3.1",
     "@types/react-dropzone": "^5.1.0",
     "@types/react-modal": "^3.16.3",
     "@vitejs/plugin-react-swc": "^3.5.0",
@@ -45,7 +57,7 @@
     "globals": "^15.9.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
-    "typescript": "^5.6.2",
+    "typescript": "^5.6.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1"
   }
