@@ -45,8 +45,14 @@ const InterestList: React.FC = () => {
 
   const shouldScroll = materials.length > 10; // Condición para mostrar scrollbar
 
+  const userStorage =
+  sessionStorage.getItem("user") || localStorage.getItem("user") || null;
+  const user = userStorage ? JSON.parse(userStorage) : null;
+
   return (
     <div style={{ padding: '20px' }}>
+      {user && (
+       <> 
       <div style={detailsStyle} onClick={handleToggle}>
         <summary style={summaryStyle}>LISTA DE INTERESES</summary>
       </div>
@@ -76,6 +82,8 @@ const InterestList: React.FC = () => {
           ))}
         </ul>
       </div>
+       </>
+      )}
     </div>
   );
 };
