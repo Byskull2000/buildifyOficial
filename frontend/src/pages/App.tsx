@@ -6,30 +6,13 @@ import InterestList from "../components/InteresList";
 import { Link } from "react-router-dom";
 import DireccionesEntrega from "./DireccionesEntrega";
 function App() {
-<<<<<<< HEAD
-    return (
-        <>
-            <div className="bg-white">
-                <NavBar />
-                <PopupRegristro></PopupRegristro>
-                <ImagenPrueba></ImagenPrueba>
-                <InterestList></InterestList>
-                <Link
-                    to="/editProfile"
-                    className="text-blue-500 hover:underline"
-                >
-                    Edicion de perfil
-                </Link>
-            </div>
-        </>
-    );
-=======
   return (
     <>
       <div className="bg-white">
         <NavBar />
         <PopupRegristro></PopupRegristro>
         <ImagenPrueba></ImagenPrueba>
+        <InterestList></InterestList>
         <Link to="/editProfile" className="text-blue-500 hover:underline">
           Edicion de perfil
         </Link>
@@ -40,7 +23,6 @@ function App() {
       </div>
     </>
   );
->>>>>>> 038720d2f85f7d2ef4794053e8abafbd1989abea
 }
 
 export default App;
