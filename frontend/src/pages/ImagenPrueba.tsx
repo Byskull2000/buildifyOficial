@@ -3,11 +3,12 @@ import React, { useState } from "react";
 interface Foto {
     id: number;
     filename: string;
-    data: string; // Base64 encoded image data
+    data: string; // Datos de imagen codificados en Base64
 }
 
-const MAX_SIZE_MB = 5 * 1024 * 1024;
-const MAX_RESOLUTION = 1080;
+const MAX_SIZE_MB = 5 * 1024 * 1024; // Tamaño máximo en bytes
+const MAX_RESOLUTION = 1024; // Resolución máxima 1024x1024
+const MAX_IMAGES = 10; // Máximo de imágenes permitido
 
 const ImageUploader: React.FC = () => {
     const [images, setImages] = useState<File[]>([]);
@@ -18,6 +19,7 @@ const ImageUploader: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [isGalleryOpen, setIsGalleryOpen] = useState<boolean>(false);
     const [galleryImages, setGalleryImages] = useState<Foto[]>([]);
+    const [showCloseConfirmation, setShowCloseConfirmation] = useState<boolean>(false);
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -33,6 +35,11 @@ const ImageUploader: React.FC = () => {
     };
 
     const validateAndAddImages = (selectedFiles: File[]) => {
+        if (images.length + selectedFiles.length > MAX_IMAGES) {
+            setErrorMessage(`Solo puedes subir un máximo de ${MAX_IMAGES} imágenes.`);
+            return;
+        }
+
         const newImages: File[] = [];
         const newPreviews: string[] = [];
         let error = "";
@@ -41,11 +48,12 @@ const ImageUploader: React.FC = () => {
             const fileType = file.type;
             const fileSize = file.size;
 
+            // Validar tipo de archivo
             if (!["image/jpeg", "image/png"].includes(fileType)) {
-                error =
-                    "Formato Incorrecto. Solo se permiten imágenes JPG o PNG.";
+                error = "Formato Incorrecto. Solo se permiten imágenes JPG o PNG.";
             }
 
+            // Validar tamaño de archivo
             if (fileSize > MAX_SIZE_MB) {
                 error = `La imagen ${file.name} excede el tamaño máximo de 5MB.`;
             }
@@ -55,33 +63,26 @@ const ImageUploader: React.FC = () => {
             image.onload = () => {
                 const width = image.width;
                 const height = image.height;
-                if (
-                    width !== height ||
-                    width > MAX_RESOLUTION ||
-                    height > MAX_RESOLUTION
-                ) {
-                    error = `La imagen ${file.name} debe tener formato 1:1 (cuadrada) y no exceder 1080x1080 píxeles.`;
+
+                // Validar resolución de imagen y formato cuadrado
+                if (width !== height) {
+                    error = `La imagen ${file.name} debe tener formato 1:1 (cuadrada).`;
+                } else if (width > MAX_RESOLUTION || height > MAX_RESOLUTION) {
+                    error = `La imagen ${file.name} no debe exceder 1024x1024 píxeles.`;
                 }
+
+                if (!error) {
+                    newImages.push(file);
+                    newPreviews.push(URL.createObjectURL(file));
+                    setErrorMessage(""); // Borrar cualquier mensaje de error previo si es válido
+                } else {
+                    setErrorMessage(error);
+                }
+
+                setImages([...images, ...newImages]);
+                setPreviewImages([...previewImages, ...newPreviews]);
             };
-
-            const existingImage = images.find((img) => img.name === file.name);
-            if (existingImage) {
-                error = `La imagen ${file.name} ya ha sido cargada previamente.`;
-            }
-
-            if (!error) {
-                newImages.push(file);
-                newPreviews.push(URL.createObjectURL(file));
-            } else {
-                setErrorMessage(error);
-            }
         });
-
-        if (!error) {
-            setImages([...images, ...newImages]);
-            setPreviewImages([...previewImages, ...newPreviews]);
-            setErrorMessage("");
-        }
     };
 
     const handleUploadImages = async () => {
@@ -131,24 +132,24 @@ const ImageUploader: React.FC = () => {
         }
     };
 
-    const handleCancelUpload = () => {
-        setUploading(false);
-        setProgress(0);
-        setErrorMessage("Carga cancelada por el usuario.");
-        setImages([]);
-        setPreviewImages([]);
-        setIsModalOpen(false);
-    };
-
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
     };
 
+    const handleDragStart = (e: React.DragEvent<HTMLImageElement>) => {
+        e.preventDefault(); // Prevenir el comportamiento predeterminado de arrastrar imágenes
+    };
+
     const toggleModal = () => {
-        setIsModalOpen(!isModalOpen);
+        setShowCloseConfirmation(true); // Mostrar la confirmación de cierre
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
         setErrorMessage("");
         setImages([]);
         setPreviewImages([]);
+        setShowCloseConfirmation(false); // Ocultar la confirmación
     };
 
     const toggleGallery = async () => {
@@ -172,7 +173,7 @@ const ImageUploader: React.FC = () => {
     return (
         <div>
             <button
-                onClick={toggleModal}
+                onClick={() => setIsModalOpen(true)}
                 style={{
                     padding: "10px 20px",
                     backgroundColor: "#007bff",
@@ -180,13 +181,12 @@ const ImageUploader: React.FC = () => {
                     border: "none",
                     borderRadius: "5px",
                     cursor: "pointer",
-                    marginRight: "10px", // Añadir margen derecho para espacio
+                    marginRight: "10px",
                 }}
             >
                 Subir Foto
             </button>
 
-            {/* Botón para abrir la galería */}
             <button
                 onClick={toggleGallery}
                 style={{
@@ -200,6 +200,9 @@ const ImageUploader: React.FC = () => {
             >
                 Galería
             </button>
+
+            {/* Mostrar mensaje de error si hay alguno */}
+            {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
 
             {/* Modal para subir imágenes */}
             {isModalOpen && (
@@ -220,136 +223,185 @@ const ImageUploader: React.FC = () => {
                         style={{
                             backgroundColor: "white",
                             padding: "20px",
-                            width: "500px",
+                            width: "900px",
+                            height: "560px",
                             borderRadius: "10px",
                             position: "relative",
                         }}
                     >
                         <h2>Subir Imágenes</h2>
 
-                        {/* Dropzone para arrastrar y soltar */}
+                        <button
+                            onClick={toggleModal}
+                            style={{
+                                position: "absolute",
+                                top: "10px",
+                                right: "10px",
+                                background: "none",
+                                border: "none",
+                                fontSize: "18px",
+                                cursor: "pointer",
+                            }}
+                        >
+                            &times;
+                        </button>
+
                         <div
                             onDrop={handleDrop}
                             onDragOver={handleDragOver}
                             style={{
                                 border: "2px dashed #ccc",
-                                padding: "20px",
+                                padding: "40px",
+                                width: "100%",
+                                height: "400px",
                                 cursor: "pointer",
                                 textAlign: "center",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                flexDirection: "column",
                                 marginBottom: "10px",
-                                position: "relative",
                             }}
                         >
-                            Arrastra y suelta tus imágenes aquí
-                            {/* Vista previa de las imágenes dentro de la dropzone */}
+                            {/* Texto que desaparecerá cuando haya imágenes */}
+                            {previewImages.length === 0 && (
+                                <p style={{ margin: 0 }}>Arrastra y suelta tus imágenes aquí</p>
+                            )}
+
                             <div
                                 style={{
                                     display: "flex",
-                                    marginTop: "10px",
                                     justifyContent: "center",
+                                    flexWrap: "wrap",
+                                    gap: "10px",
+                                    width: "100%",
+                                    height: "100%",
+                                    overflow: "auto",
                                 }}
                             >
                                 {previewImages.map((image, index) => (
-                                    <div
+                                    <img
                                         key={index}
-                                        style={{ marginRight: "10px" }}
-                                    >
-                                        <img
-                                            src={image}
-                                            alt={`preview-${index}`}
-                                            width={100}
-                                            height={100}
-                                        />
-                                    </div>
+                                        src={image}
+                                        alt={`preview-${index}`}
+                                        onDragStart={handleDragStart}
+                                        style={{
+                                            width: "150px",
+                                            height: "150px",
+                                            objectFit: "cover",
+                                            borderRadius: "10px",
+                                        }}
+                                    />
                                 ))}
                             </div>
                         </div>
 
                         {/* Botón para seleccionar archivos */}
-                        <div
-                            style={{
-                                display: "flex",
-                                justifyContent: "flex-end",
-                                marginBottom: "10px",
-                            }}
-                        >
-                            <input
-                                type="file"
-                                accept="image/jpeg, image/png"
-                                onChange={handleImageUpload}
-                                multiple
-                                style={{ display: "none" }}
-                                id="fileInput"
-                            />
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                             <label
                                 htmlFor="fileInput"
                                 style={{
                                     padding: "10px 20px",
                                     backgroundColor: "#007bff",
                                     color: "white",
-                                    cursor: "pointer",
                                     borderRadius: "5px",
+                                    cursor: "pointer",
+                                    display: "block",
                                 }}
                             >
-                                Seleccionar Archivos
+                                Seleccionar Imágenes
                             </label>
-                        </div>
+                            <input
+                                id="fileInput"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                style={{ display: "none" }}
+                            />
 
-                        {/* Mostrar errores */}
-                        {errorMessage && (
-                            <div style={{ color: "red" }}>{errorMessage}</div>
-                        )}
-
-                        {/* Progreso de carga */}
-                        {uploading && (
-                            <div>
-                                <progress
-                                    value={progress}
-                                    max="100"
-                                    style={{ width: "100%" }}
-                                />
-                            </div>
-                        )}
-
-                        {/* Botones de acción */}
-                        <div
-                            style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                marginTop: "20px",
-                            }}
-                        >
                             <button
                                 onClick={handleUploadImages}
+                                disabled={uploading}
                                 style={{
                                     padding: "10px 20px",
-                                    backgroundColor: "#007bff",
+                                    backgroundColor: "#28a745",
                                     color: "white",
-                                    border: "none",
                                     borderRadius: "5px",
+                                    cursor: "pointer",
+                                    display: "block",
                                 }}
                             >
-                                Subir Imágenes
-                            </button>
-                            <button
-                                onClick={handleCancelUpload}
-                                style={{
-                                    padding: "10px 20px",
-                                    backgroundColor: "#dc3545",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                }}
-                            >
-                                Cancelar
+                                {uploading ? `Subiendo... ${progress}%` : "Subir Imágenes"}
                             </button>
                         </div>
-                    </div>
-                </div>
-            )}
 
-            {/* Modal para galería de imágenes */}
-            {isGalleryOpen && (
+                        {/* Mensaje de error */}
+                        {errorMessage && <p style={{ color: "red", marginTop: "10px" }}>{errorMessage}</p>}
+                    </div>
+
+                    {/* Modal de confirmación */}
+                    {showCloseConfirmation && (
+                            <div
+                                style={{
+                                    position: "fixed",
+                                    top: 0,
+                                    left: 0,
+                                    width: "100%",
+                                    height: "100%",
+                                    backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        backgroundColor: "white",
+                                        padding: "20px",
+                                        width: "400px",
+                                        borderRadius: "10px",
+                                        textAlign: "center",
+                                    }}
+                                >
+                                    <h3 style={{ marginBottom: "20px" }}>¿Estás seguro de que deseas cerrar?</h3>
+                                        <p style={{ marginBottom: "30px" }}>Perderás todas las imágenes seleccionadas</p>
+
+                                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                        <button
+                                            onClick={closeModal}
+                                            style={{
+                                                padding: "10px 20px",
+                                                backgroundColor: "#007bff",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "5px",
+                                                cursor: "pointer",
+                                            }}
+                                        >
+                                            Confirmar
+                                        </button>
+                                        <button
+                                            onClick={() => setShowCloseConfirmation(false)}
+                                            style={{
+                                                padding: "10px 20px",
+                                                backgroundColor: "#dc3545",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "5px",
+                                                cursor: "pointer",
+                                            }}
+                                        >
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Galería de imágenes */}
+                {isGalleryOpen && (
                 <div
                     style={{
                         position: "fixed",
@@ -367,52 +419,60 @@ const ImageUploader: React.FC = () => {
                         style={{
                             backgroundColor: "white",
                             padding: "20px",
-                            width: "500px",
+                            width: "800px",
+                            height: "500px",
                             borderRadius: "10px",
                             position: "relative",
                         }}
                     >
                         <h2>Galería de Imágenes</h2>
+
+                        <button
+                            onClick={toggleGallery}
+                            style={{
+                                position: "absolute",
+                                top: "10px",
+                                right: "10px",
+                                background: "none",
+                                border: "none",
+                                fontSize: "18px",
+                                cursor: "pointer",
+                            }}
+                        >
+                            &times;
+                        </button>
+
                         <div
                             style={{
                                 display: "flex",
                                 flexWrap: "wrap",
+                                gap: "10px",
                                 justifyContent: "center",
+                                overflowY: "scroll",
+                                maxHeight: "400px",
                             }}
                         >
                             {galleryImages.map((foto) => (
-                                <div key={foto.id} style={{ margin: "10px" }}>
-                                    {/* Mostrar la imagen */}
-                                    <img
-                                        src={`data:image/jpeg;base64,${foto.data}`}
-                                        alt={foto.filename}
-                                        style={{
-                                            width: "200px",
-                                            height: "200px",
-                                            objectFit: "cover",
-                                        }}
-                                    />
-                                </div>
+                                <img
+                                    key={foto.id}
+                                    src={`data:image/jpeg;base64,${foto.data}`}
+                                    alt={foto.filename}
+                                    style={{
+                                        width: "200px",
+                                        height: "200px",
+                                        objectFit: "cover",
+                                        border: "0px solid #007bff",
+                                        borderRadius: "5px",
+                                    }}
+                                />
                             ))}
                         </div>
-                        <button
-                            onClick={toggleGallery}
-                            style={{
-                                padding: "10px 20px",
-                                backgroundColor: "#dc3545",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "5px",
-                                marginTop: "20px",
-                            }}
-                        >
-                            Cerrar Galería
-                        </button>
                     </div>
                 </div>
             )}
         </div>
     );
 };
+
 
 export default ImageUploader;
