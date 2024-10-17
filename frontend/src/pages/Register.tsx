@@ -5,7 +5,7 @@ import fondologin from "../assets/fondoRegisterF.jpg";
 import logo from "../assets/Buildify.png";
 import { Link, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
-import PasswordStrengthBar from 'react-password-strength-bar';
+import PasswordStrengthBar from "react-password-strength-bar";
 
 const Page = () => {
     const [showPassword, setShowPassword] = useState(false);
@@ -21,21 +21,23 @@ const Page = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [passwordScore, setPasswordScore] = useState(0);
-    const scoreWords = ['Muy débil', 'Débil', 'Aceptable', 'Fuerte', 'Muy fuerte'];
+    const scoreWords = [
+        "Muy débil",
+        "Débil",
+        "Aceptable",
+        "Fuerte",
+        "Muy fuerte",
+    ];
 
     useEffect(() => {
         const handleWheel = (e: WheelEvent) => {
             e.preventDefault();
         };
-        document.body.style.overflow = 'hidden';
-        window.addEventListener("wheel", handleWheel, { passive: false });
-
+        
         return () => {
-            document.body.style.overflow = 'auto';
             window.removeEventListener("wheel", handleWheel);
         };
     }, []);
-
 
     const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -52,7 +54,7 @@ const Page = () => {
             return;
         }
         if (passwordScore < 3) {
-            alert('Por favor, elige una contraseña más fuerte.');
+            alert("Por favor, elige una contraseña más fuerte.");
             return;
         }
 
@@ -124,20 +126,21 @@ const Page = () => {
 
     return (
         <div>
-            {loading ? <Loading /> :
-
-                <div className="flex h-screen">
-                    <div className="hidden lg:flex items-center justify-center flex-1 relative bg-white text-black w-2/3">
+            {loading ? (
+                <Loading />
+            ) : (
+                <div className="flex">
+                    <div className="hidden lg:flex items-center justify-center flex-1 relative bg-white text-black w-2/3 min-h-screen">
                         <img
                             src={fondologin}
                             alt="ImagenDelLogin"
-                            className="absolute inset-0 w-full h-full object-cover"
+                            className="absolute inset-0 h-full w-full object-cover "
                         />
                     </div>
-                    <div className="w-full bg-white lg:w-1/3 flex items-center justify-center mt-16">
-                        <div className="max-w-md w-full p-6">
-                            <Link to="/">
-                                <div className="flex items-center lg:ml-[-16px] lg:mb-16 mt-10">
+                    <div className="w-full bg-white lg:w-1/3 flex items-center justify-center flex-col min-h-screen ">
+                        <div className="w-4/5">
+                            <Link to="/" className="">
+                                <div className="flex items-center mb-7">
                                     <img
                                         src={logo}
                                         alt="Buildify Logo"
@@ -150,14 +153,14 @@ const Page = () => {
                                     </h1>
                                 </div>
                             </Link>
-                            <h1 className="lg:mt-[-20px] text-2xl font-semibold mb-6 text-black text-left w-full lg:ml-[-10px]">
-                                Regístrate ahora
-                            </h1>
                             <form
                                 onSubmit={handleSubmit}
                                 method="POST"
                                 className="space-y-4"
                             >
+                                <h1 className="text-2xl font-semibold mb-6 text-black text-left w-full">
+                                    Regístrate ahora
+                                </h1>
                                 <div>
                                     <label
                                         htmlFor="name"
@@ -167,7 +170,9 @@ const Page = () => {
                                     </label>
                                     <input
                                         value={nombre}
-                                        onChange={(e) => setNombre(e.target.value)}
+                                        onChange={(e) =>
+                                            setNombre(e.target.value)
+                                        }
                                         placeholder="Nombre completo"
                                         type="text"
                                         id="name"
@@ -218,7 +223,9 @@ const Page = () => {
                                     </label>
                                     <input
                                         value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
+                                        onChange={(e) =>
+                                            setEmail(e.target.value)
+                                        }
                                         placeholder="Correo electrónico"
                                         type="text"
                                         id="email"
@@ -238,7 +245,11 @@ const Page = () => {
                                             <input
                                                 value={password}
                                                 placeholder="Ingresa tu contraseña"
-                                                type={showPassword ? "text" : "password"}
+                                                type={
+                                                    showPassword
+                                                        ? "text"
+                                                        : "password"
+                                                }
                                                 id="password"
                                                 name="password"
                                                 className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
@@ -247,7 +258,11 @@ const Page = () => {
                                             />
                                             <button
                                                 type="button"
-                                                onClick={() => setShowPassword(!showPassword)}
+                                                onClick={() =>
+                                                    setShowPassword(
+                                                        !showPassword
+                                                    )
+                                                }
                                                 className="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-500"
                                             >
                                                 {showPassword ? (
@@ -277,12 +292,14 @@ const Page = () => {
                                         </div>
                                         {password && (
                                             <PasswordStrengthBar
-                                            password={password}
-                                            scoreWords={scoreWords}
-                                            onChangeScore={(score) => setPasswordScore(score)}
-                                            shortScoreWord="Demasiado corta"
-                                            className="-mb-5"
-                                        />
+                                                password={password}
+                                                scoreWords={scoreWords}
+                                                onChangeScore={(score) =>
+                                                    setPasswordScore(score)
+                                                }
+                                                shortScoreWord="Demasiado corta"
+                                                className="-mb-5"
+                                            />
                                         )}
                                     </div>
                                 </div>
@@ -297,16 +314,24 @@ const Page = () => {
                                         <input
                                             value={passwordS}
                                             placeholder="Ingresa tu contraseña"
-                                            type={showPassword2 ? "text" : "password"}
+                                            type={
+                                                showPassword2
+                                                    ? "text"
+                                                    : "password"
+                                            }
                                             id="password"
                                             name="password"
                                             className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                                             required
-                                            onChange={handlePasswordVerifyChange}
+                                            onChange={
+                                                handlePasswordVerifyChange
+                                            }
                                         />
                                         <button
                                             type="button"
-                                            onClick={() => setShowPassword2(!showPassword2)}
+                                            onClick={() =>
+                                                setShowPassword2(!showPassword2)
+                                            }
                                             className="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-500"
                                         >
                                             {showPassword2 ? (
@@ -334,72 +359,78 @@ const Page = () => {
                                             )}
                                         </button>
                                     </div>
-                                    {
-                                        hasNumber &&
-                                        passwordS &&
-                                        (
-                                            <p
-                                                className={`text-sm mt-1 ${passwordsMatch
+                                    {hasNumber && passwordS && (
+                                        <p
+                                            className={`text-sm mt-1 ${
+                                                passwordsMatch
                                                     ? "text-green-500"
                                                     : "text-red-500"
-                                                    }`}
-                                            >
-                                                {passwordsMatch
-                                                    ? "✓ Las contraseñas coinciden"
-                                                    : "✗ Las contraseñas no coinciden"}
-                                            </p>
-                                        )
-                                    }
+                                            }`}
+                                        >
+                                            {passwordsMatch
+                                                ? "✓ Las contraseñas coinciden"
+                                                : "✗ Las contraseñas no coinciden"}
+                                        </p>
+                                    )}
                                 </div>
 
-                                {error && <p style={{ color: "red" }}>{error}</p>}
+                                {error && (
+                                    <p style={{ color: "red" }}>{error}</p>
+                                )}
                                 <div>
                                     <button
                                         type="submit"
-                                        className={`mb-2 py-2 w-full bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 ${passwordScore < 3 || password !== passwordS ? 'opacity-50 cursor-not-allowed' : ''
-                                            }`}
-                                        disabled={passwordScore < 3 || password !== passwordS} 
+                                        className={`mb-2 py-2 w-full bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 ${
+                                            passwordScore < 3 ||
+                                            password !== passwordS
+                                                ? "opacity-50 cursor-not-allowed"
+                                                : ""
+                                        }`}
+                                        disabled={
+                                            passwordScore < 3 ||
+                                            password !== passwordS
+                                        }
                                     >
                                         Registrarme
                                     </button>
-
-
                                 </div>
                                 <hr className="border-gray-200" />
-                                <div className="w-full mb-2 lg:mb-0 mt-5">
+                                <div className="w-full mb-2 lg:mb-0 mt-5 ">
                                     <button
                                         type="button"
-                                        className="py-3 w-full flex justify-center items-center gap-2 bg-stone-800 text-sm text-gray-100 p-2 rounded-lg hover:bg-stone-950 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-950 transition-colors duration-300"
+                                        className="py-3 w-full grid justify-items-center gap-2 bg-stone-800 text-sm text-gray-100 p-2 rounded-lg hover:bg-stone-950 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-950 transition-colors duration-300"
                                     >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 512 512"
-                                            className="w-4"
-                                            id="google"
-                                        >
-                                            <path
-                                                fill="#fbbb00"
-                                                d="M113.47 309.408 95.648 375.94l-65.139 1.378C11.042 341.211 0 299.9 0 256c0-42.451 10.324-82.483 28.624-117.732h.014L86.63 148.9l25.404 57.644c-5.317 15.501-8.215 32.141-8.215 49.456.002 18.792 3.406 36.797 9.651 53.408z"
-                                            ></path>
-                                            <path
-                                                fill="#518ef8"
-                                                d="M507.527 208.176C510.467 223.662 512 239.655 512 256c0 18.328-1.927 36.206-5.598 53.451-12.462 58.683-45.025 109.925-90.134 146.187l-.014-.014-73.044-3.727-10.338-64.535c29.932-17.554 53.324-45.025 65.646-77.911h-136.89V208.176h245.899z"
-                                            ></path>
-                                            <path
-                                                fill="#28b446"
-                                                d="m416.253 455.624.014.014C372.396 490.901 316.666 512 256 512c-97.491 0-182.252-54.491-225.491-134.681l82.961-67.91c21.619 57.698 77.278 98.771 142.53 98.771 28.047 0 54.323-7.582 76.87-20.818l83.383 68.262z"
-                                            ></path>
-                                            <path
-                                                fill="#f14336"
-                                                d="m419.404 58.936-82.933 67.896C313.136 112.246 285.552 103.82 256 103.82c-66.729 0-123.429 42.957-143.965 102.724l-83.397-68.276h-.014C71.23 56.123 157.06 0 256 0c62.115 0 119.068 22.126 163.404 58.936z"
-                                            ></path>
-                                        </svg>{" "}
-                                        Continuar con Google{" "}
+                                        <div className="flex gap-2">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 512 512"
+                                                className="w-4"
+                                                id="google"
+                                            >
+                                                <path
+                                                    fill="#fbbb00"
+                                                    d="M113.47 309.408 95.648 375.94l-65.139 1.378C11.042 341.211 0 299.9 0 256c0-42.451 10.324-82.483 28.624-117.732h.014L86.63 148.9l25.404 57.644c-5.317 15.501-8.215 32.141-8.215 49.456.002 18.792 3.406 36.797 9.651 53.408z"
+                                                ></path>
+                                                <path
+                                                    fill="#518ef8"
+                                                    d="M507.527 208.176C510.467 223.662 512 239.655 512 256c0 18.328-1.927 36.206-5.598 53.451-12.462 58.683-45.025 109.925-90.134 146.187l-.014-.014-73.044-3.727-10.338-64.535c29.932-17.554 53.324-45.025 65.646-77.911h-136.89V208.176h245.899z"
+                                                ></path>
+                                                <path
+                                                    fill="#28b446"
+                                                    d="m416.253 455.624.014.014C372.396 490.901 316.666 512 256 512c-97.491 0-182.252-54.491-225.491-134.681l82.961-67.91c21.619 57.698 77.278 98.771 142.53 98.771 28.047 0 54.323-7.582 76.87-20.818l83.383 68.262z"
+                                                ></path>
+                                                <path
+                                                    fill="#f14336"
+                                                    d="m419.404 58.936-82.933 67.896C313.136 112.246 285.552 103.82 256 103.82c-66.729 0-123.429 42.957-143.965 102.724l-83.397-68.276h-.014C71.23 56.123 157.06 0 256 0c62.115 0 119.068 22.126 163.404 58.936z"
+                                                ></path>
+                                            </svg>
+                                            Continuar con Google
+                                        </div>
                                     </button>
                                 </div>
                             </form>
                             {error && <p style={{ color: "red" }}>{error}</p>}
-                            <div className="mt-4 text-sm text-center lg:mb-36">
+                            <div className="mt-4 text-sm text-center ">
                                 <p className="text-gray-600">
                                     Ya tienes una cuenta?
                                     <Link
@@ -413,9 +444,8 @@ const Page = () => {
                         </div>
                     </div>
                 </div>
-            }
+            )}
         </div>
-
     );
 };
 export default Page;
