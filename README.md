@@ -89,7 +89,7 @@ hacer lo siguiente
 
 ### agregar tablas o modificaciones de tablas
 
-1. crear el modelo en models
+1. crear el modelo en models **poner __tablename__ = 'modelo'** debe estar en minusculas los nombres de las tablas
 2. registrar el modelo en app.py
 3. crear una migracion con un mensaje
 

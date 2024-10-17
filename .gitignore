@@ -2,6 +2,7 @@ backend/.venv
 backend/venv
 backend/__pycache__
 backend/static/image/*.*
+.venv
 
 *.pyc
 *.pyo
