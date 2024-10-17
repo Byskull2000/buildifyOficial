@@ -159,18 +159,18 @@ const Page = () => {
 
     const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setLoading(true);
-
+        
         const formData = new FormData();
         formData.append("nombre_usuario", nombre_usuario);
         formData.append("numero_telefono", cod_pais +" "+ numero_telefono);
         formData.append("zona_trabajo", zona_trabajo);
-
+        
         if (imagenRecortada) {
             formData.append("imagen_perfil", imagenRecortada);
         }
-
+        
         try {
+            setLoading(true);
             const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
             const response = await fetch(
                 `${URL_BACKEND}/api/usuarios/${id}/perfil`,
@@ -354,7 +354,6 @@ const Page = () => {
                                                 <select
                                                     defaultValue={cod_pais}
                                                     className="bg-yellow-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
-                                                    onChange={e => console.log(e.target.value)}
                                                 >
                                                     <option value="+591">+591</option>
                                                     <option value="+31">+31</option>
