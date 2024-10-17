@@ -34,6 +34,7 @@ const Page = () => {
             "correo_electronico": email,
             "contrasenia": password,
             "fecha_creacion": Date.now + "",
+            "numero_telefono": "-",
         };
 
 
