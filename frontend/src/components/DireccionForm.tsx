@@ -65,7 +65,7 @@ const DireccionForm: React.FC<DireccionFormProps> = ({
 
       <input
         className="block w-full p-2 mb-2 rounded"
-        placeholder="Nombre de usuario"
+        placeholder="Nombre de Destinatario"
         value={nombre}
         onChange={(e) => setNombre(e.target.value)}
       />
