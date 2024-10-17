@@ -8,6 +8,7 @@ import Cropper from "react-easy-crop";
 
 const Page = () => {
     const [nombre_usuario, setNombre] = useState("");
+    const [cod_pais, setCodPais] = useState("+591");
     const [numero_telefono, setTelefono] = useState("");
     const [zona_trabajo, setZonaTrabajo] = useState("");
     const [imagen_perfil, setImagenPerfil] = useState(imgEjemploPerfil);
@@ -32,7 +33,7 @@ const Page = () => {
             const user = JSON.parse(data);
             setId(user.id_usuario || "");
             setNombre(user.nombre_usuario || "");
-            setTelefono(user.numero_telefono || "");
+            setTelefono(user.numero_telefono.split(' ')[1] || "");
             setZonaTrabajo(user.zona_trabajo || "");
             setImagenPerfil(user.imagen_perfil || imgEjemploPerfil);
             setImagenOriginal(user.imagen_perfil || imgEjemploPerfil);
@@ -158,18 +159,18 @@ const Page = () => {
 
     const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setLoading(true);
-
+        
         const formData = new FormData();
         formData.append("nombre_usuario", nombre_usuario);
-        formData.append("numero_telefono", numero_telefono);
+        formData.append("numero_telefono", cod_pais +" "+ numero_telefono);
         formData.append("zona_trabajo", zona_trabajo);
-
+        
         if (imagenRecortada) {
             formData.append("imagen_perfil", imagenRecortada);
         }
-
+        
         try {
+            setLoading(true);
             const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
             const response = await fetch(
                 `${URL_BACKEND}/api/usuarios/${id}/perfil`,
@@ -346,25 +347,33 @@ const Page = () => {
                                                     setNombre(e.target.value)
                                                 }
                                             />
-
-                                            <label className="block mb-2 text-sm font-medium ">
-                                                Telefono
-                                            </label>
-                                            <input
-                                                type="tel"
-                                                className="bg-yellow-100 border border-orange-200 text-sm rounded-lg block w-full p-2.5"
-                                                placeholder="Ej: +591 12345678"
-                                                required
-                                                value={numero_telefono}
-                                                onChange={(e) => {
-                                                    const valor =
-                                                        e.target.value.replace(
-                                                            /[^+\d\s-]/g,
-                                                            ""
-                                                        ); // Permite solo +, dígitos, espacios y guiones
-                                                    setTelefono(valor);
-                                                }}
-                                            />
+                                             <label className="block mb-2 text-sm font-medium ">
+                                                    Telefono
+                                                </label>
+                                            <div className="flex space-x-2 mb-2">
+                                                <select
+                                                    defaultValue={cod_pais}
+                                                    className="bg-yellow-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                                >
+                                                    <option value="+591">+591</option>
+                                                    <option value="+31">+31</option>
+                                                </select>
+                                                <input
+                                                    type="tel"
+                                                    className="bg-yellow-100 border border-orange-200 text-sm rounded-lg block w-full p-2.5"
+                                                    placeholder="Ej: 77777777"
+                                                    required
+                                                    value={numero_telefono}
+                                                    onChange={(e) => {
+                                                        const valor =
+                                                            e.target.value.replace(
+                                                                /[^+\d\s-]/g,
+                                                                ""
+                                                            ); // Permite solo +, dígitos, espacios y guiones
+                                                        setTelefono(valor);
+                                                    }}
+                                                />
+                                            </div>
                                             <div className="mb-2 sm:mb-6">
                                                 <label className="block mb-2 text-sm font-medium ">
                                                     Ubicacion

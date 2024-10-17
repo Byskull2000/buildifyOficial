@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from utils.db import db
-from models.tipo_material import tipo_material
+from models.tipo_material import TipoMaterial
 
 tipo_material = Blueprint("tipo_material", __name__)
 

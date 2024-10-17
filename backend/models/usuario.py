@@ -9,7 +9,7 @@ class Usuario(db.Model):
     id_usuario = db.Column(db.Integer, primary_key=True)
     nombre_usuario = db.Column(db.String(80), nullable=False)
     correo_electronico = db.Column(db.String(100), nullable=False, unique=True)
-    numero_telefono = db.Column(db.String(20), nullable=False, unique=True)
+    numero_telefono = db.Column(db.String(20), nullable=True, unique=True)
     contrasenia = db.Column(db.String(50), nullable=False)
     fecha_creacion = db.Column(db.DateTime, default=func.now(), nullable=True)
     ultimo_login = db.Column(db.DateTime, nullable=True)

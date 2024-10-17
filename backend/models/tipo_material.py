@@ -1,6 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from utils.db import db
 
 class TipoMaterial(db.Model):
     __tablename__ = 'Tipo_Material'
