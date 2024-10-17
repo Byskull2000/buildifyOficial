@@ -16,12 +16,11 @@ const Page = () => {
     const [passwordS, setPasswordS] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
-    const [hasUpperCase, setHasUpperCase] = useState(false);
     const [hasNumber, setHasNumber] = useState(false);
-    const [passwordLength, setPasswordLength] = useState(false);
     const [passwordsMatch, setPasswordsMatch] = useState(false);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const [passwordScore, setPasswordScore] = useState(0);
     const scoreWords = ['Muy débil', 'Débil', 'Aceptable', 'Fuerte', 'Muy fuerte'];
 
     useEffect(() => {
@@ -50,6 +49,10 @@ const Page = () => {
             console.error(
                 "La contraseña debe contener al menos una letra mayúscula y un número"
             );
+            return;
+        }
+        if (passwordScore < 3) {
+            alert('Por favor, elige una contraseña más fuerte.');
             return;
         }
 
@@ -94,14 +97,8 @@ const Page = () => {
     ) => {
         const newPassword = event.target.value;
         setPassword(newPassword);
-
-        const upperCaseRegex = /[A-Z]/;
-        setHasUpperCase(upperCaseRegex.test(newPassword));
-
         const numberRegex = /\d/;
         setHasNumber(numberRegex.test(newPassword));
-
-        setPasswordLength(newPassword.length >= 8);
     };
 
     const handlePasswordVerifyChange = (
@@ -121,9 +118,7 @@ const Page = () => {
         const upperCaseCheck = /[A-Z]/.test(password);
         const numberCheck = /\d/.test(password);
         const lengthCheck = password.length >= 8;
-        setHasUpperCase(upperCaseCheck);
         setHasNumber(numberCheck);
-        setPasswordLength(lengthCheck);
         return upperCaseCheck && numberCheck && lengthCheck;
     };
 
@@ -280,7 +275,15 @@ const Page = () => {
                                                 )}
                                             </button>
                                         </div>
-                                        <PasswordStrengthBar password={password} scoreWords={scoreWords} />
+                                        {password && (
+                                            <PasswordStrengthBar
+                                            password={password}
+                                            scoreWords={scoreWords}
+                                            onChangeScore={(score) => setPasswordScore(score)}
+                                            shortScoreWord="Demasiado corta"
+                                            className="-mb-5"
+                                        />
+                                        )}
                                     </div>
                                 </div>
                                 <div>
@@ -294,9 +297,7 @@ const Page = () => {
                                         <input
                                             value={passwordS}
                                             placeholder="Ingresa tu contraseña"
-                                            type={
-                                                showPassword2 ? "text" : "password"
-                                            }
+                                            type={showPassword2 ? "text" : "password"}
                                             id="password"
                                             name="password"
                                             className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
@@ -305,9 +306,7 @@ const Page = () => {
                                         />
                                         <button
                                             type="button"
-                                            onClick={() =>
-                                                setShowPassword2(!showPassword2)
-                                            }
+                                            onClick={() => setShowPassword2(!showPassword2)}
                                             className="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-500"
                                         >
                                             {showPassword2 ? (
@@ -335,9 +334,10 @@ const Page = () => {
                                             )}
                                         </button>
                                     </div>
-                                    {hasUpperCase &&
+                                    {
                                         hasNumber &&
-                                        passwordLength && (
+                                        passwordS &&
+                                        (
                                             <p
                                                 className={`text-sm mt-1 ${passwordsMatch
                                                     ? "text-green-500"
@@ -348,16 +348,22 @@ const Page = () => {
                                                     ? "✓ Las contraseñas coinciden"
                                                     : "✗ Las contraseñas no coinciden"}
                                             </p>
-                                        )}
+                                        )
+                                    }
                                 </div>
+
                                 {error && <p style={{ color: "red" }}>{error}</p>}
                                 <div>
                                     <button
                                         type="submit"
-                                        className="mb-2 py-2 w-full bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
+                                        className={`mb-2 py-2 w-full bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 ${passwordScore < 3 || password !== passwordS ? 'opacity-50 cursor-not-allowed' : ''
+                                            }`}
+                                        disabled={passwordScore < 3 || password !== passwordS} 
                                     >
                                         Registrarme
                                     </button>
+
+
                                 </div>
                                 <hr className="border-gray-200" />
                                 <div className="w-full mb-2 lg:mb-0 mt-5">
