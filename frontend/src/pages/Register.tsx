@@ -381,12 +381,18 @@ const Page = () => {
                                     <button
                                         type="submit"
                                         className={`mb-2 py-2 w-full bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 ${
+                                            !nombre ||
+                                            !telefono||
+                                            !email||
                                             passwordScore < 3 ||
                                             password !== passwordS
                                                 ? "opacity-50 cursor-not-allowed"
                                                 : ""
                                         }`}
                                         disabled={
+                                            !nombre ||
+                                            !telefono||
+                                            !email||
                                             passwordScore < 3 ||
                                             password !== passwordS
                                         }
