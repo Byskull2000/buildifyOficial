@@ -1,8 +1,8 @@
-"""nuevas tablas
+"""Telefono nulo
 
-Revision ID: 3d7368bbe7dd
+Revision ID: e37619dfffd5
 Revises: a3c05348c568
-Create Date: 2024-10-16 18:35:08.827462
+Create Date: 2024-10-17 14:05:20.010227
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import mysql
 
 # revision identifiers, used by Alembic.
-revision = '3d7368bbe7dd'
+revision = 'e37619dfffd5'
 down_revision = 'a3c05348c568'
 branch_labels = None
 depends_on = None
@@ -56,7 +56,7 @@ def upgrade():
         batch_op.alter_column('numero_telefono',
                existing_type=mysql.VARCHAR(length=13),
                type_=sa.String(length=20),
-               existing_nullable=False)
+               nullable=True)
         batch_op.alter_column('imagen_perfil',
                existing_type=sa.BLOB(),
                type_=sa.String(length=255),
@@ -77,7 +77,7 @@ def downgrade():
         batch_op.alter_column('numero_telefono',
                existing_type=sa.String(length=20),
                type_=mysql.VARCHAR(length=13),
-               existing_nullable=False)
+               nullable=False)
 
     op.drop_table('direccion_entrega')
     op.drop_table('Interes')

@@ -33,7 +33,7 @@ const Page = () => {
             nombre_usuario: nombre,
             correo_electronico: email,
             contrasenia: password,
-            numero_telefono: "+591 0",
+            numero_telefono: null,
         };
 
 
@@ -56,6 +56,10 @@ const Page = () => {
 
             const { data } = await res.json();
             console.log("data: ", data);
+            localStorage.setItem("user", JSON.stringify(data));
+            setIsOpen(false);
+            window.location.reload();  // Recarga la página
+
 
 
         } catch (e) {
