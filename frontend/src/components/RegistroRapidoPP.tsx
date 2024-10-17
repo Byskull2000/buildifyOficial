@@ -38,6 +38,7 @@ const Page = () => {
 
 
         try {
+            console.log(body.nombre_usuario, body.numero_telefono, body.contrasenia, body.correo_electronico)
             const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
             const res = await fetch(URL_BACKEND + "/api/RegistrarUsuario", {
                 method: 'POST',
