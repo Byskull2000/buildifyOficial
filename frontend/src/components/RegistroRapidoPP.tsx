@@ -30,11 +30,10 @@ const Page = () => {
         }
 
         const body = {
-            "nombre_usuario": nombre,
-            "correo_electronico": email,
-            "contrasenia": password,
-            "fecha_creacion": Date.now + "",
-            "numero_telefono": "-",
+            nombre_usuario: nombre,
+            correo_electronico: email,
+            contrasenia: password,
+            numero_telefono: "+591 0",
         };
 
 
