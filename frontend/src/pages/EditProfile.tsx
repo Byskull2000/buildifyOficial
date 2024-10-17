@@ -346,25 +346,32 @@ const Page = () => {
                                                     setNombre(e.target.value)
                                                 }
                                             />
-
-                                            <label className="block mb-2 text-sm font-medium ">
-                                                Telefono
-                                            </label>
-                                            <input
-                                                type="tel"
-                                                className="bg-yellow-100 border border-orange-200 text-sm rounded-lg block w-full p-2.5"
-                                                placeholder="Ej: +591 12345678"
-                                                required
-                                                value={numero_telefono}
-                                                onChange={(e) => {
-                                                    const valor =
-                                                        e.target.value.replace(
-                                                            /[^+\d\s-]/g,
-                                                            ""
-                                                        ); // Permite solo +, dígitos, espacios y guiones
-                                                    setTelefono(valor);
-                                                }}
-                                            />
+                                             <label className="block mb-2 text-sm font-medium ">
+                                                    Telefono
+                                                </label>
+                                            <div className="flex space-x-2 mb-2">
+                                                <select
+                                                    defaultValue="+591"
+                                                    className="bg-yellow-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                                >
+                                                    <option value="+591">+591</option>
+                                                </select>
+                                                <input
+                                                    type="tel"
+                                                    className="bg-yellow-100 border border-orange-200 text-sm rounded-lg block w-full p-2.5"
+                                                    placeholder="Ej: 77777777"
+                                                    required
+                                                    value={numero_telefono}
+                                                    onChange={(e) => {
+                                                        const valor =
+                                                            e.target.value.replace(
+                                                                /[^+\d\s-]/g,
+                                                                ""
+                                                            ); // Permite solo +, dígitos, espacios y guiones
+                                                        setTelefono(valor);
+                                                    }}
+                                                />
+                                            </div>
                                             <div className="mb-2 sm:mb-6">
                                                 <label className="block mb-2 text-sm font-medium ">
                                                     Ubicacion
