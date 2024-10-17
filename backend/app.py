@@ -4,9 +4,9 @@ from flask_migrate import Migrate
 from utils.db import db
 
 # importacion de modelos para tablas que no tendran rutas
-# from models import ubicacion
-from models import interes
-from models import tipo_material
+#from models import ubicacion
+#from models import interes
+#from models import tipo_material
 
 # importacion de rutas
 from routes.usuarios import usuarios
@@ -14,7 +14,8 @@ from routes.fotos import fotos
 from routes.static_file import static_file
 from routes.ubicaciones import ubicaciones
 from routes.direcciones_entrega import direcciones_entrega
-
+from routes.interes import interes
+from routes.tipo_material import tipo_material
 
 app = Flask(__name__)
 
@@ -24,6 +25,8 @@ app.register_blueprint(fotos)
 app.register_blueprint(static_file)
 app.register_blueprint(ubicaciones)
 app.register_blueprint(direcciones_entrega)  
+app.register_blueprint(interes)
+app.register_blueprint(tipo_material)
 
 
 # CONEXION PARA PRUEBAS EN PYTHONANYWHERE

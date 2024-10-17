@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from utils.db import db
-from models.interes import interes
+from models.interes import Interes
+from datetime import datetime
 
 interes = Blueprint("interes", __name__)
 
@@ -8,18 +9,20 @@ interes = Blueprint("interes", __name__)
 def registrar_interes():
     try:
         data = request.get_json()
-        tipo_material = data.get('id_tipo_material')
+        tipo_material = data.get('id_tipoMaterial')
         usuario = data.get('id_usuario')
+        fechaSelec = data.get('fecha_seleccion', datetime.now())
 
       
         # Validación de campos obligatorios
         if not tipo_material or not usuario:
-            return jsonify({'message': 'id_tipo_material y id_usuario son obligatorios'}), 400
+            return jsonify({'message': 'id_tipoMaterial y id_usuario son obligatorios'}), 400
 
 
         nuevo_interes = interes(
-            id_tipo_material=tipo_material,
-            id_usuario=usuario
+            id_tipoMaterial=tipo_material,
+            id_usuario=usuario,
+            fecha_seleccion=fechaSelec
         )
 
         db.session.add(nuevo_interes)
@@ -28,8 +31,9 @@ def registrar_interes():
         return jsonify({
             'message': 'Interes registrado exitosamente',
             'data': {
-                'material': nuevo_interes.id_tipo_material,
-                'usuario': nuevo_interes.id_usuario
+                'material': nuevo_interes.id_tipoMaterial,
+                'usuario': nuevo_interes.id_usuario,
+                'fecha_seleccion': nuevo_interes.fecha_seleccion
             }
         }), 201
 
@@ -49,7 +53,7 @@ def obtener_intereses_usuario(id_usuario):
         
         # Convertir resultados a JSON
         data = [{
-            'id_tipo_material': interes.id_tipo_material,
+            'id_tipoMaterial': interes.id_tipoMaterial,
         } for interes in intereses]
 
         return jsonify({
