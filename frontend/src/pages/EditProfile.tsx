@@ -8,6 +8,7 @@ import Cropper from "react-easy-crop";
 
 const Page = () => {
     const [nombre_usuario, setNombre] = useState("");
+    const [cod_pais, setCodPais] = useState("+591");
     const [numero_telefono, setTelefono] = useState("");
     const [zona_trabajo, setZonaTrabajo] = useState("");
     const [imagen_perfil, setImagenPerfil] = useState(imgEjemploPerfil);
@@ -32,7 +33,7 @@ const Page = () => {
             const user = JSON.parse(data);
             setId(user.id_usuario || "");
             setNombre(user.nombre_usuario || "");
-            setTelefono(user.numero_telefono || "");
+            setTelefono(user.numero_telefono.split(' ')[1] || "");
             setZonaTrabajo(user.zona_trabajo || "");
             setImagenPerfil(user.imagen_perfil || imgEjemploPerfil);
             setImagenOriginal(user.imagen_perfil || imgEjemploPerfil);
@@ -162,7 +163,7 @@ const Page = () => {
 
         const formData = new FormData();
         formData.append("nombre_usuario", nombre_usuario);
-        formData.append("numero_telefono", numero_telefono);
+        formData.append("numero_telefono", cod_pais +" "+ numero_telefono);
         formData.append("zona_trabajo", zona_trabajo);
 
         if (imagenRecortada) {
@@ -351,10 +352,12 @@ const Page = () => {
                                                 </label>
                                             <div className="flex space-x-2 mb-2">
                                                 <select
-                                                    defaultValue="+591"
+                                                    defaultValue={cod_pais}
                                                     className="bg-yellow-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                                    onChange={e => console.log(e.target.value)}
                                                 >
                                                     <option value="+591">+591</option>
+                                                    <option value="+31">+31</option>
                                                 </select>
                                                 <input
                                                     type="tel"
