@@ -102,8 +102,16 @@ const Page = () => {
                             href="#"
                             className="flex items-center px-3 py-2.5 font-bold bg-white  text-yellow-500 border rounded-full"
                         >
-                            Perfil publico
+                            Mi cuenta
                         </a>
+                        <Link to="/publicProfile">
+                            <a
+                                href="#"
+                                className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full"
+                            >
+                                Perfil Comercial
+                            </a>
+                        </Link>
                         <Link to="/editProfile">
                             <a
                                 href="#"
@@ -134,7 +142,7 @@ const Page = () => {
                     <div className="p-2 md:p-4">
                         <div className="w-full px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg">
                             <h2 className="pl-6 text-2xl font-bold sm:text-xl">
-                                Perfil público
+                                Información de la cuenta
                             </h2>
 
                             <div className="grid max-w-2xl mx-auto mt-8">

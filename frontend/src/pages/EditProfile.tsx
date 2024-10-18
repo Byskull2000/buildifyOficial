@@ -33,7 +33,8 @@ const Page = () => {
             const user = JSON.parse(data);
             setId(user.id_usuario || "");
             setNombre(user.nombre_usuario || "");
-            setTelefono(user.numero_telefono.split(" ")[1] || "");
+            const telf = user.numero_telefono ? user.numero_telefono.split(" ")[1] : "";
+            setTelefono(telf);
             setZonaTrabajo(user.zona_trabajo || "");
             setImagenPerfil(user.imagen_perfil || imgEjemploPerfil);
             setImagenOriginal(user.imagen_perfil || imgEjemploPerfil);
@@ -235,8 +236,14 @@ const Page = () => {
                             href="/profile"
                             className="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full"
                         >
-                            Perfil publico
+                            Mi cuenta
                         </a>
+                        <a
+                                href="#"
+                                className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full"
+                            >
+                                Perfil Comercial
+                            </a>
                         <a
                             href="/editProfile"
                             className="flex items-center px-3 py-2.5 font-bold bg-white  text-yellow-500 border rounded-full"
