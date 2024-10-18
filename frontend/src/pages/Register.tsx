@@ -22,6 +22,7 @@ const Page = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [passwordScore, setPasswordScore] = useState(0);
+    const [telefonoValido, setTelefonoValido] = useState(false);
     const [cod_pais, setCodPais] = useState("+591")
     const scoreWords = [
         "Muy débil",
@@ -30,12 +31,23 @@ const Page = () => {
         "Fuerte",
         "Muy fuerte",
     ];
+    const [emailValido, setEmailValido] = useState(true); // Estado para almacenar si el correo es válido o no
+
+    // Función de validación de correo
+    const validarEmail = (valor: string) => {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (emailRegex.test(valor)) {
+            setEmailValido(true);
+        } else {
+            setEmailValido(false);
+        }
+    };
 
     useEffect(() => {
         const handleWheel = (e: WheelEvent) => {
             e.preventDefault();
         };
-        
+
         return () => {
             window.removeEventListener("wheel", handleWheel);
         };
@@ -48,7 +60,7 @@ const Page = () => {
             return;
         }
         if (!validatePassword(password)) {
-            
+
             setError(
                 "La contraseña debe contener al menos una letra mayúscula y un número"
             );
@@ -58,14 +70,14 @@ const Page = () => {
             setError("Por favor, elige una contraseña más fuerte.");
             return;
         }
-        
+
         const body = {
             nombre_usuario: nombre,
             correo_electronico: email,
             contrasenia: password,
-            numero_telefono: cod_pais+" " + telefono,
+            numero_telefono: cod_pais + " " + telefono,
         };
-        
+
         try {
             setLoading(true);
             const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
@@ -203,21 +215,35 @@ const Page = () => {
                                         </select>
                                         <input
                                             value={telefono}
-                                            onChange={(e) =>
-                                                setTelefono(e.target.value)
-                                            }
-                                            onKeyDown={(e) =>
-                                                (e.key === "e" ||
-                                                    e.key === "-" ||
-                                                    e.key === "+") &&
-                                                e.preventDefault()
-                                            }
+                                            onChange={(e) => {
+                                                const valor = e.target.value.replace(/[^+\d-]/g, ""); // Permite solo +, dígitos, y guiones
+                                                // Contar solo los dígitos, excluyendo '+' y '-'
+                                                const cantidadDigitos = valor.replace(/\D/g, "").length;
+
+                                                if (cantidadDigitos <= 8) {
+                                                    setTelefono(valor);
+                                                }
+
+                                                // Validar si el teléfono tiene exactamente 8 dígitos
+                                                if (cantidadDigitos >= 7) {
+                                                    setTelefonoValido(true);
+                                                } else {
+                                                    setTelefonoValido(false);
+                                                }
+                                            }}
+                                            onKeyDown={(e) => {
+                                                // Evitar ingreso de las teclas 'e', '-', y '+' directamente
+                                                if (["e", "-", "+"].includes(e.key)) {
+                                                    e.preventDefault();
+                                                }
+                                            }}
                                             placeholder="Número de teléfono"
-                                            type="number"
+                                            type="tel" // Cambiado a 'tel' en lugar de 'number' para un mejor control de entrada de números de teléfono
                                             id="phone"
                                             name="phone"
                                             className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                                         />
+
                                     </div>
                                 </div>
                                 <div>
@@ -229,16 +255,24 @@ const Page = () => {
                                     </label>
                                     <input
                                         value={email}
-                                        onChange={(e) =>
-                                            setEmail(e.target.value)
-                                        }
+                                        onChange={(e) => {
+                                            const valor = e.target.value;
+                                            setEmail(valor);
+                                            validarEmail(valor); // Llamamos a la función de validación
+                                        }}
                                         placeholder="Correo electrónico"
-                                        type="text"
+                                        type="email" // Cambiado a 'email' para manejo adecuado del input
                                         id="email"
                                         name="email"
-                                        className="bg-gray-100 mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                        className={`bg-gray-100 mt-1 p-2 w-full border rounded-md transition-colors duration-300 focus:outline-none ${emailValido ? "focus:ring-2 focus:ring-gray-300 focus:border-gray-200" : "focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                                            }`}
                                     />
+                                    {/* Mensaje de error si el correo es inválido */}
+                                    {!emailValido && email && (
+                                        <span className="text-yellow-500 text-sm mt-1 block">Correo no válido</span>
+                                    )}
                                 </div>
+
                                 <div>
                                     <label
                                         htmlFor="password"
@@ -367,11 +401,10 @@ const Page = () => {
                                     </div>
                                     {hasNumber && passwordS && (
                                         <p
-                                            className={`text-sm mt-1 ${
-                                                passwordsMatch
-                                                    ? "text-green-500"
-                                                    : "text-red-500"
-                                            }`}
+                                            className={`text-sm mt-1 ${passwordsMatch
+                                                ? "text-green-500"
+                                                : "text-red-500"
+                                                }`}
                                         >
                                             {passwordsMatch
                                                 ? "✓ Las contraseñas coinciden"
@@ -386,19 +419,22 @@ const Page = () => {
                                 <div>
                                     <button
                                         type="submit"
-                                        className={`mb-2 py-2 w-full bg-blue-600 text-white p-2 font-normal rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 ${
-                                            !nombre ||
-                                            !telefono||
-                                            !email||
+                                        className={`mb-2 py-2 w-full bg-blue-600 text-white p-2 font-normal rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 ${!nombre ||
+                                            !emailValido ||
+                                            !telefonoValido ||
+                                            !telefono ||
+                                            !email ||
                                             passwordScore < 3 ||
                                             password !== passwordS
-                                                ? "opacity-50 cursor-not-allowed"
-                                                : ""
-                                        }`}
+                                            ? "opacity-50 cursor-not-allowed"
+                                            : ""
+                                            }`}
                                         disabled={
+                                            !emailValido ||
+                                            !telefonoValido ||
                                             !nombre ||
-                                            !telefono||
-                                            !email||
+                                            !telefono ||
+                                            !email ||
                                             passwordScore < 3 ||
                                             password !== passwordS
                                         }
