@@ -25,6 +25,17 @@ def registrar_interes():
         if not usuario:
             return jsonify({'message': 'id_usuario es obligatorio'}), 400
 
+        
+         # Primero, eliminar los intereses previos del usuario
+        intereses_previos = Interes.query.filter_by(id_usuario=usuario).all()
+
+        if intereses_previos:
+            for interes in intereses_previos:
+                db.session.delete(interes)
+            db.session.commit()  # Confirmar la eliminación de los intereses previos
+            print(f"Intereses previos del usuario {usuario} eliminados.")
+
+        
         # Generar la fecha de selección en el backend (una sola para todos los intereses)
         #fecha_seleccion = datetime.now()
 
@@ -106,7 +117,7 @@ def obtener_intereses_usuario(id_usuario):
 def eliminar_intereses_usuario(id_usuario):
     try:
         # Consultar todos los intereses del usuario
-        intereses = interes.query.filter_by(id_usuario=id_usuario).all()
+        intereses = Interes.query.filter_by(id_usuario=id_usuario).all()
 
         if not intereses:
             return jsonify({'message': 'No se encontraron intereses para este usuario'}), 404
