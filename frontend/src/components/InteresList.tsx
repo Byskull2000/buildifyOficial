@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 
 interface Material {
   id: number;
@@ -22,7 +22,9 @@ const InterestList: React.FC = () => {
     { id: 11, name: "Piedras", icon: "⛰️", interested: false },
   ];
 
-  const [materials, setMaterials] = useState<Material[]>(initialMaterials);
+  const [materials] = useState<Material[]>(initialMaterials);
+  const [selectedMaterials, setSelectedMaterials] = useState<Material[]>([]);
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -31,52 +33,61 @@ const InterestList: React.FC = () => {
   const userStorage =
     sessionStorage.getItem("user") || localStorage.getItem("user") || null;
   const user = userStorage ? JSON.parse(userStorage) : null;
+  
+  const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
 
-  useEffect(() => {
+
+  const fetchIntereses = () => {
     if (user) {
       // Llamar a la API para obtener los intereses del usuario con fetch
-      fetch(`/api/intereses/${user.id_usuario}`)
+      fetch(URL_BACKEND + `/api/intereses/${user.id_usuario}`)
         .then((response) => response.json())
         .then((data) => {
           const intereses = data.data;
 
-          // Marcar los materiales como seleccionados si están en la lista de intereses
-          const updatedMaterials = materials.map((material) =>
+          // Filtrar los materiales ya seleccionados y guardarlos en la lista de seleccionados
+          const userSelectedMaterials = materials.filter((material) =>
             intereses.some(
               (interes: any) => interes.id_tipoMaterial === material.id
             )
-              ? { ...material, interested: true }
-              : material
           );
-
-          setMaterials(updatedMaterials);
+          setSelectedMaterials(userSelectedMaterials);
         })
         .catch((error) => {
           console.error("Error al obtener los intereses:", error);
         });
     }
-  }, [user]);
+  };
 
   const handleToggle = () => {
+    if (!isExpanded) {
+      fetchIntereses();
+    }
     setIsExpanded(!isExpanded);
   };
 
-  const handleCheckboxChange = (id: number) => {
-    const updatedMaterials = materials.map((material) =>
-      material.id === id
-        ? { ...material, interested: !material.interested }
-        : material
-    );
-    setMaterials(updatedMaterials);
+  // Maneja el cambio de selección de un material
+  const handleCheckboxChange = (material: Material) => {
+    if (selectedMaterials.some((m) => m.id === material.id)) {
+      // Si ya está seleccionado, lo quitamos de la lista de seleccionados
+      setSelectedMaterials(
+        selectedMaterials.filter((m) => m.id !== material.id)
+      );
+    } else {
+      // Si no está seleccionado, lo agregamos a la lista de seleccionados
+      setSelectedMaterials([...selectedMaterials, material]);
+    }
   };
 
   const guardarIntereses = async () => {
-    const interesesSeleccionados = materials
-      .filter((material) => material.interested)
-      .map((material) => ({
-        id_tipoMaterial: material.id,
-        fecha_seleccion: new Date().toISOString(), // Agregar la fecha actual de selección
-      }));
+    const interesesSeleccionados = selectedMaterials.map((material) => material.id);
+    console.log(interesesSeleccionados.length);
+    console.log(interesesSeleccionados[0]);
+    console.log(interesesSeleccionados[1]);
+    console.log(interesesSeleccionados[2]);
+    console.log(interesesSeleccionados[3]);
+    console.log(interesesSeleccionados[4]);
+
 
     if (!user) {
       console.error("No hay usuario registrado");
@@ -84,8 +95,8 @@ const InterestList: React.FC = () => {
     }
 
     try {
-      // Llamada a la API para registrar los intereses seleccionados usando fetch
-      const response = await fetch("/api/registrar_interes", {
+      // Llamada a la API para registrar los intereses seleccionados
+      const response = await fetch(URL_BACKEND+"/api/registrar_interes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,12 +111,6 @@ const InterestList: React.FC = () => {
       setMessage(result.message); // Mostrar el mensaje de éxito
       console.log(result.message);
 
-      // Ordena los intereses seleccionados al inicio solo al guardar
-      const sortedMaterials = [...materials].sort(
-        (a, b) => Number(b.interested) - Number(a.interested)
-      );
-      setMaterials(sortedMaterials);
-
       setIsExpanded(false); // Cierra la lista después de guardar
     } catch (error) {
       setMessage("Error al guardar los intereses. Inténtalo de nuevo.");
@@ -113,9 +118,7 @@ const InterestList: React.FC = () => {
     }
   };
 
-  const interesesSeleccionados = materials.some(
-    (material) => material.interested
-  );
+  const interesesSeleccionados = selectedMaterials.length > 0;
 
   return (
     <div style={{ padding: "20px" }}>
@@ -138,15 +141,15 @@ const InterestList: React.FC = () => {
               {materials.map((material) => (
                 <li
                   key={material.id}
-                  style={itemStyle(material.interested)}
-                  onClick={() => handleCheckboxChange(material.id)}
+                  style={itemStyle(selectedMaterials.some((m) => m.id === material.id))}
+                  onClick={() => handleCheckboxChange(material)}
                 >
                   <span style={{ marginRight: "10px" }}>{material.icon}</span>
                   <span style={{ flexGrow: 1 }}>{material.name}</span>
                   <input
                     type="checkbox"
-                    checked={material.interested}
-                    onChange={() => handleCheckboxChange(material.id)}
+                    checked={selectedMaterials.some((m) => m.id === material.id)}
+                    onChange={() => handleCheckboxChange(material)}
                     style={{ pointerEvents: "none" }}
                   />
                 </li>
