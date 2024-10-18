@@ -33,7 +33,7 @@ const Page = () => {
             const user = JSON.parse(data);
             setId(user.id_usuario || "");
             setNombre(user.nombre_usuario || "");
-            setTelefono(user.numero_telefono.split(' ')[1] || "");
+            setTelefono(user.numero_telefono.split(" ")[1] || "");
             setZonaTrabajo(user.zona_trabajo || "");
             setImagenPerfil(user.imagen_perfil || imgEjemploPerfil);
             setImagenOriginal(user.imagen_perfil || imgEjemploPerfil);
@@ -159,16 +159,21 @@ const Page = () => {
 
     const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
+
         const formData = new FormData();
         formData.append("nombre_usuario", nombre_usuario);
-        formData.append("numero_telefono", cod_pais +" "+ numero_telefono);
+        formData.append("numero_telefono", cod_pais + " " + numero_telefono);
         formData.append("zona_trabajo", zona_trabajo);
-        
+
+        if(numero_telefono.length < 8){
+            setError("El número de teléfono debe tener al menos 8 dígitos");
+            return;
+        }
+
         if (imagenRecortada) {
             formData.append("imagen_perfil", imagenRecortada);
         }
-        
+
         try {
             setLoading(true);
             const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
@@ -234,10 +239,9 @@ const Page = () => {
                         </a>
                         <button
                             onClick={() => {
-                                localStorage.removeItem('user')
-                                sessionStorage.removeItem('user')
-                                navigate('/')
-                         
+                                localStorage.removeItem("user");
+                                sessionStorage.removeItem("user");
+                                navigate("/");
                             }}
                             className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full  "
                         >
@@ -352,17 +356,25 @@ const Page = () => {
                                                     setNombre(e.target.value)
                                                 }
                                             />
-                                             <label className="block mb-2 text-sm font-medium ">
-                                                    Telefono
-                                                </label>
+                                            <label className="block mb-2 text-sm font-medium ">
+                                                Telefono
+                                            </label>
                                             <div className="flex space-x-2 mb-2">
                                                 <select
                                                     defaultValue={cod_pais}
                                                     className="bg-yellow-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
-                                                    onChange={e => setCodPais(e.target.value)}
+                                                    onChange={(e) =>
+                                                        setCodPais(
+                                                            e.target.value
+                                                        )
+                                                    }
                                                 >
-                                                    <option value="+591">+591</option>
-                                                    <option value="+31">+31</option>
+                                                    <option value="+591">
+                                                        +591
+                                                    </option>
+                                                    <option value="+31">
+                                                        +31
+                                                    </option>
                                                 </select>
                                                 <input
                                                     type="tel"
@@ -376,11 +388,13 @@ const Page = () => {
                                                                 /[^+\d\s-]/g,
                                                                 ""
                                                             ); // Permite solo +, dígitos, espacios y guiones
-                                                        setTelefono(valor);
+                                                        if (valor.length <= 8) {
+                                                            setTelefono(valor);
+                                                        }
                                                     }}
                                                 />
                                             </div>
-                                            <div className="mb-2 sm:mb-6">
+                                            <div className="mb-3">
                                                 <label className="block mb-2 text-sm font-medium ">
                                                     Ubicacion
                                                 </label>
@@ -403,11 +417,11 @@ const Page = () => {
                                                 </div>
                                             </div>
                                             {error && (
-                                                <p style={{ color: "red" }}>
+                                                <p className="text-red-600 py-1">
                                                     {error}
                                                 </p>
                                             )}
-                                            <div className="flex justify-end">
+                                            <div className="flex justify-end mt-3">
                                                 <button
                                                     type="submit"
                                                     className="text-white border-orange-300 bg-[#FED35F] hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
