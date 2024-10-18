@@ -69,7 +69,7 @@ const Page = () => {
     };
     return (
         <div>
-            <div className="flex">
+            <div className="flex font-poppins">
                 <div className="hidden lg:flex items-center justify-center flex-1 relative bg-white text-black w-2/3 min-h-screen">
                     <img
                         src={fondologin}

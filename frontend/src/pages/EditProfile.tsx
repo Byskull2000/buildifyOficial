@@ -370,7 +370,7 @@ const Page = () => {
                                                             e.target.value.replace(
                                                                 /[^+\d\s-]/g,
                                                                 ""
-                                                            ); // Permite solo +, dígitos, espacios y guiones
+                                                            ); 
                                                         setTelefono(valor);
                                                     }}
                                                 />

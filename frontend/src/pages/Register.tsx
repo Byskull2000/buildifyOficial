@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 import PasswordStrengthBar from "react-password-strength-bar";
 
+
 const Page = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
@@ -127,10 +128,11 @@ const Page = () => {
 
     return (
         <div>
+            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
             {loading ? (
                 <Loading />
             ) : (
-                <div className="flex">
+                <div className="flex font-poppins">
                     <div className="hidden lg:flex items-center justify-center flex-1 relative bg-white text-black w-2/3 min-h-screen">
                         <img
                             src={fondologin}
@@ -149,7 +151,7 @@ const Page = () => {
                                         height={50}
                                         className="mr-2"
                                     />
-                                    <h1 className="text-3xl font-bold text-black">
+                                    <h1 className="text-3xl font-semibold text-black">
                                         Buildify
                                     </h1>
                                 </div>
@@ -159,7 +161,7 @@ const Page = () => {
                                 method="POST"
                                 className="space-y-4"
                             >
-                                <h1 className="text-2xl font-semibold mb-6 text-black text-left w-full">
+                                <h1 className="text-2xl font-medium mb-6 text-black text-left w-full">
                                     Regístrate ahora
                                 </h1>
                                 <div>
@@ -223,7 +225,7 @@ const Page = () => {
                                         htmlFor="email"
                                         className="block text-sm font-medium text-gray-500 ml-2"
                                     >
-                                        Inicio de sesión
+                                        Correo electrónico
                                     </label>
                                     <input
                                         value={email}
@@ -384,7 +386,7 @@ const Page = () => {
                                 <div>
                                     <button
                                         type="submit"
-                                        className={`mb-2 py-2 w-full bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 ${
+                                        className={`mb-2 py-2 w-full bg-blue-600 text-white p-2 font-normal rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 ${
                                             !nombre ||
                                             !telefono||
                                             !email||
