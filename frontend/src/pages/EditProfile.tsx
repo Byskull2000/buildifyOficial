@@ -239,7 +239,7 @@ const Page = () => {
                             Mi cuenta
                         </a>
                         <a
-                                href="#"
+                                href="/publicProfile"
                                 className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full"
                             >
                                 Perfil Comercial
