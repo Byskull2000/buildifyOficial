@@ -106,12 +106,16 @@ const Page = () => {
                         >
                             Notificaciones
                         </a>
-                        <a
-                            href="#"
+                        <button
+                            onClick={() => {
+                                localStorage.removeItem('user')
+                                sessionStorage.removeItem('user')
+                                navigate('/')
+                            }}
                             className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full  "
                         >
-                            Campo a futuro
-                        </a>
+                            Cerrar Sesion
+                        </button>
                     </div>
                 </aside>
                 <main className="w-full min-h-screen py-1 md:w-2/3 lg:w-3/4">
