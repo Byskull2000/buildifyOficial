@@ -386,7 +386,7 @@ const Page = () => {
                                                     onChange={(e) => {
                                                         const valor =
                                                             e.target.value.replace(
-                                                                /[^+\d\s-]/g,
+                                                                /[^+\d-]/g,
                                                                 ""
                                                             ); // Permite solo +, dígitos, espacios y guiones
                                                         if (valor.length <= 8) {
