@@ -165,7 +165,7 @@ const Page = () => {
         formData.append("numero_telefono", cod_pais + " " + numero_telefono);
         formData.append("zona_trabajo", zona_trabajo);
 
-        if(numero_telefono.length < 8){
+        if (numero_telefono.length < 8) {
             setError("El número de teléfono debe tener al menos 8 dígitos");
             return;
         }
@@ -347,14 +347,15 @@ const Page = () => {
                                             </label>
                                             <input
                                                 type="text"
-                                                className="bg-yellow-100 border border-orange-200 text-sm rounded-lg block w-full p-2.5 "
+                                                className="bg-yellow-100 border border-orange-200 text-sm rounded-lg block w-full p-2.5"
                                                 placeholder="Tu nombre"
                                                 required
                                                 value={nombre_usuario}
-                                                pattern="[A-Za-z\s]+"
-                                                onChange={(e) =>
-                                                    setNombre(e.target.value)
-                                                }
+                                                onChange={(e) => {
+                                                    const valor = e.target.value.replace(/[^A-Za-z\sñÑ]/g, ""); 
+                                                    setNombre(valor);
+                                                }}
+                                                
                                             />
                                             <label className="block mb-2 text-sm font-medium ">
                                                 Telefono
