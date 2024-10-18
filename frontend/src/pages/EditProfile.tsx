@@ -354,6 +354,7 @@ const Page = () => {
                                                 <select
                                                     defaultValue={cod_pais}
                                                     className="bg-yellow-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                                    onChange={e => setCodPais(e.target.value)}
                                                 >
                                                     <option value="+591">+591</option>
                                                     <option value="+31">+31</option>
