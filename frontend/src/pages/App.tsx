@@ -13,8 +13,8 @@ function App() {
     <>
       <div className="bg-white">
         <NavBar />
-        <h2>Bienvenido {user.nombre_usuario}</h2>
-        <PopupRegristro></PopupRegristro>
+        <h2>Bienvenido {user ? user.nombre_usuario : "Invitado"}</h2>
+        {!user && <PopupRegristro></PopupRegristro>}
         <ImagenPrueba></ImagenPrueba>
         <InterestList></InterestList>
 
