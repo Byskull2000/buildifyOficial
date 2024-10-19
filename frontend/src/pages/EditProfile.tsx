@@ -5,8 +5,16 @@ import { MdLocationOn } from "react-icons/md";
 import { useEffect, useState } from "react";
 import Loading from "../components/Loading";
 import Cropper from "react-easy-crop";
+import Mapa from "../components/Mapa";
 
+interface Ubicacion {
+    lat: number;
+    lng: number;
+}
 const Page = () => {
+    const [openMap, setOpenMap] = useState(false);
+    const [coordenadasSeleccionadas, setCoordenadasSeleccionadas] =
+        useState<Ubicacion | null>(null);
     const [nombre_usuario, setNombre] = useState("");
     const [cod_pais, setCodPais] = useState("+591");
     const [numero_telefono, setTelefono] = useState("");
@@ -33,7 +41,9 @@ const Page = () => {
             const user = JSON.parse(data);
             setId(user.id_usuario || "");
             setNombre(user.nombre_usuario || "");
-            const telf = user.numero_telefono ? user.numero_telefono.split(" ")[1] : "";
+            const telf = user.numero_telefono
+                ? user.numero_telefono.split(" ")[1]
+                : "";
             setTelefono(telf);
             setZonaTrabajo(user.zona_trabajo || "");
             setImagenPerfil(user.imagen_perfil || imgEjemploPerfil);
@@ -165,6 +175,13 @@ const Page = () => {
         formData.append("nombre_usuario", nombre_usuario);
         formData.append("numero_telefono", cod_pais + " " + numero_telefono);
         formData.append("zona_trabajo", zona_trabajo);
+        if (coordenadasSeleccionadas) {
+            formData.append("latitud", coordenadasSeleccionadas.lat.toString());
+            formData.append(
+                "longitud",
+                coordenadasSeleccionadas.lng.toString()
+            );
+        }
 
         if (numero_telefono.length < 8) {
             setError("El número de teléfono debe tener al menos 8 dígitos");
@@ -239,11 +256,11 @@ const Page = () => {
                             Mi cuenta
                         </a>
                         <a
-                                href="/publicProfile"
-                                className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full"
-                            >
-                                Perfil Comercial
-                            </a>
+                            href="/publicProfile"
+                            className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full"
+                        >
+                            Perfil Comercial
+                        </a>
                         <a
                             href="/editProfile"
                             className="flex items-center px-3 py-2.5 font-bold bg-white  text-yellow-500 border rounded-full"
@@ -434,10 +451,61 @@ const Page = () => {
                                                             )
                                                         }
                                                     />
-                                                    <button className="ml-2 p-2 bg-yellow-100 border hover:bg-yellow-500 border-orange-200 rounded-lg">
+                                                    <div
+                                                        onClick={() =>
+                                                            setOpenMap(!openMap)
+                                                        }
+                                                        className="ml-2 p-2 bg-yellow-100 border hover:bg-yellow-500 border-orange-200 rounded-lg hover:cursor-pointer"
+                                                    >
                                                         <MdLocationOn className="text-xl text-black" />
-                                                    </button>
+                                                    </div>
                                                 </div>
+                                                {openMap && (
+                                                    <div
+                                                        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+                                                        onClick={() =>
+                                                            setOpenMap(false)
+                                                        } // Cerrar modal al hacer clic fuera
+                                                    >
+                                                        <div
+                                                            className="bg-white p-6 rounded-lg"
+                                                            onClick={(e) =>
+                                                                e.stopPropagation()
+                                                            } // Prevenir cierre al hacer clic dentro del modal
+                                                        >
+                                                            <button
+                                                                className="text-black font-bold mb-4"
+                                                                onClick={() =>
+                                                                    setOpenMap(
+                                                                        false
+                                                                    )
+                                                                } // Botón para cerrar el modal
+                                                            >
+                                                                Cerrar
+                                                            </button>
+
+                                                            <Mapa
+                                                                onUbicacionSeleccionada={(
+                                                                    lat: number,
+                                                                    lng: number
+                                                                ) => {
+                                                                    setCoordenadasSeleccionadas(
+                                                                        {
+                                                                            lat,
+                                                                            lng,
+                                                                        }
+                                                                    );
+                                                                    setOpenMap(
+                                                                        false
+                                                                    ); 
+                                                                }}
+                                                                onDireccionObtenida={
+                                                                    setZonaTrabajo
+                                                                }
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                             {error && (
                                                 <p className="text-red-600 py-1">
