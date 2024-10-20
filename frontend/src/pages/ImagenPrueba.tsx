@@ -1,14 +1,17 @@
+
 import React, { useState } from "react";
+import Cropper from "react-easy-crop";
+
 
 interface Foto {
     id: number;
     filename: string;
-    data: string; // Datos de imagen codificados en Base64
+    data: string; 
 }
 
-const MAX_SIZE_MB = 5 * 1024 * 1024; // Tamaño máximo en bytes
-const MAX_RESOLUTION = 1024; // Resolución máxima 1024x1024
-const MAX_IMAGES = 10; // Máximo de imágenes permitido
+const MAX_SIZE_MB = 5 * 1024 * 1024; 
+const MAX_RESOLUTION = 1024; 
+const MAX_IMAGES = 10; 
 
 const ImageUploader: React.FC = () => {
     const [images, setImages] = useState<File[]>([]);
@@ -20,6 +23,16 @@ const ImageUploader: React.FC = () => {
     const [isGalleryOpen, setIsGalleryOpen] = useState<boolean>(false);
     const [galleryImages, setGalleryImages] = useState<Foto[]>([]);
     const [showCloseConfirmation, setShowCloseConfirmation] = useState<boolean>(false);
+    
+    const [rotation, setRotation] = useState(0); // Estado para la rotación en grados
+    const [imagenRecortada, setImagenRecortada] = useState<Blob | null>(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
+    const [imageToEdit, setImageToEdit] = useState<string | null>(null); // Imagen seleccionada para editar
+
+
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -28,11 +41,18 @@ const ImageUploader: React.FC = () => {
         }
     };
 
+    //cargar imagenes en dropzone 
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         const droppedFiles = Array.from(e.dataTransfer.files);
         validateAndAddImages(droppedFiles);
     };
+
+    const rotateImage = () => {
+        const newRotation = (rotation + 90) % 360; // Incrementa la rotación en 90 grados
+        setRotation(newRotation); // Actualiza el estado de rotación
+      };
+    
 
     const validateAndAddImages = (selectedFiles: File[]) => {
         if (images.length + selectedFiles.length > MAX_IMAGES) {
@@ -48,12 +68,9 @@ const ImageUploader: React.FC = () => {
             const fileType = file.type;
             const fileSize = file.size;
 
-            // Validar tipo de archivo
             if (!["image/jpeg", "image/png"].includes(fileType)) {
                 error = "Formato Incorrecto. Solo se permiten imágenes JPG o PNG.";
             }
-
-            // Validar tamaño de archivo
             if (fileSize > MAX_SIZE_MB) {
                 error = `La imagen ${file.name} excede el tamaño máximo de 5MB.`;
             }
@@ -64,7 +81,7 @@ const ImageUploader: React.FC = () => {
                 const width = image.width;
                 const height = image.height;
 
-                // Validar resolución de imagen y formato cuadrado
+                
                 if (width !== height) {
                     error = `La imagen ${file.name} debe tener formato 1:1 (cuadrada).`;
                 } else if (width > MAX_RESOLUTION || height > MAX_RESOLUTION) {
@@ -74,7 +91,7 @@ const ImageUploader: React.FC = () => {
                 if (!error) {
                     newImages.push(file);
                     newPreviews.push(URL.createObjectURL(file));
-                    setErrorMessage(""); // Borrar cualquier mensaje de error previo si es válido
+                    setErrorMessage(""); 
                 } else {
                     setErrorMessage(error);
                 }
@@ -85,6 +102,140 @@ const ImageUploader: React.FC = () => {
         });
     };
 
+    const createImage = (url: string): Promise<HTMLImageElement> => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = url;
+            img.crossOrigin = "anonymous";
+            img.onload = () => resolve(img);
+            img.onerror = (err) => reject(err);
+        });
+    };
+
+    
+    const getCroppedImg = async (
+        imageSrc: string,
+        crop: { x: number; y: number; width: number; height: number }
+    ) => {
+        async function generateHash(input: string) {
+            const textEncoder = new TextEncoder();
+            const encodedData = textEncoder.encode(input);
+            const hashBuffer = await crypto.subtle.digest(
+                "SHA-256",
+                encodedData
+            );
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray
+                .map((b) => b.toString(16).padStart(2, "0"))
+                .join("");
+            return hashHex;
+        }
+
+        const image = await createImage(imageSrc);
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        if (!ctx) return null;
+
+        const scaleX = image.naturalWidth / image.width;
+        const scaleY = image.naturalHeight / image.height;
+
+        canvas.width = crop.width;
+        canvas.height = crop.height;
+
+        ctx.save();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((rotation * Math.PI) / 180); // Rotar imagen
+        ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
+        ctx.drawImage(
+            image,
+            crop.x * scaleX,
+            crop.y * scaleY,
+            crop.width * scaleX,
+            crop.height * scaleY,
+            0,
+            0,
+            crop.width,
+            crop.height
+        );
+        ctx.restore();
+
+        const timestamp = new Date().toISOString();
+        const hash = await generateHash(`${timestamp}`);
+
+        return new Promise<File | null>((resolve) => {
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    const fileName = `${hash}.webp`;
+                    const file = new File([blob], fileName, {
+                        type: "image/webp",
+                    });
+                    resolve(file);
+                } else {
+                    resolve(null);
+                }
+            }, "image/webp");
+        });
+    };
+
+    const onCropComplete = async (
+        croppedArea: { x: number; y: number; width: number; height: number },
+        croppedAreaPixels: { x: number; y: number; width: number; height: number }
+    ) => {
+        console.log("Cropped Area: ", croppedArea);
+        setCroppedAreaPixels(croppedAreaPixels);
+        if (imageToEdit) {
+            const croppedImage = await getCroppedImg(imageToEdit, croppedAreaPixels);
+            setImagenRecortada(croppedImage); // Guardar la imagen recortada
+        }
+    };
+
+    const closeEditModal = () => {
+        setIsEditing(false);
+        setImageToEdit(null);
+        setCrop({ x: 0, y: 0 });
+        setZoom(1);
+      };
+
+      
+
+    const handleEditImage = (imageSrc: string) => {
+        setImageToEdit(imageSrc); // Seleccionar imagen para editar
+        setIsEditing(true);
+        setIsModalOpen(true); // Abrir modal para edición
+    };
+
+    const saveEditedImage = async () => {
+        if (!croppedAreaPixels || !imageToEdit) return;
+
+        try {
+            const croppedImage = await getCroppedImg(imageToEdit, croppedAreaPixels);
+            if (croppedImage) {
+                // Reemplazar la imagen editada en previewImages
+                setPreviewImages((prevImages) =>
+                    prevImages.map((image) => (image === imageToEdit ? URL.createObjectURL(croppedImage) : image))
+                );
+    
+                // Reemplazar la imagen editada en el estado images
+                setImages((prevImages) =>
+                    prevImages.map((file, index) => {
+                        // Convertir el Blob en un File
+                        if (previewImages[index] === imageToEdit) {
+                            return new File([croppedImage], file.name, { type: "image/webp" });
+                        }
+                        return file;
+                    })
+                );
+            }
+        } catch (error) {
+            console.error("Error recortando la imagen:", error);
+        }
+        closeEditModal();
+    };
+
+
+    //sube imagenes al servidor
     const handleUploadImages = async () => {
         if (images.length === 0) {
             setErrorMessage("No hay imágenes para subir.");
@@ -109,6 +260,7 @@ const ImageUploader: React.FC = () => {
 
             if (!response.ok) {
                 throw new Error("Error en la subida de imágenes");
+                
             }
 
             const interval = setInterval(() => {
@@ -152,6 +304,9 @@ const ImageUploader: React.FC = () => {
         setShowCloseConfirmation(false); // Ocultar la confirmación
     };
 
+    
+
+    //mostrar la galeria
     const toggleGallery = async () => {
         setIsGalleryOpen(!isGalleryOpen);
         if (!isGalleryOpen) {
@@ -169,6 +324,8 @@ const ImageUploader: React.FC = () => {
             }
         }
     };
+
+
 
     return (
         <div>
@@ -204,6 +361,9 @@ const ImageUploader: React.FC = () => {
             {/* Mostrar mensaje de error si hay alguno */}
             {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
 
+            {/* Mostrar mensaje sobre la imagen recortada */}
+            {imagenRecortada ? (<p></p>) : (<p></p>)}
+
             {/* Modal para subir imágenes */}
             {isModalOpen && (
                 <div
@@ -228,8 +388,8 @@ const ImageUploader: React.FC = () => {
                             borderRadius: "10px",
                             position: "relative",
                         }}
-                    >
-                        <h2>Subir Imágenes</h2>
+                    >   
+                        <h2>Subir y Editar Imágenes</h2>
 
                         <button
                             onClick={toggleModal}
@@ -279,19 +439,40 @@ const ImageUploader: React.FC = () => {
                                     overflow: "auto",
                                 }}
                             >
-                                {previewImages.map((image, index) => (
-                                    <img
-                                        key={index}
-                                        src={image}
-                                        alt={`preview-${index}`}
-                                        onDragStart={handleDragStart}
-                                        style={{
-                                            width: "150px",
-                                            height: "150px",
-                                            objectFit: "cover",
-                                            borderRadius: "10px",
+                                {previewImages.map((src, index) => (
+                                    <div key={index} style={{ position: "relative", width: "150px", height: "150px" }}>
+                                        <img
+                                            //key={index}
+                                            src={src}
+                                            alt={`preview-${index}`}
+                                            onDragStart={handleDragStart}
+                                            style={{
+                                                width: "150px",
+                                                height: "150px",
+                                                objectFit: "cover",
+                                                borderRadius: "10px",
+                                                margin: "10px",
                                         }}
                                     />
+
+                                        <button
+                                        onClick={() => handleEditImage(src)} // Llamada a la función para editar la imagen
+                                        style={{
+                                            //position: "absolute",
+                                            //bottom: "10px",
+                                            //left: "10px",
+                                            padding: "5px 10px",
+                                            backgroundColor: "#007bff",
+                                            color: "white",
+                                            //border: "none",
+                                            borderRadius: "5px",
+                                            cursor: "pointer",
+                                            marginTop: "5px", 
+                                        }}
+                                    >
+                                        Editar
+                                    </button>
+                                    </div>    
                                 ))}
                             </div>
                         </div>
@@ -338,6 +519,129 @@ const ImageUploader: React.FC = () => {
                         {/* Mensaje de error */}
                         {errorMessage && <p style={{ color: "red", marginTop: "10px" }}>{errorMessage}</p>}
                     </div>
+
+                    {/* Modal de edición de imagen */}
+                    {isEditing && (
+                        <div
+                            style={{
+                                position: "fixed",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                zIndex: 10,
+                            }}
+                        >
+                            <div
+                                style={{
+                                    backgroundColor: "white",
+                                    padding: "20px",
+                                    width: "80vw",
+                                    maxWidth:"800px",
+                                    height: "600px",
+                                    borderRadius: "10px",
+                                    position: "relative",
+                                    overflow: "hidden",
+                                }}
+                            >
+                                <h3>Editar Imagen</h3>
+
+                                {imageToEdit && (
+
+                                    <div 
+                                        style={{
+                                            position:"relative",
+                                            width: "100%",
+                                            height: "450px",
+                                            marginBottom:"20px",  
+                                        }}
+                                    >
+
+                                    <Cropper
+                                        image={imageToEdit}
+                                        crop={crop}
+                                        zoom={zoom}
+                                        aspect={1}
+                                        onCropChange={setCrop}
+                                        onZoomChange={setZoom}
+                                        onCropComplete={onCropComplete}
+                                        rotation={rotation}
+                                    />
+                                </div>
+                                )}
+
+                                {/* Botón para rotar la imagen 90 grados */}
+                                {isEditing && (
+                                    <div style={{ display: "flex", justifyContent: "center", marginBottom: "10px" }}>
+                                    <button
+                                        onClick={rotateImage}
+                                        style={{
+                                            padding: "10px 20px",
+                                            backgroundColor: "#007bff",
+                                            color: "white",
+                                            borderRadius: "5px",
+                                            cursor: "pointer",
+                                            //margin: "0 20px",
+                                            width: "150px",
+                                            zIndex: 1002,
+                                            //marginBottom: "10px",
+                                        }}
+                                    >
+                                        Rotar
+                                    </button>
+                                    </div>
+                                )}
+
+                                {/* Botón para guardar los cambios del recorte */}
+                                <div style={{   
+                                                display: "flex", 
+                                                justifyContent: "space-between",
+                                                position:"absolute", 
+                                                bottom: "20px",
+                                                left: "20px",
+                                                right: "20px",
+                                                //marginTop:"20px"   
+                                            }}>
+                                
+                                
+                                <button
+                                    onClick={saveEditedImage}
+                                    style={{
+                                        padding: "10px 20px",
+                                        backgroundColor: "#28a745",
+                                        color: "white",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                        //marginTop: "10px",
+                                    }}
+                                >
+                                    Guardar cambios
+                                </button>
+
+                                {/* Botón para cerrar el modal */}
+                                <button
+                                    onClick={closeEditModal}
+                                    style={{
+                                        padding: "10px 20px",
+                                        backgroundColor: "#dc3545",
+                                        color: "white",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                        //marginTop: "10px",
+                                    }}
+                                >
+                                    Cancelar
+                                </button>
+                                </div>
+                            </div>
+                        </div>
+                        )}
+
+
 
                     {/* Modal de confirmación */}
                     {showCloseConfirmation && (
@@ -399,6 +703,8 @@ const ImageUploader: React.FC = () => {
                         )}
                     </div>
                 )}
+
+
 
                 {/* Galería de imágenes */}
                 {isGalleryOpen && (
