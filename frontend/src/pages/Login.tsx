@@ -19,7 +19,6 @@ const Page = () => {
         const handleWheel = (e: WheelEvent) => {
             e.preventDefault();
         };
-        window.addEventListener("wheel", handleWheel, { passive: false });
         return () => {
             window.removeEventListener("wheel", handleWheel);
         };
@@ -28,7 +27,7 @@ const Page = () => {
     const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
-        
+
         const body = {
             correo_electronico: email,
             contrasenia: password,
@@ -70,40 +69,42 @@ const Page = () => {
     };
     return (
         <div>
-            <div className="flex h-screen">
-                <div className="hidden lg:flex items-center justify-center flex-1 relative bg-white text-black w-2/3">
+            <div className="flex font-poppins">
+                <div className="hidden lg:flex items-center justify-center flex-1 relative bg-white text-black w-2/3 min-h-screen">
                     <img
                         src={fondologin}
                         alt="ImagenDelLogin"
-                        className="absolute inset-0 w-full h-full object-cover"
+                        className="absolute inset-0 h-full w-full object-cover "
                     />
                 </div>
 
-                <div className="w-full bg-white lg:w-1/3 flex items-center justify-center">
+                <div className="w-full bg-white lg:w-1/3 flex items-center justify-center flex-col min-h-screen ">
                     {loading ? (
-                       <Loading/>
+                        <Loading />
                     ) : (
-                        <div className="max-w-md w-full p-6">
-                            <div className="flex items-center lg:ml-[-16px] lg:mb-16">
-                                <img
-                                    src={logo}
-                                    alt="Buildify Logo"
-                                    width={50}
-                                    height={50}
-                                    className="mr-2"
-                                />
-                                <h1 className="text-3xl font-bold text-black">
-                                    Buildify
-                                </h1>
-                            </div>
-                            <h1 className="text-2xl font-semibold mb-6 text-black text-left w-full lg:ml-[-10px]">
-                                Bienvenido de nuevo
-                            </h1>
+                        <div className=" w-4/5 h-5/6">
+                            <Link to="/">
+                                <div className="flex items-center mb-12">
+                                    <img
+                                        src={logo}
+                                        alt="Buildify Logo"
+                                        width={50}
+                                        height={50}
+                                        className="mr-2"
+                                    />
+                                    <h1 className="text-3xl font-bold text-black">
+                                        Buildify
+                                    </h1>
+                                </div>
+                            </Link>
                             <form
                                 onSubmit={handleSubmit}
                                 method="POST"
                                 className="space-y-4"
                             >
+                                <h1 className="text-2xl font-semibold mb-6 text-black text-left w-full ">
+                                    Bienvenido de nuevo
+                                </h1>
                                 <div>
                                     <label
                                         htmlFor="email"
@@ -241,7 +242,7 @@ const Page = () => {
                                 </div>
                             </form>
 
-                            <div className="mt-4 text-sm text-center lg:mb-36">
+                            <div className="mt-4 text-sm text-center">
                                 <p className="text-gray-600">
                                     No tienes una cuenta?
                                     <Link

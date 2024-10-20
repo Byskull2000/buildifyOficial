@@ -9,6 +9,9 @@ import Register from './pages/Register.tsx'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import RegistroRapido from './pages/RegistroRapido.tsx'
 import EditProfile from './pages/EditProfile.tsx'
+import Profile from './pages/Profile.tsx'
+import PublicProfile from './pages/PublicProfile.tsx'
+import InterestList from './components/InteresList.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -21,7 +24,9 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/registroRapido" element={<RegistroRapido/>} />
         <Route path="/imagenprueba" element={<ImagenPrueba/>}/>
         <Route path="/editProfile" element={<EditProfile/>} />
-
+        <Route path="/listaInteres" element={<InterestList/>}/>
+        <Route path="/publicProfile" element={<PublicProfile/>} />
+        <Route path="/profile" element={<Profile/>}/>
       </Routes>
     </Router>
     </GoogleOAuthProvider>

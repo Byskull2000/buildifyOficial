@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Cropper from 'react-easy-crop';
-import { getCroppedImg } from './getCroppedImg';  // Asegúrate de que esta función está implementada en tu proyecto.
+import { getCroppedImg } from '../components/getCroppedImg';  // Asegúrate de que esta función está implementada en tu proyecto.
 
 interface ImageEditorPopupProps {
   imageSrc: string;

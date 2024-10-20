@@ -1,5 +1,6 @@
 import { useState } from 'react';
 /*import { Link } from 'react-router-dom';*/
+import PasswordStrengthBar from 'react-password-strength-bar';
 import logo from "../assets/Buildify.png"
 const Page = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -14,6 +15,8 @@ const Page = () => {
     const [error, setError] = useState("");
     const [passwordsMatch, setPasswordsMatch] = useState(false);
     const [passwordLength, setPasswordLength] = useState(false);
+    const [passwordScore, setPasswordScore] = useState(0);
+    const scoreWords = ['Muy débil', 'Débil', 'Aceptable', 'Fuerte', 'Muy fuerte'];
 
     const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -27,14 +30,15 @@ const Page = () => {
         }
 
         const body = {
-            "nombre_usuario": nombre,
-            "correo_electronico": email,
-            "contrasenia": password,
-            "fecha_creacion": Date.now + "",
+            nombre_usuario: nombre,
+            correo_electronico: email,
+            contrasenia: password,
+            numero_telefono: null,
         };
 
 
         try {
+            console.log(body.nombre_usuario, body.numero_telefono, body.contrasenia, body.correo_electronico)
             const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
             const res = await fetch(URL_BACKEND + "/api/RegistrarUsuario", {
                 method: 'POST',
@@ -52,6 +56,10 @@ const Page = () => {
 
             const { data } = await res.json();
             console.log("data: ", data);
+            localStorage.setItem("user", JSON.stringify(data));
+            setIsOpen(false);
+            window.location.reload();  // Recarga la página
+
 
 
         } catch (e) {
@@ -96,19 +104,25 @@ const Page = () => {
         setPasswordLength(lengthCheck);
         return upperCaseCheck && numberCheck && lengthCheck;
     };
+    const userStorage =
+    sessionStorage.getItem("user") || localStorage.getItem("user") || null;
+    const user = userStorage ? JSON.parse(userStorage) : null;
 
     return (
         <div>
+            {!user &&(
             <button
                 onClick={() => setIsOpen(true)}
                 className="mt-4 p-2 bg-blue-500 text-white rounded"
             >
-                Abrir formulario
+                Registro Rapido
+                
             </button>
+             )}
 
             {isOpen && (
-                <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
-                    <div className="bg-white py-10 px-24 rounded-xl shadow-lg">
+                <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 overflow-auto ">
+                    <div className="bg-white py-10 px-6 md:px-12 lg:px-24 rounded-xl shadow-lg max-h-[90vh] overflow-y-auto">
                         <div className="relative">
                             <button
                                 onClick={() => setIsOpen(false)}
@@ -176,15 +190,15 @@ const Page = () => {
                                         )}
                                     </button>
                                 </div>
-                                <div className={`text-sm ${hasUpperCase ? 'text-green-500' : 'text-red-500'}`}>
-                                    {hasUpperCase ? 'Contiene al menos una mayúscula' : 'Debes incluir al menos una mayúscula'}
-                                </div>
-                                <div className={`text-sm ${hasNumber ? 'text-green-500' : 'text-red-500'}`}>
-                                    {hasNumber ? 'Contiene al menos un número' : 'Debes incluir al menos un número'}
-                                </div>
-                                <div className={`text-sm ${passwordLength ? 'text-green-500' : 'text-red-500'}`}>
-                                    {passwordLength ? 'La contraseña tiene al menos 8 caracteres' : 'La contraseña debe tener al menos 8 caracteres'}
-                                </div>
+                                {password && (
+                                    <PasswordStrengthBar
+                                        password={password}
+                                        scoreWords={scoreWords}
+                                        onChangeScore={(score) => setPasswordScore(score)}
+                                        shortScoreWord="Demasiado corta"
+                                        className="-mb-5"
+                                    />
+                                )}
                             </div>
                             <div>
                                 <label htmlFor="confirm_password" className="block text-sm font-medium text-gray-500 ml-2">Confirma la contraseña</label>
@@ -233,9 +247,11 @@ const Page = () => {
                             </div>
                             <button
                                 type="submit"
-                                className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-300"
+                                className={`mb-2 py-2 w-full bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 ${passwordScore < 3 || password !== passwordS ? 'opacity-50 cursor-not-allowed' : ''
+                                    }`}
+                                disabled={passwordScore < 3 || password !== passwordS}
                             >
-                                Registrarse
+                                Registrarme
                             </button>
                             <button
                                 type="button"
