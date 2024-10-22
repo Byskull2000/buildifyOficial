@@ -8,10 +8,10 @@ import { BrowserRouter as Router,Routes, Route } from 'react-router-dom'
 import Register from './pages/Register.tsx'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import RegistroRapido from './pages/RegistroRapido.tsx'
-import InterestList from './components/InteresList.tsx';
 import EditProfile from './pages/EditProfile.tsx'
 import Profile from './pages/Profile.tsx'
 import PublicProfile from './pages/PublicProfile.tsx'
+import InterestList from './components/InteresList.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
