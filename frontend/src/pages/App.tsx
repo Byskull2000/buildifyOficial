@@ -14,6 +14,9 @@ import material5 from "../assets/material5.png";
 import { MaterialProp } from "../components/Material";
 import { Link } from "react-router-dom";
 import ListarMateriales from "../components/ListarMateriales";
+import Categorias from "../components/Categorias"
+
+
 
 function App() {
     const userStorage =
@@ -24,6 +27,7 @@ function App() {
 
     useEffect(() => {
         // esta lista debe ser reemplazada por la API de recomendados
+
         const recomendados = [
             {
                 id: 1,
@@ -69,6 +73,18 @@ function App() {
                 </h2>
                 {!user && <PopupRegristro></PopupRegristro>}
 
+                <div className="flex justify-between items-center mb-5">
+                    <h2 className="font-semibold text-xl md:text-2xl ">
+                        Categorías
+                    </h2>
+                    <Link
+                        to={"/materiales/recomendados"}
+                        className="text-[#FDBC3F]"
+                    >
+                        Ver Mas
+                    </Link>
+                </div>
+                <Categorias></Categorias>
                 <div className="flex justify-between items-center">
                     <h2 className="font-semibold text-xl md:text-2xl ">
                         Recomendados para ti
@@ -81,10 +97,12 @@ function App() {
                     </Link>
                 </div>
                 <ListarMateriales materiales={recomendados} />
-
                 <ImagenPrueba></ImagenPrueba>
                 <InterestList></InterestList>
                 <DireccionesEntrega />
+                <Link to = {"/matRegister"}> Registro de material</Link>
+                <Link to = {"/subirImagenes"}> Imagenes</Link>
+                
             </div>
         </>
     );
