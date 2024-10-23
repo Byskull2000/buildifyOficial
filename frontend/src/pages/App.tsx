@@ -85,6 +85,7 @@ function App() {
                 <ImagenPrueba></ImagenPrueba>
                 <InterestList></InterestList>
                 <DireccionesEntrega />
+                <Link to="/matRegister">Registro sde material</Link>
             </div>
         </>
     );

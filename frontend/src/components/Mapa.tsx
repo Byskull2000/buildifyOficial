@@ -8,6 +8,7 @@ import L from "leaflet";
 interface MapaProps {
   onUbicacionSeleccionada: (lat: number, lng: number) => void;
   onDireccionObtenida: (direccion: string) => void;
+  className?: string; // Agregado para permitir estilos
 }
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -21,6 +22,7 @@ L.Icon.Default.mergeOptions({
 const Mapa: React.FC<MapaProps> = ({
   onUbicacionSeleccionada,
   onDireccionObtenida,
+  className, // Desestructurar aquí
 }) => {
   const [ubicacion, setUbicacion] = useState<{
     lat: number;
@@ -58,7 +60,7 @@ const Mapa: React.FC<MapaProps> = ({
     <MapContainer
       center={[-17.3936, -66.157]}
       zoom={13}
-      className="w-80 h-80 rounded-lg"
+      className={`w-full h-full rounded-lg ${className}`} // Aplicar className
     >
       <TileLayer
         url="https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=GCOpKicdylXi0ePsOuiv"

@@ -12,6 +12,7 @@ import EditProfile from './pages/EditProfile.tsx'
 import Profile from './pages/Profile.tsx'
 import PublicProfile from './pages/PublicProfile.tsx'
 import InterestList from './components/InteresList.tsx';
+import MatRegister from './pages/MatRegister.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -27,6 +28,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/listaInteres" element={<InterestList/>}/>
         <Route path="/publicProfile" element={<PublicProfile/>} />
         <Route path="/profile" element={<Profile/>}/>
+        <Route path="/matRegister" element={<MatRegister/>}/>
       </Routes>
     </Router>
     </GoogleOAuthProvider>
