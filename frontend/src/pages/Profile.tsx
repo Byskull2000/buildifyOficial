@@ -82,6 +82,18 @@ const Page = () => {
             <div className="bg-white w-full flex flex-col gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931] font-poppins">
                 <aside className="hidden py-4 md:w-1/3 lg:w-1/4 md:block">
                     <div className="sticky flex flex-col gap-2 p-4 text-sm border-r border-indigo-100 top-12">
+                    <Link to="/" className="p-4 flex items-center">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="lg:w-6 lg:h-6 lg:mt-5 h-4 w-4 mt-5"
+                                viewBox="0 0 448 512"
+                            >
+                                <path
+                                    fill="#000000"
+                                    d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"
+                                />
+                            </svg>
+                        </Link>
                         <h2 className="pl-3 mb-4 text-2xl font-semibold">
                             Ajustes de usuario
                         </h2>
@@ -90,8 +102,16 @@ const Page = () => {
                             href="#"
                             className="flex items-center px-3 py-2.5 font-bold bg-white  text-yellow-500 border rounded-full"
                         >
-                            Perfil publico
+                            Mi cuenta
                         </a>
+                        <Link to="/publicProfile">
+                            <a
+                                href="#"
+                                className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full"
+                            >
+                                Perfil Comercial
+                            </a>
+                        </Link>
                         <Link to="/editProfile">
                             <a
                                 href="#"
@@ -106,19 +126,23 @@ const Page = () => {
                         >
                             Notificaciones
                         </a>
-                        <a
-                            href="#"
+                        <button
+                            onClick={() => {
+                                localStorage.removeItem('user')
+                                sessionStorage.removeItem('user')
+                                navigate('/')
+                            }}
                             className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full  "
                         >
-                            Campo a futuro
-                        </a>
+                            Cerrar Sesion
+                        </button>
                     </div>
                 </aside>
                 <main className="w-full min-h-screen py-1 md:w-2/3 lg:w-3/4">
                     <div className="p-2 md:p-4">
                         <div className="w-full px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg">
                             <h2 className="pl-6 text-2xl font-bold sm:text-xl">
-                                Perfil público
+                                Información de la cuenta
                             </h2>
 
                             <div className="grid max-w-2xl mx-auto mt-8">

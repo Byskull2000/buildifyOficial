@@ -104,15 +104,21 @@ const Page = () => {
         setPasswordLength(lengthCheck);
         return upperCaseCheck && numberCheck && lengthCheck;
     };
+    const userStorage =
+    sessionStorage.getItem("user") || localStorage.getItem("user") || null;
+    const user = userStorage ? JSON.parse(userStorage) : null;
 
     return (
         <div>
+            {!user &&(
             <button
                 onClick={() => setIsOpen(true)}
                 className="mt-4 p-2 bg-blue-500 text-white rounded"
             >
-                Abrir formulario
+                Registro Rapido
+                
             </button>
+             )}
 
             {isOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75 overflow-auto ">

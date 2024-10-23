@@ -19,6 +19,7 @@ def guardar_direccion_entrega():
         telefono = data.get('telefono')
         latitud = data.get('lat')
         longitud = data.get('lng')
+        userID = data.get('usuario')
 
         # Crear una nueva instancia del modelo DireccionEntrega
         nueva_direccion = DireccionEntrega(
@@ -26,7 +27,8 @@ def guardar_direccion_entrega():
             descrip_direcEntrega=direccion,
             telefono=telefono,
             latitud_entrega=latitud,
-            longitud_entrega=longitud
+            longitud_entrega=longitud,
+            id_usuario=userID
         )
 
         # Guardar la nueva dirección en la base de datos

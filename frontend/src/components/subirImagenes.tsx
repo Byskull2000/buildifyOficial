@@ -1,13 +1,5 @@
-
 import React, { useState } from "react";
 import Cropper from "react-easy-crop";
-
-
-interface Foto {
-    id: number;
-    filename: string;
-    data: string; 
-}
 
 const MAX_SIZE_MB = 5 * 1024 * 1024; 
 const MAX_RESOLUTION = 1024; 
@@ -20,10 +12,7 @@ const ImageUploader: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [progress, setProgress] = useState<number>(0);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const [isGalleryOpen, setIsGalleryOpen] = useState<boolean>(false);
-    const [galleryImages, setGalleryImages] = useState<Foto[]>([]);
     const [showCloseConfirmation, setShowCloseConfirmation] = useState<boolean>(false);
-    
     const [rotation, setRotation] = useState(0); // Estado para la rotación en grados
     const [imagenRecortada, setImagenRecortada] = useState<Blob | null>(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -50,7 +39,7 @@ const ImageUploader: React.FC = () => {
 
     const rotateImage = () => {
         const newRotation = (rotation + 90) % 360; // Incrementa la rotación en 90 grados
-        setRotation(newRotation); // Actualiza el estado de rotación
+        setRotation(newRotation); 
       };
     
 
@@ -304,74 +293,16 @@ const ImageUploader: React.FC = () => {
         setShowCloseConfirmation(false); // Ocultar la confirmación
     };
 
-    
-
-    //mostrar la galeria
-    const toggleGallery = async () => {
-        setIsGalleryOpen(!isGalleryOpen);
-        if (!isGalleryOpen) {
-            try {
-                const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
-                const response = await fetch(URL_BACKEND + "/api/galeria");
-                if (!response.ok) {
-                    throw new Error("Error al cargar imágenes de la galería.");
-                }
-                const data = await response.json();
-                setGalleryImages(data.fotos);
-            } catch (error) {
-                console.error(error);
-                setErrorMessage("Ocurrió un error al cargar la galería.");
-            }
-        }
-    };
-
-    const userStorage =
-    sessionStorage.getItem("user") || localStorage.getItem("user") || null;
-const user = userStorage ? JSON.parse(userStorage) : null;
-
     return (
         <div>
-            {user && (
-            <>
-                <button
-                    onClick={() => setIsModalOpen(true)}
-                    style={{
-                        padding: "10px 20px",
-                        backgroundColor: "#007bff",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                        marginRight: "10px",
-                    }}
-                >
-                    Subir Foto
-                </button>
+                {/* Mostrar mensaje de error si hay alguno */}
+                {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
 
-                <button
-                    onClick={toggleGallery}
-                    style={{
-                        padding: "10px 20px",
-                        backgroundColor: "#28a745",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                    }}
-                >
-                    Galería
-                </button>
-            </>
-        )}
+                {/* Mostrar mensaje sobre la imagen recortada */}
+                {imagenRecortada ? (<p></p>) : (<p></p>)}
 
-            {/* Mostrar mensaje de error si hay alguno */}
-            {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
-
-            {/* Mostrar mensaje sobre la imagen recortada */}
-            {imagenRecortada ? (<p></p>) : (<p></p>)}
-
-            {/* Modal para subir imágenes */}
-            {isModalOpen && (
+                {/* Modal para subir imágenes */}
+                {isModalOpen && (
                 <div
                     style={{
                         position: "fixed",
@@ -647,8 +578,6 @@ const user = userStorage ? JSON.parse(userStorage) : null;
                         </div>
                         )}
 
-
-
                     {/* Modal de confirmación */}
                     {showCloseConfirmation && (
                             <div
@@ -697,7 +626,7 @@ const user = userStorage ? JSON.parse(userStorage) : null;
                                                 backgroundColor: "#dc3545",
                                                 color: "white",
                                                 border: "none",
-                                                borderRadius: "5px",
+                                                borderRadius: "5px", 
                                                 cursor: "pointer",
                                             }}
                                         >
@@ -710,78 +639,6 @@ const user = userStorage ? JSON.parse(userStorage) : null;
                     </div>
                 )}
 
-
-
-                {/* Galería de imágenes */}
-                {isGalleryOpen && (
-                <div
-                    style={{
-                        position: "fixed",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        backgroundColor: "rgba(0, 0, 0, 0.5)",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                >
-                    <div
-                        style={{
-                            backgroundColor: "white",
-                            padding: "20px",
-                            width: "800px",
-                            height: "500px",
-                            borderRadius: "10px",
-                            position: "relative",
-                        }}
-                    >
-                        <h2>Galería de Imágenes</h2>
-
-                        <button
-                            onClick={toggleGallery}
-                            style={{
-                                position: "absolute",
-                                top: "10px",
-                                right: "10px",
-                                background: "none",
-                                border: "none",
-                                fontSize: "18px",
-                                cursor: "pointer",
-                            }}
-                        >
-                            &times;
-                        </button>
-
-                        <div
-                            style={{
-                                display: "flex",
-                                flexWrap: "wrap",
-                                gap: "10px",
-                                justifyContent: "center",
-                                overflowY: "scroll",
-                                maxHeight: "400px",
-                            }}
-                        >
-                            {galleryImages.map((foto) => (
-                                <img
-                                    key={foto.id}
-                                    src={`data:image/jpeg;base64,${foto.data}`}
-                                    alt={foto.filename}
-                                    style={{
-                                        width: "200px",
-                                        height: "200px",
-                                        objectFit: "cover",
-                                        border: "0px solid #007bff",
-                                        borderRadius: "5px",
-                                    }}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

@@ -5,8 +5,16 @@ import { MdLocationOn } from "react-icons/md";
 import { useEffect, useState } from "react";
 import Loading from "../components/Loading";
 import Cropper from "react-easy-crop";
+import Mapa from "../components/Mapa";
 
+interface Ubicacion {
+    lat: number;
+    lng: number;
+}
 const Page = () => {
+    const [openMap, setOpenMap] = useState(false);
+    const [coordenadasSeleccionadas, setCoordenadasSeleccionadas] =
+        useState<Ubicacion | null>(null);
     const [nombre_usuario, setNombre] = useState("");
     const [cod_pais, setCodPais] = useState("+591");
     const [numero_telefono, setTelefono] = useState("");
@@ -33,7 +41,10 @@ const Page = () => {
             const user = JSON.parse(data);
             setId(user.id_usuario || "");
             setNombre(user.nombre_usuario || "");
-            setTelefono(user.numero_telefono.split(' ')[1] || "");
+            const telf = user.numero_telefono
+                ? user.numero_telefono.split(" ")[1]
+                : "";
+            setTelefono(telf);
             setZonaTrabajo(user.zona_trabajo || "");
             setImagenPerfil(user.imagen_perfil || imgEjemploPerfil);
             setImagenOriginal(user.imagen_perfil || imgEjemploPerfil);
@@ -159,16 +170,28 @@ const Page = () => {
 
     const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
+
         const formData = new FormData();
         formData.append("nombre_usuario", nombre_usuario);
-        formData.append("numero_telefono", cod_pais +" "+ numero_telefono);
+        formData.append("numero_telefono", cod_pais + " " + numero_telefono);
         formData.append("zona_trabajo", zona_trabajo);
-        
+        if (coordenadasSeleccionadas) {
+            formData.append("latitud", coordenadasSeleccionadas.lat.toString());
+            formData.append(
+                "longitud",
+                coordenadasSeleccionadas.lng.toString()
+            );
+        }
+
+        if (numero_telefono.length < 8) {
+            setError("El número de teléfono debe tener al menos 8 dígitos");
+            return;
+        }
+
         if (imagenRecortada) {
             formData.append("imagen_perfil", imagenRecortada);
         }
-        
+
         try {
             setLoading(true);
             const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
@@ -210,6 +233,18 @@ const Page = () => {
             <div className="bg-white w-full flex flex-col gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931] font-poppins">
                 <aside className="hidden py-4 md:w-1/3 lg:w-1/4 md:block">
                     <div className="sticky flex flex-col gap-2 p-4 text-sm border-r border-indigo-100 top-12">
+                        <Link to="/" className="p-4 flex items-center">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="lg:w-6 lg:h-6 lg:mt-5 h-4 w-4 mt-5"
+                                viewBox="0 0 448 512"
+                            >
+                                <path
+                                    fill="#000000"
+                                    d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"
+                                />
+                            </svg>
+                        </Link>
                         <h2 className="pl-3 mb-4 text-2xl font-semibold">
                             Ajustes de usuario
                         </h2>
@@ -218,7 +253,13 @@ const Page = () => {
                             href="/profile"
                             className="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full"
                         >
-                            Perfil publico
+                            Mi cuenta
+                        </a>
+                        <a
+                            href="/publicProfile"
+                            className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full"
+                        >
+                            Perfil Comercial
                         </a>
                         <a
                             href="/editProfile"
@@ -232,12 +273,16 @@ const Page = () => {
                         >
                             Notificaciones
                         </a>
-                        <a
-                            href="#"
+                        <button
+                            onClick={() => {
+                                localStorage.removeItem("user");
+                                sessionStorage.removeItem("user");
+                                navigate("/");
+                            }}
                             className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full  "
                         >
-                            Campo a futuro
-                        </a>
+                            Cerrar Sesion
+                        </button>
                     </div>
                 </aside>
                 <main className="w-full min-h-screen py-1 md:w-2/3 lg:w-3/4">
@@ -338,25 +383,38 @@ const Page = () => {
                                             </label>
                                             <input
                                                 type="text"
-                                                className="bg-yellow-100 border border-orange-200 text-sm rounded-lg block w-full p-2.5 "
+                                                className="bg-yellow-100 border border-orange-200 text-sm rounded-lg block w-full p-2.5"
                                                 placeholder="Tu nombre"
                                                 required
                                                 value={nombre_usuario}
-                                                pattern="[A-Za-z\s]+"
-                                                onChange={(e) =>
-                                                    setNombre(e.target.value)
-                                                }
+                                                onChange={(e) => {
+                                                    const valor =
+                                                        e.target.value.replace(
+                                                            /[^A-Za-z\sñÑ]/g,
+                                                            ""
+                                                        );
+                                                    setNombre(valor);
+                                                }}
                                             />
-                                             <label className="block mb-2 text-sm font-medium ">
-                                                    Telefono
-                                                </label>
+                                            <label className="block mb-2 text-sm font-medium ">
+                                                Telefono
+                                            </label>
                                             <div className="flex space-x-2 mb-2">
                                                 <select
                                                     defaultValue={cod_pais}
                                                     className="bg-yellow-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                                    onChange={(e) =>
+                                                        setCodPais(
+                                                            e.target.value
+                                                        )
+                                                    }
                                                 >
-                                                    <option value="+591">+591</option>
-                                                    <option value="+31">+31</option>
+                                                    <option value="+591">
+                                                        +591
+                                                    </option>
+                                                    <option value="+31">
+                                                        +31
+                                                    </option>
                                                 </select>
                                                 <input
                                                     type="tel"
@@ -367,14 +425,16 @@ const Page = () => {
                                                     onChange={(e) => {
                                                         const valor =
                                                             e.target.value.replace(
-                                                                /[^+\d\s-]/g,
+                                                                /[^+\d-]/g,
                                                                 ""
                                                             ); // Permite solo +, dígitos, espacios y guiones
-                                                        setTelefono(valor);
+                                                        if (valor.length <= 8) {
+                                                            setTelefono(valor);
+                                                        }
                                                     }}
                                                 />
                                             </div>
-                                            <div className="mb-2 sm:mb-6">
+                                            <div className="mb-3">
                                                 <label className="block mb-2 text-sm font-medium ">
                                                     Ubicacion
                                                 </label>
@@ -391,17 +451,68 @@ const Page = () => {
                                                             )
                                                         }
                                                     />
-                                                    <button className="ml-2 p-2 bg-yellow-100 border hover:bg-yellow-500 border-orange-200 rounded-lg">
+                                                    <div
+                                                        onClick={() =>
+                                                            setOpenMap(!openMap)
+                                                        }
+                                                        className="ml-2 p-2 bg-yellow-100 border hover:bg-yellow-500 border-orange-200 rounded-lg hover:cursor-pointer"
+                                                    >
                                                         <MdLocationOn className="text-xl text-black" />
-                                                    </button>
+                                                    </div>
                                                 </div>
+                                                {openMap && (
+                                                    <div
+                                                        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+                                                        onClick={() =>
+                                                            setOpenMap(false)
+                                                        } // Cerrar modal al hacer clic fuera
+                                                    >
+                                                        <div
+                                                            className="bg-white p-6 rounded-lg"
+                                                            onClick={(e) =>
+                                                                e.stopPropagation()
+                                                            } // Prevenir cierre al hacer clic dentro del modal
+                                                        >
+                                                            <button
+                                                                className="text-black font-bold mb-4"
+                                                                onClick={() =>
+                                                                    setOpenMap(
+                                                                        false
+                                                                    )
+                                                                } // Botón para cerrar el modal
+                                                            >
+                                                                Cerrar
+                                                            </button>
+
+                                                            <Mapa
+                                                                onUbicacionSeleccionada={(
+                                                                    lat: number,
+                                                                    lng: number
+                                                                ) => {
+                                                                    setCoordenadasSeleccionadas(
+                                                                        {
+                                                                            lat,
+                                                                            lng,
+                                                                        }
+                                                                    );
+                                                                    setOpenMap(
+                                                                        false
+                                                                    ); 
+                                                                }}
+                                                                onDireccionObtenida={
+                                                                    setZonaTrabajo
+                                                                }
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                )}
                                             </div>
                                             {error && (
-                                                <p style={{ color: "red" }}>
+                                                <p className="text-red-600 py-1">
                                                     {error}
                                                 </p>
                                             )}
-                                            <div className="flex justify-end">
+                                            <div className="flex justify-end mt-3">
                                                 <button
                                                     type="submit"
                                                     className="text-white border-orange-300 bg-[#FED35F] hover:bg-yellow-500 focus:ring-4 focus:outline-none focus:ring-orange-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
