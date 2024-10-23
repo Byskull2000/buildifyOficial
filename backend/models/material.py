@@ -10,7 +10,7 @@ class Material(db.Model):
     descripcion_material = db.Column(db.String(255), nullable=True)
 
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario', ondelete="CASCADE"), nullable=False)
-    id_tipoMaterial = db.Column(db.Integer, db.ForeignKey('Tipo_Material.id_tipoMaterial', ondelete="CASCADE"), nullable=False)
+    id_tipo_material = db.Column(db.Integer, db.ForeignKey('tipo_material.id_tipo_material', ondelete="CASCADE"), nullable=False)
 
     usuario = db.relationship('Usuario', backref=db.backref('materiales', lazy=True, cascade="all, delete"))
     tipo_material = db.relationship('Usuario', backref=db.backref('materiales', lazy=True, cascade="all, delete"))

@@ -1,8 +1,8 @@
 from utils.db import db
 
 class TipoMaterial(db.Model):
-    __tablename__ = 'Tipo_Material'
+    __tablename__ = 'tipo_material'
 
-    id_tipoMaterial = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id_tipo_material = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre_tipo_material = db.Column(db.String(50), nullable=False)
-    descripcion_tipoMaterial = db.Column(db.String(255), nullable=True)
+    descripcion_tipo_material = db.Column(db.String(255), nullable=True)
