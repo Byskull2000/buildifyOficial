@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Mapa from "../components/Mapa";
 import { MdLocationOn } from "react-icons/md";
-import SubirImagenes from "../components/subirImagenes";
 
 
 
@@ -22,6 +21,7 @@ const page = () => {
     const [condicion, setCondicion] = useState("");
     const [descripcion, setDescripcion] = useState("");
 
+    console.log(coordenadasSeleccionadas)
 
 
     return (

@@ -75,9 +75,7 @@ function App() {
         <>
             <NavBar />
             <div className="bg-white  w-[90%] mx-auto">
-                <h2 className="flex justify-center">
-                    Bienvenido {user ? user.nombre_usuario : "Invitado"}
-                </h2>
+                
                 {!user && <PopupRegristro></PopupRegristro>}
 
                 <div className="flex justify-between items-center mb-5">
