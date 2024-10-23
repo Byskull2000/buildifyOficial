@@ -96,3 +96,68 @@ def obtener_materiales():
             'message': 'Error al obtener los materiales',
             'error': str(e)
         }), 400
+
+@material.route('/api/materiales/usuario/<int:id_usuario>', methods=['GET'])
+def obtener_materiales_por_usuario(id_usuario):
+    try:
+        # Obtener los materiales filtrados por el id del usuario
+        materiales = Material.query.filter_by(id_usuario=id_usuario).all()
+
+        if not materiales:
+            return jsonify({'message': 'No se encontraron materiales para este usuario'}), 404
+
+        # Convertir resultados a JSON
+        data = [{
+            'id_material': material.id_material,
+            'nombre_material': material.nombre_material,
+            'cantidad_material': material.cantidad_material,
+            'estado_material': material.estado_material,
+            'precio_material': material.precio_material,
+            'descripcion_material': material.descripcion_material,
+            'id_usuario': material.id_usuario,
+            'id_tipo_material': material.id_tipo_material
+        } for material in materiales]
+
+        return jsonify({
+            'message': 'Materiales obtenidos exitosamente',
+            'data': data
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'message': 'Error al obtener los materiales',
+            'error': str(e)
+        }), 400
+
+
+@material.route('/api/materiales/tipo/<int:id_tipo_material>', methods=['GET'])
+def obtener_materiales_por_tipo_material(id_tipo_material):
+    try:
+        # Obtener los materiales filtrados por el tipo de material
+        materiales = Material.query.filter_by(id_tipo_material=id_tipo_material).all()
+
+        if not materiales:
+            return jsonify({'message': 'No se encontraron materiales para este tipo de material'}), 404
+
+        # Convertir resultados a JSON
+        data = [{
+            'id_material': material.id_material,
+            'nombre_material': material.nombre_material,
+            'cantidad_material': material.cantidad_material,
+            'estado_material': material.estado_material,
+            'precio_material': material.precio_material,
+            'descripcion_material': material.descripcion_material,
+            'id_usuario': material.id_usuario,
+            'id_tipo_material': material.id_tipo_material
+        } for material in materiales]
+
+        return jsonify({
+            'message': 'Materiales obtenidos exitosamente',
+            'data': data
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'message': 'Error al obtener los materiales',
+            'error': str(e)
+        }), 400
