@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from utils.db import db
 from models.material import Material
-
+from models.tipo_material import TipoMaterial
 material = Blueprint("material", __name__)
 
 @material.route('/api/registrar_material', methods=['POST'])
@@ -193,3 +193,36 @@ def obtener_material_por_id(id_material):
             'message': 'Error al obtener el material',
             'error': str(e)
         }), 400
+
+
+@material.route('/api/materiales/<int:id>',methods=['PUT'])
+def actualizar_material(id):
+    
+    material = Material.query.get(id)
+    
+    if not material:
+        return jsonify({'message': 'Material no encontrado'}), 400
+    
+    data = request.get_json()
+    nombre_material = data["nombre_material"]
+    cantidad_material = data["cantidad_material"]
+    estado_material = data["estado_material"]
+    precio_material = data["precio_material"]
+    descripcion_material = data["descripcion_material"]
+    id_tipo_material = data["id_tipo_material"]
+    
+    tipo_material = TipoMaterial.query.get(id_tipo_material)
+    if not tipo_material:
+        return jsonify({'message': 'Tipo de material no válido'}), 400
+    
+    
+    material.nombre_material = nombre_material
+    material.estado_material = estado_material
+    material.precio_material = precio_material
+    material.descripcion_material = descripcion_material
+    material.id_tipo_material = id_tipo_material
+    material.cantidad_material = cantidad_material
+    
+    db.session.commit()
+    
+    return jsonify({'message': 'material actualizado'})     
