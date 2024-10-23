@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from utils.db import db
 from models.material import Material
 
-material = Blueprint("material_bp", __name__)
+material = Blueprint("material", __name__)
 
 @material.route('/api/registrar_material', methods=['POST'])
 def registrar_material():
