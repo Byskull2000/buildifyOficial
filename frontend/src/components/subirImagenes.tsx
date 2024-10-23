@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Cropper from "react-easy-crop";
 
 const MAX_SIZE_MB = 5 * 1024 * 1024; 
 const MAX_RESOLUTION = 1024; 
 const MAX_IMAGES = 10; 
 
-const ImageUploader: React.FC = () => {
+const SubirImagenes: React.FC = () => {
     const [images, setImages] = useState<File[]>([]);
     const [previewImages, setPreviewImages] = useState<string[]>([]);
     const [uploading, setUploading] = useState<boolean>(false);
@@ -22,6 +22,9 @@ const ImageUploader: React.FC = () => {
     const [imageToEdit, setImageToEdit] = useState<string | null>(null); // Imagen seleccionada para editar
 
 
+    useEffect(()=>{
+        setIsModalOpen(true);
+    }, []) 
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -273,6 +276,11 @@ const ImageUploader: React.FC = () => {
         }
     };
 
+    const clearImages = () => {
+        setPreviewImages([]);
+        setErrorMessage('');
+    };
+
     const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
     };
@@ -286,7 +294,7 @@ const ImageUploader: React.FC = () => {
     };
 
     const closeModal = () => {
-        setIsModalOpen(false);
+        clearImages();
         setErrorMessage("");
         setImages([]);
         setPreviewImages([]);
@@ -304,17 +312,7 @@ const ImageUploader: React.FC = () => {
                 {/* Modal para subir imágenes */}
                 {isModalOpen && (
                 <div
-                    style={{
-                        position: "fixed",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        backgroundColor: "rgba(0, 0, 0, 0.5)",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
+                    
                 >
                     <div
                         style={{
@@ -602,7 +600,7 @@ const ImageUploader: React.FC = () => {
                                         textAlign: "center",
                                     }}
                                 >
-                                    <h3 style={{ marginBottom: "20px" }}>¿Estás seguro de que deseas cerrar?</h3>
+                                    <h3 style={{ marginBottom: "20px" }}>¿Estás seguro de que deseas cancelar?</h3>
                                         <p style={{ marginBottom: "30px" }}>Perderás todas las imágenes seleccionadas</p>
 
                                     <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -644,4 +642,4 @@ const ImageUploader: React.FC = () => {
 };
 
 
-export default ImageUploader;
+export default SubirImagenes;
