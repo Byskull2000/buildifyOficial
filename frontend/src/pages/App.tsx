@@ -14,6 +14,8 @@ import material5 from "../assets/material5.png";
 import { MaterialProp } from "../components/Material";
 import { Link } from "react-router-dom";
 import ListarMateriales from "../components/ListarMateriales";
+import Categorias from "../components/Categorias"
+import FormEliminacion from "../components/formEliminacion"
 
 
 
@@ -25,6 +27,7 @@ function App() {
     const user = userStorage ? JSON.parse(userStorage) : null;
 
     const [recomendados, setRecomendados] = useState<MaterialProp[]>([]);
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
 
     useEffect(() => {
         // esta lista debe ser reemplazada por la API de recomendados
@@ -64,6 +67,9 @@ function App() {
 
         setRecomendados(recomendados);
     }, []);
+    const togglePopup = () => {
+        setIsPopupVisible(!isPopupVisible);
+    };
 
     return (
         <>
@@ -85,7 +91,7 @@ function App() {
                         Ver Mas
                     </Link>
                 </div>
-                
+                <Categorias></Categorias>
                 <div className="flex justify-between items-center">
                     <h2 className="font-semibold text-xl md:text-2xl ">
                         Recomendados para ti
@@ -101,8 +107,28 @@ function App() {
                 <ImagenPrueba></ImagenPrueba>
                 <InterestList></InterestList>
                 <DireccionesEntrega />
-                <Link to = {"/matRegister"}> Registro de material</Link>
-                <Link to = {"/subirImagenes"}> Imagenes</Link>
+                <Link to={"/matRegister"}>
+                    <button className="mr-5 *:mb-2 py-2 bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">Registrar material</button>
+                </Link>
+                <button
+                    className="mt-5 mb-2 py-2 bg-red-600 text-white p-2 font-semibold rounded-lg hover:bg-red-700 focus:outline-none"
+                    onClick={togglePopup}
+                >
+                    Eliminar Material
+                </button>
+
+                {/* Mostrar el PopUp de eliminación solo si el estado está activo */}
+                {isPopupVisible && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50 z-50">
+                        <FormEliminacion />
+                        <button
+                            onClick={togglePopup}
+                            className="absolute top-0 right-0 m-4 text-white bg-black p-2 rounded-full hover:bg-gray-800"
+                        >
+                            Cerrar
+                        </button>
+                    </div>
+                )}
                 
             </div>
         </>

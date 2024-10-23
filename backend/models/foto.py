@@ -9,6 +9,6 @@ class Foto(db.Model):
     filename = db.Column(db.String(100), nullable=False)
     data = db.Column(db.LargeBinary, nullable=False)
 
-    id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario', ondelete="CASCADE"), nullable=False)
-    usuario = db.relationship('Usuario', backref=db.backref('fotos', lazy=True, cascade="all, delete"))
+    id_material = db.Column(db.Integer, db.ForeignKey('material.id_material', ondelete="CASCADE"), nullable=False)
+    material = db.relationship('Material', backref=db.backref('fotos', lazy=True, cascade="all, delete"))
 
