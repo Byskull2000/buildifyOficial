@@ -161,3 +161,35 @@ def obtener_materiales_por_tipo_material(id_tipo_material):
             'message': 'Error al obtener los materiales',
             'error': str(e)
         }), 400
+
+@material.route('/api/materiales/<int:id_material>', methods=['GET'])
+def obtener_material_por_id(id_material):
+    try:
+        # Buscar el material por su ID
+        material = Material.query.get(id_material)
+
+        if not material:
+            return jsonify({'message': 'Material no encontrado'}), 404
+
+        # Convertir el material a JSON
+        data = {
+            'id_material': material.id_material,
+            'nombre_material': material.nombre_material,
+            'cantidad_material': material.cantidad_material,
+            'estado_material': material.estado_material,
+            'precio_material': material.precio_material,
+            'descripcion_material': material.descripcion_material,
+            'id_usuario': material.id_usuario,
+            'id_tipo_material': material.id_tipo_material
+        }
+
+        return jsonify({
+            'message': 'Material obtenido exitosamente',
+            'data': data
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'message': 'Error al obtener el material',
+            'error': str(e)
+        }), 400
