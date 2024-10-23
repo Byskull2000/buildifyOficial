@@ -13,4 +13,4 @@ class Material(db.Model):
     id_tipo_material = db.Column(db.Integer, db.ForeignKey('tipo_material.id_tipo_material', ondelete="CASCADE"), nullable=False)
 
     usuario = db.relationship('Usuario', backref=db.backref('materiales', lazy=True, cascade="all, delete"))
-    tipo_material = db.relationship('Usuario', backref=db.backref('materiales', lazy=True, cascade="all, delete"))
+    tipo_material = db.relationship('TipoMaterial', backref=db.backref('materiales', lazy=True, cascade="all, delete"))
