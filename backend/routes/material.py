@@ -194,8 +194,192 @@ def obtener_material_por_id(id_material):
             'error': str(e)
         }), 400
 
+@material.route('/api/materiales/rango_precio', methods=['GET'])
+def obtener_materiales_por_rango_precio():
+    try:
+        # Obtener los valores min y max del rango de precios desde los parámetros de la consulta
+        min_precio = request.args.get('min_precio', type=float)
+        max_precio = request.args.get('max_precio', type=float)
 
-@material.route('/api/materiales/<int:id>',methods=['PUT'])
+        # Validar que se hayan proporcionado ambos valores
+        if min_precio is None or max_precio is None:
+            return jsonify({'message': 'Se deben proporcionar los valores min_precio y max_precio'}), 400
+
+        # Filtrar materiales según el rango de precios
+        materiales = Material.query.filter(
+            Material.precio_material.cast(db.Float) >= min_precio,
+            Material.precio_material.cast(db.Float) <= max_precio
+        ).all()
+
+        if not materiales:
+            return jsonify({'message': 'No se encontraron materiales en el rango de precios especificado'}), 404
+
+        # Convertir resultados a JSON
+        data = [{
+            'id_material': material.id_material,
+            'nombre_material': material.nombre_material,
+            'cantidad_material': material.cantidad_material,
+            'estado_material': material.estado_material,
+            'precio_material': material.precio_material,
+            'descripcion_material': material.descripcion_material,
+            'id_usuario': material.id_usuario,
+            'id_tipo_material': material.id_tipo_material
+        } for material in materiales]
+
+        return jsonify({
+            'message': 'Materiales obtenidos exitosamente',
+            'data': data
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'message': 'Error al obtener los materiales',
+            'error': str(e)
+        }), 400
+
+
+@material.route('/api/materiales/estado/<string:estado_material>', methods=['GET'])
+def obtener_materiales_por_estado(estado_material):
+    try:
+        # Filtrar materiales según el estado
+        materiales = Material.query.filter_by(estado_material=estado_material).all()
+
+        if not materiales:
+            return jsonify({'message': 'No se encontraron materiales con el estado especificado'}), 404
+
+        # Convertir resultados a JSON
+        data = [{
+            'id_material': material.id_material,
+            'nombre_material': material.nombre_material,
+            'cantidad_material': material.cantidad_material,
+            'estado_material': material.estado_material,
+            'precio_material': material.precio_material,
+            'descripcion_material': material.descripcion_material,
+            'id_usuario': material.id_usuario,
+            'id_tipo_material': material.id_tipo_material
+        } for material in materiales]
+
+        return jsonify({
+            'message': 'Materiales obtenidos exitosamente',
+            'data': data
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'message': 'Error al obtener los materiales',
+            'error': str(e)
+        }), 400
+
+
+@material.route('/api/materiales/buscar', methods=['GET'])
+def buscar_materiales():
+    try:
+        # Obtener el texto de búsqueda desde los parámetros de la consulta
+        texto_busqueda = request.args.get('texto')
+
+        # Validar que se haya proporcionado el texto de búsqueda
+        if not texto_busqueda:
+            return jsonify({'message': 'Se debe proporcionar el texto de búsqueda'}), 400
+
+        # Filtrar materiales que contengan el texto en el nombre
+        materiales = Material.query.filter(Material.nombre_material.ilike(f'%{texto_busqueda}%')).all()
+
+        if not materiales:
+            return jsonify({'message': 'No se encontraron materiales que coincidan con la búsqueda'}), 404
+
+        # Convertir resultados a JSON
+        data = [{
+            'id_material': material.id_material,
+            'nombre_material': material.nombre_material,
+            'cantidad_material': material.cantidad_material,
+            'estado_material': material.estado_material,
+            'precio_material': material.precio_material,
+            'descripcion_material': material.descripcion_material,
+            'id_usuario': material.id_usuario,
+            'id_tipo_material': material.id_tipo_material
+        } for material in materiales]
+
+        return jsonify({
+            'message': 'Materiales obtenidos exitosamente',
+            'data': data
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'message': 'Error al buscar materiales',
+            'error': str(e)
+        }), 400
+
+
+
+@material.route('/api/materiales/buscar_avanzado', methods=['POST'])
+def buscar_materiales_avanzado():
+    try:
+        # Obtener los filtros desde el cuerpo de la petición
+        data = request.get_json()
+        
+        nombre_material = data.get('nombre_material', None)
+        id_tipo_material = data.get('id_tipo_material', None)
+        estado_material = data.get('estado_material', None)
+        min_precio = data.get('min_precio', None)
+        max_precio = data.get('max_precio', None)
+
+        # Iniciar la consulta de materiales
+        query = Material.query
+
+        # Aplicar filtros si los valores son proporcionados
+        if nombre_material:
+            query = query.filter(Material.nombre_material.ilike(f'%{nombre_material}%'))
+        
+        if id_tipo_material is not None:  # Usar is not None para permitir 0 como valor
+            query = query.filter_by(id_tipo_material=id_tipo_material)
+
+        if estado_material:
+            query = query.filter_by(estado_material=estado_material)
+
+        if min_precio is not None and max_precio is not None:
+            query = query.filter(
+                Material.precio_material.cast(db.Float) >= min_precio,
+                Material.precio_material.cast(db.Float) <= max_precio
+            )
+        elif min_precio is not None:  # Solo filtrar por mínimo si se proporciona
+            query = query.filter(Material.precio_material.cast(db.Float) >= min_precio)
+        elif max_precio is not None:  # Solo filtrar por máximo si se proporciona
+            query = query.filter(Material.precio_material.cast(db.Float) <= max_precio)
+
+        # Obtener los materiales que coinciden con los filtros aplicados
+        materiales = query.all()
+
+        if not materiales:
+            return jsonify({'message': 'No se encontraron materiales que coincidan con los filtros'}), 404
+
+        # Convertir resultados a JSON
+        data = [{
+            'id_material': material.id_material,
+            'nombre_material': material.nombre_material,
+            'cantidad_material': material.cantidad_material,
+            'estado_material': material.estado_material,
+            'precio_material': material.precio_material,
+            'descripcion_material': material.descripcion_material,
+            'id_usuario': material.id_usuario,
+            'id_tipo_material': material.id_tipo_material
+        } for material in materiales]
+
+        return jsonify({
+            'message': 'Materiales obtenidos exitosamente',
+            'data': data
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'message': 'Error al buscar materiales',
+            'error': str(e)
+        }), 400
+
+
+
+
+@material.route('/api/editar-material/<int:id>',methods=['PUT'])
 def actualizar_material(id):
     
     material = Material.query.get(id)
@@ -226,3 +410,5 @@ def actualizar_material(id):
     db.session.commit()
     
     return jsonify({'message': 'material actualizado'})     
+
+
