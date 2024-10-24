@@ -8,6 +8,10 @@ class Material(db.Model):
     estado_material = db.Column(db.String(20), nullable=False)
     precio_material = db.Column(db.String(30), nullable=False)
     descripcion_material = db.Column(db.String(255), nullable=True)
+    latitud_publicacion_material = db.Column(db.String(255), nullable=True)
+    longitud_publicacion_material = db.Column(db.String(255), nullable=True)
+    descripcion_direccion_material = db.Column(db.String(255), nullable=True)
+    estado_publicacion_material = db.Column(db.String(255), nullable=True)
 
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario', ondelete="CASCADE"), nullable=False)
     id_tipo_material = db.Column(db.Integer, db.ForeignKey('tipo_material.id_tipo_material', ondelete="CASCADE"), nullable=False)
