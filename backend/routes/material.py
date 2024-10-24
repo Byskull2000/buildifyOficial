@@ -359,7 +359,7 @@ def buscar_materiales():
 
 
 
-@material.route('/api/materiales/buscar_avanzado', methods=['GET'])
+@material.route('/api/materiales/buscar_avanzado', methods=['GET','POST'])
 def buscar_materiales_avanzado():
     try:
         # Obtener los filtros desde el cuerpo de la petición
