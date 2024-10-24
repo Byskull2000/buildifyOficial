@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from utils.db import db
 from models.material import Material
 from models.tipo_material import TipoMaterial
+
 material = Blueprint("material", __name__)
 
 @material.route('/api/registrar_material', methods=['POST'])
@@ -15,6 +16,9 @@ def registrar_material():
         estado_material = data.get('estado_material')
         precio_material = data.get('precio_material')
         descripcion_material = data.get('descripcion_material')
+        latitud_publicacion_material = data.get('latitud_publicacion_material')
+        longitud_publicacion_material = data.get('longitud_publicacion_material')
+        descripcion_direccion_material = data.get('descripcion_direccion_material')
         id_usuario = data.get('id_usuario')
         id_tipo_material = data.get('id_tipo_material')
 
@@ -39,6 +43,9 @@ def registrar_material():
             estado_material=estado_material,
             precio_material=precio_material,
             descripcion_material=descripcion_material,
+            latitud_publicacion_material=latitud_publicacion_material,
+            longitud_publicacion_material=longitud_publicacion_material,
+            descripcion_direccion_material=descripcion_direccion_material,
             id_usuario=id_usuario,
             id_tipo_material=id_tipo_material
         )
@@ -56,6 +63,11 @@ def registrar_material():
                 'estado_material': nuevo_material.estado_material,
                 'precio_material': nuevo_material.precio_material,
                 'descripcion_material': nuevo_material.descripcion_material,
+                'latitud_publicacion_material': nuevo_material.latitud_publicacion_material,
+                'longitud_publicacion_material': nuevo_material.longitud_publicacion_material,
+                'descripcion_direccion_material': nuevo_material.descripcion_direccion_material,
+                'estado_publicacion_material': nuevo_material.estado_publicacion_material,
+                'fecha_publicacion': nuevo_material.fecha_publicacion,
                 'id_usuario': nuevo_material.id_usuario,
                 'id_tipo_material': nuevo_material.id_tipo_material
             }
@@ -83,7 +95,12 @@ def obtener_materiales():
             'precio_material': material.precio_material,
             'descripcion_material': material.descripcion_material,
             'id_usuario': material.id_usuario,
-            'id_tipo_material': material.id_tipo_material
+            'id_tipo_material': material.id_tipo_material,
+            'latitud_publicacion_material': material.latitud_publicacion_material,
+            'longitud_publicacion_material': material.longitud_publicacion_material,
+            'descripcion_direccion_material': material.descripcion_direccion_material,
+            'estado_publicacion_material': material.estado_publicacion_material,
+            'fecha_publicacion': material.fecha_publicacion
         } for material in materiales]
 
         return jsonify({
@@ -115,7 +132,12 @@ def obtener_materiales_por_usuario(id_usuario):
             'precio_material': material.precio_material,
             'descripcion_material': material.descripcion_material,
             'id_usuario': material.id_usuario,
-            'id_tipo_material': material.id_tipo_material
+            'id_tipo_material': material.id_tipo_material,
+            'latitud_publicacion_material': material.latitud_publicacion_material,
+            'longitud_publicacion_material': material.longitud_publicacion_material,
+            'descripcion_direccion_material': material.descripcion_direccion_material,
+            'estado_publicacion_material': material.estado_publicacion_material,
+            'fecha_publicacion': material.fecha_publicacion
         } for material in materiales]
 
         return jsonify({
@@ -148,7 +170,12 @@ def obtener_materiales_por_tipo_material(id_tipo_material):
             'precio_material': material.precio_material,
             'descripcion_material': material.descripcion_material,
             'id_usuario': material.id_usuario,
-            'id_tipo_material': material.id_tipo_material
+            'id_tipo_material': material.id_tipo_material,
+            'latitud_publicacion_material': material.latitud_publicacion_material,
+            'longitud_publicacion_material': material.longitud_publicacion_material,
+            'descripcion_direccion_material': material.descripcion_direccion_material,
+            'estado_publicacion_material': material.estado_publicacion_material,
+            'fecha_publicacion': material.fecha_publicacion
         } for material in materiales]
 
         return jsonify({
@@ -180,7 +207,12 @@ def obtener_material_por_id(id_material):
             'precio_material': material.precio_material,
             'descripcion_material': material.descripcion_material,
             'id_usuario': material.id_usuario,
-            'id_tipo_material': material.id_tipo_material
+            'id_tipo_material': material.id_tipo_material,
+            'latitud_publicacion_material': material.latitud_publicacion_material,
+            'longitud_publicacion_material': material.longitud_publicacion_material,
+            'descripcion_direccion_material': material.descripcion_direccion_material,
+            'estado_publicacion_material': material.estado_publicacion_material,
+            'fecha_publicacion': material.fecha_publicacion
         }
 
         return jsonify({
@@ -223,7 +255,12 @@ def obtener_materiales_por_rango_precio():
             'precio_material': material.precio_material,
             'descripcion_material': material.descripcion_material,
             'id_usuario': material.id_usuario,
-            'id_tipo_material': material.id_tipo_material
+            'id_tipo_material': material.id_tipo_material,
+            'latitud_publicacion_material': material.latitud_publicacion_material,
+            'longitud_publicacion_material': material.longitud_publicacion_material,
+            'descripcion_direccion_material': material.descripcion_direccion_material,
+            'estado_publicacion_material': material.estado_publicacion_material,
+            'fecha_publicacion': material.fecha_publicacion
         } for material in materiales]
 
         return jsonify({
@@ -256,7 +293,12 @@ def obtener_materiales_por_estado(estado_material):
             'precio_material': material.precio_material,
             'descripcion_material': material.descripcion_material,
             'id_usuario': material.id_usuario,
-            'id_tipo_material': material.id_tipo_material
+            'id_tipo_material': material.id_tipo_material,
+            'latitud_publicacion_material': material.latitud_publicacion_material,
+            'longitud_publicacion_material': material.longitud_publicacion_material,
+            'descripcion_direccion_material': material.descripcion_direccion_material,
+            'estado_publicacion_material': material.estado_publicacion_material,
+            'fecha_publicacion': material.fecha_publicacion
         } for material in materiales]
 
         return jsonify({
@@ -296,7 +338,12 @@ def buscar_materiales():
             'precio_material': material.precio_material,
             'descripcion_material': material.descripcion_material,
             'id_usuario': material.id_usuario,
-            'id_tipo_material': material.id_tipo_material
+            'id_tipo_material': material.id_tipo_material,
+            'latitud_publicacion_material': material.latitud_publicacion_material,
+            'longitud_publicacion_material': material.longitud_publicacion_material,
+            'descripcion_direccion_material': material.descripcion_direccion_material,
+            'estado_publicacion_material': material.estado_publicacion_material,
+            'fecha_publicacion': material.fecha_publicacion
         } for material in materiales]
 
         return jsonify({
@@ -362,7 +409,12 @@ def buscar_materiales_avanzado():
             'precio_material': material.precio_material,
             'descripcion_material': material.descripcion_material,
             'id_usuario': material.id_usuario,
-            'id_tipo_material': material.id_tipo_material
+            'id_tipo_material': material.id_tipo_material,
+            'latitud_publicacion_material': material.latitud_publicacion_material,
+            'longitud_publicacion_material': material.longitud_publicacion_material,
+            'descripcion_direccion_material': material.descripcion_direccion_material,
+            'estado_publicacion_material': material.estado_publicacion_material,
+            'fecha_publicacion': material.fecha_publicacion
         } for material in materiales]
 
         return jsonify({
@@ -375,9 +427,6 @@ def buscar_materiales_avanzado():
             'message': 'Error al buscar materiales',
             'error': str(e)
         }), 400
-
-
-
 
 @material.route('/api/editar-material/<int:id>',methods=['PUT'])
 def actualizar_material(id):
@@ -394,6 +443,10 @@ def actualizar_material(id):
     precio_material = data["precio_material"]
     descripcion_material = data["descripcion_material"]
     id_tipo_material = data["id_tipo_material"]
+    estado_publicacion_material = data["estado_publicacion_material"]
+    latitud_publicacion_material = data["latitud_publicacion_material"]
+    longitud_publicacion_material = data["longitud_publicacion_material"]
+    descripcion_direccion_material = data["descripcion_direccion_material"]  
     
     tipo_material = TipoMaterial.query.get(id_tipo_material)
     if not tipo_material:
@@ -406,6 +459,10 @@ def actualizar_material(id):
     material.descripcion_material = descripcion_material
     material.id_tipo_material = id_tipo_material
     material.cantidad_material = cantidad_material
+    material.estado_publicacion_material = estado_publicacion_material
+    material.latitud_publicacion_material = latitud_publicacion_material  # Actualizar latitud
+    material.longitud_publicacion_material = longitud_publicacion_material  # Actualizar longitud
+    material.descripcion_direccion_material = descripcion_direccion_material  # Actualizar descripción de dirección
     
     db.session.commit()
     
