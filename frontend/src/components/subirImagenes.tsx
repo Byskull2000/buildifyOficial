@@ -324,8 +324,7 @@ const SubirImagenes: React.FC = () => {
                             position: "relative",
                         }}
                     >   
-                        <h2>Subir y Editar Imágenes</h2>
-
+                        
                         <button
                             onClick={toggleModal}
                             style={{
