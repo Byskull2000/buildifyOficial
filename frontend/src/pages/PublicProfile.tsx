@@ -1,13 +1,14 @@
 import imgEjemploPerfil from "../assets/ejemploPerfil.jpg";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import NavBar from "../components/NavBar";
+import {useNavigate } from "react-router-dom";
+import SimpleNavBar from "../components/simpleNavBar"
 const Page = () => {
     const [nombre_usuario, setNombre] = useState("");
     //const [numero_telefono, setTelefono] = useState("");
     const [zona_trabajo, setZonaTrabajo] = useState("");
     const [imagen_perfil, setImagenPerfil] = useState("");
     //const [id, setId] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         const data =
@@ -18,9 +19,9 @@ const Page = () => {
         if (data) {
             const user = JSON.parse(data);
             console.log(user);
-      //      setId(user.id_usuario || "");
+            //      setId(user.id_usuario || "");
             setNombre(user.nombre_usuario || "");
-        //    setTelefono(user.numero_telefono || "");
+            //    setTelefono(user.numero_telefono || "");
             setZonaTrabajo(user.zona_trabajo || "");
             setImagenPerfil(user.imagen_perfil || imgEjemploPerfil);
         }
@@ -35,13 +36,50 @@ const Page = () => {
                 href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap"
                 rel="stylesheet"
             />
-            <NavBar></NavBar>
-            <Link to="/">
-                <svg xmlns="http://www.w3.org/2000/svg" className="lg:w-6 lg:h-6 lg:mt-5 lg:ml-10 h-4 w-4 ml-5 mt-5" viewBox="0 0 448 512"><path fill="#000000" d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z" /></svg>
-
-            </Link>
-
-            <div className="bg-white flex flex-col gap-5 md:px-16 lg:px-28 md:flex-row text-[#161931] font-poppins -mt-10 ">
+            <SimpleNavBar></SimpleNavBar>
+            <div className="bg-white w-full flex flex-col gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931] font-poppins ">
+                <aside className="hidden py-4 md:w-1/3 lg:w-1/4 md:block">
+                    <div className="sticky flex flex-col gap-2 p-4 text-sm border-r border-indigo-100 top-12">
+                        <h2 className="pl-3 mb-4 text-2xl font-semibold">
+                            Ajustes de usuario
+                        </h2>
+                        {/*Areas de la seccion de perfil*/}
+                        <a
+                            href="/profile"
+                            className="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full"
+                        >
+                            Mi cuenta
+                        </a>
+                        <a
+                            href="/publicProfile"
+                            className="flex items-center px-3 py-2.5 font-bold bg-white  text-yellow-500 border rounded-full"
+                        >
+                            Perfil Comercial
+                        </a>
+                        <a
+                            href="/editProfile"
+                            className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full"
+                        >
+                            Editar perfil
+                        </a>
+                        <a
+                            href="#"
+                            className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full"
+                        >
+                            Notificaciones
+                        </a>
+                        <button
+                            onClick={() => {
+                                localStorage.removeItem("user");
+                                sessionStorage.removeItem("user");
+                                navigate("/");
+                            }}
+                            className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full  "
+                        >
+                            Cerrar Sesion
+                        </button>
+                    </div>
+                </aside>
                 <main className=" min-h-screen py-1 lg:w-3/4">
                     <div className="p-2 md:p-4">
                         <div className="px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg">
