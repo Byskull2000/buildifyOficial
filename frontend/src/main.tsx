@@ -14,7 +14,7 @@ import InterestList from './components/InteresList.tsx';
 import SubirImagenes from './components/subirImagenes.tsx';
 import Galeria from './components/galeria.tsx';
 import Buscar from './pages/Buscar.tsx';
-
+import MatRegister from './pages/MatRegister.tsx'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     {
@@ -35,6 +35,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/subirImagenes" element={<SubirImagenes/>}/>
         <Route path="/galeria" element={<Galeria/>}/>
         <Route path="/buscar" element={<Buscar/>}/>
+        <Route path="/matRegister" element={<MatRegister/>}/>
       </Routes>
     </Router>
     {

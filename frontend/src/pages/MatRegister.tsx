@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Mapa from "../components/Mapa";
 import { MdLocationOn } from "react-icons/md";
+import SubirImagenes from "../components/subirImagenes";
 
 
 
@@ -184,7 +185,8 @@ const page = () => {
                         </div>
                     </form>
                 </div>
-                <div>
+                <div className="mr-60">
+                    <SubirImagenes></SubirImagenes>
                 </div>
             </div>
         </div>

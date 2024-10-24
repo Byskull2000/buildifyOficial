@@ -74,9 +74,7 @@ const SubirImagenes: React.FC = () => {
                 const height = image.height;
 
                 
-                if (width !== height) {
-                    error = `La imagen ${file.name} debe tener formato 1:1 (cuadrada).`;
-                } else if (width > MAX_RESOLUTION || height > MAX_RESOLUTION) {
+                if (width > MAX_RESOLUTION || height > MAX_RESOLUTION) {
                     error = `La imagen ${file.name} no debe exceder 1024x1024 píxeles.`;
                 }
 
@@ -234,6 +232,23 @@ const SubirImagenes: React.FC = () => {
             return;
         }
 
+        // Verificar si todas las imágenes son cuadradas
+        const errors = await Promise.all(
+            images.map(async (image) => {
+                const img = await createImage(URL.createObjectURL(image));
+                return img.width !== img.height
+                    ? `La imagen ${image.name} no es cuadrada.`
+                    : null;
+            })
+        );
+
+        const hasError = errors.find((error) => error !== null);
+
+        if (hasError) {
+            setErrorMessage(hasError);
+            return;
+        }
+
         setUploading(true);
         setErrorMessage("");
         setProgress(0);
@@ -324,8 +339,7 @@ const SubirImagenes: React.FC = () => {
                             position: "relative",
                         }}
                     >   
-                        <h2>Subir y Editar Imágenes</h2>
-
+                        
                         <button
                             onClick={toggleModal}
                             style={{
