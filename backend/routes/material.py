@@ -359,17 +359,23 @@ def buscar_materiales():
 
 
 
-@material.route('/api/materiales/buscar_avanzado', methods=['POST'])
+@material.route('/api/materiales/buscar_avanzado', methods=['GET'])
 def buscar_materiales_avanzado():
     try:
         # Obtener los filtros desde el cuerpo de la petición
         data = request.get_json()
+
+        if not data:
+            return jsonify({'message': 'No se proporcionaron datos JSON'}), 400
         
         nombre_material = data.get('nombre_material', None)
         id_tipo_material = data.get('id_tipo_material', None)
         estado_material = data.get('estado_material', None)
         min_precio = data.get('min_precio', None)
         max_precio = data.get('max_precio', None)
+        orden_precio = data.get('orden_precio')  # Nuevo campo para ordenar por precio
+        ciudad = data.get('ciudad', None)  # Nuevo campo para buscar por ciudad        
+
 
         # Iniciar la consulta de materiales
         query = Material.query
@@ -393,6 +399,15 @@ def buscar_materiales_avanzado():
             query = query.filter(Material.precio_material.cast(db.Float) >= min_precio)
         elif max_precio is not None:  # Solo filtrar por máximo si se proporciona
             query = query.filter(Material.precio_material.cast(db.Float) <= max_precio)
+
+        if ciudad:
+            query = query.filter(Material.descripcion_direccion_material.ilike(f'%{ciudad}%'))
+        
+        # Ordenar por precio si se proporciona el campo de orden_precio
+        if orden_precio == 'asc':
+            query = query.order_by(Material.precio_material)
+        elif orden_precio == 'desc':
+            query = query.order_by(Material.precio_material.desc())
 
         # Obtener los materiales que coinciden con los filtros aplicados
         materiales = query.all()
