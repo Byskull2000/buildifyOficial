@@ -5,6 +5,7 @@ import Material from "../components/Material";
 import { URL_BACKEND } from "../constant/url";
 import Loading from "../components/Loading";
 import { useLocation } from "react-router-dom";
+
 const Buscar = () => {
     const [resultados, setResultados] = useState<MaterialProp[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -12,28 +13,26 @@ const Buscar = () => {
     const searchQuery = new URLSearchParams(window.location.search).get(
         "query"
     );
-    const [selected, setSelected] = useState<string | null>(null);
-    const handleSelect = (value: string) => {
-        if (selected === value) {
-            setSelected(null);
-        } else {
-            setSelected(value);
-        }
-    };
 
+    const [min_precio, setMinPrecio] = useState<number | null>(null);
+    const [max_precio, setMaxPrecio] = useState<number | null>(null);
+    const [estado_material, setEstadoMaterial] = useState<string | null>(null);
+    //const [id_tipo_material, setIdTipoMaterial] = useState<number | null>(null);
+    const [orden_precio, setOrdenPrecio] = useState<string | null>(null);
 
     useEffect(() => {
         const obtenerMateriales = async () => {
-            if (!searchQuery) {
-                setResultados([]);
-                return;
-            }
             setLoading(true);
-
             try {
                 const body = {
                     nombre_material: searchQuery,
+                    min_precio,
+                    max_precio,
+                    estado_material,
+                    orden_precio,
                 };
+                console.log(body);
+
                 const res = await fetch(
                     URL_BACKEND + "/api/materiales/buscar_avanzado",
                     {
@@ -59,8 +58,20 @@ const Buscar = () => {
             }
         };
 
-        obtenerMateriales();
-    }, [location, searchQuery]);
+        // Fetch materials whenever searchQuery or filters change
+        if (searchQuery) {
+            obtenerMateriales();
+        } else {
+            setResultados([]);
+        }
+    }, [
+        searchQuery,
+        min_precio,
+        max_precio,
+        estado_material,
+        orden_precio,
+        location,
+    ]);
 
     return (
         <div>
@@ -69,7 +80,9 @@ const Buscar = () => {
             <div className="md:w-[90%] mx-auto flex">
                 <aside className="hidden py-4 md:w-1/5 lg:w-1/5 md:block">
                     <div className="sticky flex flex-col gap-2 p-4 text-sm border-r border-indigo-100 top-12">
-                        <h2 className="pl-3 mb-4 text-2xl font-semibold">Filtros</h2>
+                        <h2 className="pl-3 mb-4 text-2xl font-semibold">
+                            Filtros
+                        </h2>
                         <div className="flex items-center space-x-4 mb-4">
                             <div className="flex flex-col w-full">
                                 <label
@@ -86,8 +99,14 @@ const Buscar = () => {
                                     placeholder="MIN"
                                     min="0"
                                     onChange={(e) => {
-                                        const value = Math.max(0, Number(e.target.value));
-                                        e.target.value = value.toString();
+                                        const value =
+                                            e.target.value === ""
+                                                ? null
+                                                : Math.max(
+                                                      0,
+                                                      Number(e.target.value)
+                                                  );
+                                        setMinPrecio(value);
                                     }}
                                 />
                             </div>
@@ -106,12 +125,14 @@ const Buscar = () => {
                                     placeholder="MAX"
                                     min="0"
                                     onChange={(e) => {
-                                        const minInput = document.getElementById(
-                                            "min_precio"
-                                        ) as HTMLInputElement | null;
-                                        const minValue = minInput ? Number(minInput.value) : 0;
-                                        const value = Math.max(minValue, Number(e.target.value));
-                                        e.target.value = value.toString();
+                                        const value =
+                                            e.target.value === ""
+                                                ? null
+                                                : Math.max(
+                                                      min_precio || 0,
+                                                      Number(e.target.value)
+                                                  );
+                                        setMaxPrecio(value);
                                     }}
                                 />
                             </div>
@@ -127,6 +148,9 @@ const Buscar = () => {
                                 id="estado_material"
                                 name="estado_material"
                                 className="border rounded-md px-3 py-2"
+                                onChange={(e) =>
+                                    setEstadoMaterial(e.target.value)
+                                }
                             >
                                 <option value="">Ninguno</option>
                                 <option value="nuevo">Nuevo</option>
@@ -137,12 +161,17 @@ const Buscar = () => {
                             </select>
                         </div>
                         <div className="flex flex-col mb-6">
-                            <label htmlFor="orden_precio" className="text-base font-bold mb-2 text-gray-700">
+                            <label
+                                htmlFor="orden_precio"
+                                className="text-base font-bold mb-2 text-gray-700"
+                            >
                                 Ordenar por
                             </label>
-
                             <hr className="border-t border-gray-300 mb-4" />
-                            <label htmlFor="orden_precio" className="text-sm font-medium mb-3 text-gray-600">
+                            <label
+                                htmlFor="orden_precio"
+                                className="text-sm font-medium mb-3 text-gray-600"
+                            >
                                 Precio
                             </label>
                             <div className="space-y-3">
@@ -150,14 +179,20 @@ const Buscar = () => {
                                     <input
                                         id="ninguno-radio"
                                         type="radio"
-                                        value="ninguno"
+                                        value="null"
                                         name="orden_precio"
-                                        checked={selected === "ninguno"}
-                                        onChange={() => handleSelect("ninguno")}
-                                        className={`w-5 h-5 ${selected === "ninguno" ? "text-blue-600" : "text-gray-300"
-                                            } border-gray-300 focus:ring-blue-500`}
+                                        checked={orden_precio === null}
+                                        onChange={() => setOrdenPrecio(null)}
+                                        className={`w-5 h-5 ${
+                                            !orden_precio
+                                                ? "text-blue-600"
+                                                : "text-gray-300"
+                                        } border-gray-300 focus:ring-blue-500`}
                                     />
-                                    <label htmlFor="ninguno-radio" className="ml-3 text-sm font-medium text-gray-700">
+                                    <label
+                                        htmlFor="ninguno-radio"
+                                        className="ml-3 text-sm font-medium text-gray-700"
+                                    >
                                         Ninguno
                                     </label>
                                 </div>
@@ -165,14 +200,20 @@ const Buscar = () => {
                                     <input
                                         id="barato-radio"
                                         type="radio"
-                                        value="barato"
+                                        value="asc"
                                         name="orden_precio"
-                                        checked={selected === "barato"}
-                                        onChange={() => handleSelect("barato")}
-                                        className={`w-5 h-5 ${selected === "barato" ? "text-blue-600" : "text-gray-300"
-                                            } border-gray-300 focus:ring-blue-500`}
+                                        checked={orden_precio === "asc"}
+                                        onChange={() => setOrdenPrecio("asc")}
+                                        className={`w-5 h-5 ${
+                                            orden_precio === "asc"
+                                                ? "text-blue-600"
+                                                : "text-gray-300"
+                                        } border-gray-300 focus:ring-blue-500`}
                                     />
-                                    <label htmlFor="barato-radio" className="ml-3 text-sm font-medium text-gray-700">
+                                    <label
+                                        htmlFor="barato-radio"
+                                        className="ml-3 text-sm font-medium text-gray-700"
+                                    >
                                         Más barato primero
                                     </label>
                                 </div>
@@ -180,22 +221,26 @@ const Buscar = () => {
                                     <input
                                         id="caro-radio"
                                         type="radio"
-                                        value="caro"
+                                        value="desc"
                                         name="orden_precio"
-                                        checked={selected === "caro"}
-                                        onChange={() => handleSelect("caro")}
-                                        className={`w-5 h-5 ${selected === "caro" ? "text-blue-600" : "text-gray-300"
-                                            } border-gray-300 focus:ring-blue-500`}
+                                        checked={orden_precio === "desc"}
+                                        onChange={() => setOrdenPrecio("desc")}
+                                        className={`w-5 h-5 ${
+                                            orden_precio === "desc"
+                                                ? "text-blue-600"
+                                                : "text-gray-300"
+                                        } border-gray-300 focus:ring-blue-500`}
                                     />
-                                    <label htmlFor="caro-radio" className="ml-3 text-sm font-medium text-gray-700">
+                                    <label
+                                        htmlFor="caro-radio"
+                                        className="ml-3 text-sm font-medium text-gray-700"
+                                    >
                                         Más caro primero
                                     </label>
                                 </div>
                             </div>
-
                             <hr className="border-t border-gray-300 mt-6" />
                         </div>
-
                     </div>
                 </aside>
                 <div className="ml-3">
