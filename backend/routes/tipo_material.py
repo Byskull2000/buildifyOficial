@@ -100,6 +100,11 @@ def obtener_tipo_material_por_id(id):
                 "descripcion_material": material.descripcion_material,
                 "id_usuario": material.id_usuario,
                 "id_tipo_material": material.id_tipo_material,
+                "latitud_publicacion_material": material.latitud_publicacion_material,
+                "longitud_publicacion_material": material.longitud_publicacion_material,
+                "descripcion_direccion_material": material.descripcion_direccion_material,
+                "estado_publicacion_material": material.estado_publicacion_material,
+                "fecha_publicacion": material.fecha_publicacion
             }
         )
 

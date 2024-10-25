@@ -1,5 +1,10 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import Material, { type MaterialProp } from "./Material";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faChevronLeft,
+    faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
 
 interface ListarMaterialesProps {
     materiales: MaterialProp[];
@@ -8,35 +13,43 @@ interface ListarMaterialesProps {
 const ListarMateriales = ({ materiales }: ListarMaterialesProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const handleScroll = (e: React.WheelEvent<HTMLDivElement>) => {
-        if (containerRef.current) {
-            const container = containerRef.current;
-
-            e.preventDefault();
-
-            container.scrollLeft -= e.deltaY;
-        }
-    };
-
-    const handleMouseEnter = () => {
-        document.body.style.overflow = 'hidden'; 
-    };
-    const handleMouseLeave = () => {
-        document.body.style.overflow = ''; 
-
-    };
-
     return (
-        <div
-            ref={containerRef}
-            className="flex gap-2 md:gap-9 md:px-4 py-5 overflow-x-auto hide-scrollbar"
-            onWheel={handleScroll} 
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-        >
-            {materiales.map((material, index) => (
-                <Material key={index} material={material} />
-            ))}
+        <div className="relative">
+            <button
+                className=" md:absolute  left-0 hover:bg-yellow-400 hover:rounded-full text-gray-800 -translate-y-1/2 z-50  top-1/2 items-center justify-center w-10 h-10 bg-transparent focus:outline-none"
+                onClick={() => {
+                    if (containerRef.current) {
+                        const container = containerRef.current;
+                        container.scrollBy({ left: -300, behavior: "smooth" });
+                    }
+                }}
+            >
+                <FontAwesomeIcon
+                    icon={faChevronLeft}
+                />
+            </button>
+            <div
+                ref={containerRef}
+                className="flex gap-2 md:gap-9 py-5 px-2 overflow-x-auto hide-scrollbar"
+            >
+                {materiales.map((material, index) => (
+                    <Material key={index} material={material} />
+                ))}
+            </div>
+            <button
+                className="md:absolute right-0  hover:bg-yellow-400 hover:rounded-full text-gray-800  top-1/2 -translate-y-1/2 z-50  items-center justify-center w-10 h-10 bg-transparent focus:outline-none"
+                onClick={() => {
+                    if (containerRef.current) {
+                        const container = containerRef.current;
+                        container.scrollBy({ left: 300, behavior: "smooth" });
+                    }
+                }}
+            >
+                <FontAwesomeIcon
+                    icon={faChevronRight}
+                   
+                />
+            </button>
         </div>
     );
 };
