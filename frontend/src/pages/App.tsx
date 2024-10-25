@@ -75,9 +75,6 @@ function App() {
         <>
             <NavBar />
             <div className="bg-white  w-[90%] mx-auto">
-                
-                {!user && <PopupRegristro></PopupRegristro>}
-
                 <div className="flex justify-between items-center mb-5">
                     <h2 className="font-semibold text-xl md:text-2xl ">
                         Categorías
@@ -127,7 +124,8 @@ function App() {
                         </button>
                     </div>
                 )}
-                
+                {!user && <PopupRegristro></PopupRegristro>}
+
             </div>
         </>
     );
