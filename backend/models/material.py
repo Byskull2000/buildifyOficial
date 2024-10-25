@@ -1,4 +1,5 @@
 from utils.db import db
+from sqlalchemy.sql import func
 
 class Material(db.Model):
     __tablename__= 'material'
@@ -8,6 +9,12 @@ class Material(db.Model):
     estado_material = db.Column(db.String(20), nullable=False)
     precio_material = db.Column(db.String(30), nullable=False)
     descripcion_material = db.Column(db.String(255), nullable=True)
+    latitud_publicacion_material = db.Column(db.String(255), nullable=True)
+    longitud_publicacion_material = db.Column(db.String(255), nullable=True)
+    descripcion_direccion_material = db.Column(db.String(255), nullable=True)
+    estado_publicacion_material = db.Column(db.String(255), default="Activo", nullable=True)
+
+    fecha_publicacion = db.Column(db.DateTime, default=func.now(), nullable=True)
 
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario', ondelete="CASCADE"), nullable=False)
     id_tipo_material = db.Column(db.Integer, db.ForeignKey('tipo_material.id_tipo_material', ondelete="CASCADE"), nullable=False)

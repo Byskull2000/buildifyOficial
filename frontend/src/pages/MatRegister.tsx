@@ -22,6 +22,7 @@ const page = () => {
     const [condicion, setCondicion] = useState("");
     const [descripcion, setDescripcion] = useState("");
 
+    console.log(coordenadasSeleccionadas)
 
 
     return (
@@ -184,7 +185,8 @@ const page = () => {
                         </div>
                     </form>
                 </div>
-                <div>
+                <div className="mr-60">
+                    <SubirImagenes></SubirImagenes>
                 </div>
             </div>
         </div>

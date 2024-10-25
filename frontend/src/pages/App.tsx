@@ -34,34 +34,34 @@ function App() {
 
         const recomendados = [
             {
-                id: 1,
+                id_material: 1,
                 imagenUrl: material1,
-                precio: 200,
-                titulo: "Ladrillos 6 huecos",
+                precio_material: 200,
+                nombre_material: "Ladrillos 6 huecos",
             },
             {
-                id: 2,
+                id_material: 2,
                 imagenUrl: material2,
-                precio: 200,
-                titulo: "Ladrillos 6 huecos",
+                precio_material: 200,
+                nombre_material: "Ladrillos 6 huecos",
             },
             {
-                id: 3,
+                id_material: 3,
                 imagenUrl: material3,
-                precio: 200,
-                titulo: "Ladrillos 6 huecos",
+                precio_material: 200,
+                nombre_material: "Ladrillos 6 huecos",
             },
             {
-                id: 4,
+                id_material: 4,
                 imagenUrl: material4,
-                precio: 200,
-                titulo: "Ladrillos 6 huecos",
+                precio_material: 200,
+                nombre_material: "Ladrillos 6 huecos",
             },
             {
-                id: 5,
+                id_material: 5,
                 imagenUrl: material5,
-                precio: 80,
-                titulo: "Arena lavada",
+                precio_material: 80,
+                nombre_material: "Arena lavada",
             },
         ];
 
@@ -75,9 +75,7 @@ function App() {
         <>
             <NavBar />
             <div className="bg-white  w-[90%] mx-auto">
-                <h2 className="flex justify-center">
-                    Bienvenido {user ? user.nombre_usuario : "Invitado"}
-                </h2>
+                
                 {!user && <PopupRegristro></PopupRegristro>}
 
                 <div className="flex justify-between items-center mb-5">

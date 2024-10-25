@@ -6,7 +6,6 @@ import Login from './pages/Login.tsx'
 import './index.css'
 import { BrowserRouter as Router,Routes, Route } from 'react-router-dom'
 import Register from './pages/Register.tsx'
-import { GoogleOAuthProvider } from '@react-oauth/google'
 import RegistroRapido from './pages/RegistroRapido.tsx'
 import EditProfile from './pages/EditProfile.tsx'
 import Profile from './pages/Profile.tsx'
@@ -19,7 +18,10 @@ import ViewGalery from './components/ViewGalery.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <GoogleOAuthProvider clientId='707624544355-tt3o1jqfblee1ciqmcvu2plhuitc26b7.apps.googleusercontent.com'>
+    {
+    //    <GoogleOAuthProvider clientId='707624544355-tt3o1jqfblee1ciqmcvu2plhuitc26b7.apps.googleusercontent.com'>
+    }
+
     <Router>
       <Routes>
         <Route path="/" element={<App />} />
@@ -37,6 +39,8 @@ createRoot(document.getElementById('root')!).render(
         
       </Routes>
     </Router>
-    </GoogleOAuthProvider>
+    {
+      //</GoogleOAuthProvider>
+    }
   </StrictMode>
 );

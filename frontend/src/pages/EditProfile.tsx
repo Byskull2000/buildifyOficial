@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Loading from "../components/Loading";
 import Cropper from "react-easy-crop";
 import Mapa from "../components/Mapa";
+import SimpleNavBar from "../components/simpleNavBar"
 
 interface Ubicacion {
     lat: number;
@@ -230,21 +231,10 @@ const Page = () => {
                 href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800&display=swap"
                 rel="stylesheet"
             />
+            <SimpleNavBar></SimpleNavBar>
             <div className="bg-white w-full flex flex-col gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931] font-poppins">
                 <aside className="hidden py-4 md:w-1/3 lg:w-1/4 md:block">
                     <div className="sticky flex flex-col gap-2 p-4 text-sm border-r border-indigo-100 top-12">
-                        <Link to="/" className="p-4 flex items-center">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="lg:w-6 lg:h-6 lg:mt-5 h-4 w-4 mt-5"
-                                viewBox="0 0 448 512"
-                            >
-                                <path
-                                    fill="#000000"
-                                    d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"
-                                />
-                            </svg>
-                        </Link>
                         <h2 className="pl-3 mb-4 text-2xl font-semibold">
                             Ajustes de usuario
                         </h2>
