@@ -484,3 +484,33 @@ def actualizar_material(id):
     return jsonify({'message': 'material actualizado'})     
 
 
+
+@material.route('/api/marcar-inactivo/<int:id>', methods=['PUT'])
+def marcar_inactivo(id):
+    try:
+        # Buscar el material por ID
+        material = Material.query.get(id)
+        
+        if not material:
+            return jsonify({'message': 'Material no encontrado'}), 404
+
+        # Cambiar el estado de publicación a "inactivo"
+        material.estado_publicacion_material = 'inactivo'
+
+        # Guardar los cambios
+        db.session.commit()
+
+        return jsonify({
+            'message': 'Material marcado como inactivo exitosamente',
+            'data': {
+                'id_material': material.id_material,
+                'estado_publicacion_material': material.estado_publicacion_material
+            }
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'message': 'Error al cambiar el estado de publicación',
+            'error': str(e)
+        }), 400
