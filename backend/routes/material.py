@@ -1,8 +1,15 @@
 from flask import Blueprint, jsonify, request
+import base64
 from utils.db import db
 from models.material import Material
 from models.tipo_material import TipoMaterial
+from models.foto import Foto
 material = Blueprint("material", __name__)
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
+# Función para verificar si la extensión de archivo es permitida
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @material.route('/api/registrar_material', methods=['POST'])
 def registrar_material():
@@ -31,6 +38,8 @@ def registrar_material():
             return jsonify({'message': 'El ID del usuario es obligatorio'}), 400
         if not id_tipo_material:
             return jsonify({'message': 'El ID del tipo de material es obligatorio'}), 400
+        if 'imagen' not in request.files:
+            return jsonify({'message': 'La imagen del material es obligatoria'}), 400
 
         # Crear una nueva instancia del modelo Material
         nuevo_material = Material(
@@ -47,6 +56,27 @@ def registrar_material():
         db.session.add(nuevo_material)
         db.session.commit()
 
+        # Procesar las fotos enviadas (si las hay)
+        if 'fotos' in request.files:
+            fotos = request.files.getlist('fotos')  # Obtener todas las fotos subidas
+
+            for foto in fotos:
+                if foto and allowed_file(foto.filename):
+                    # Leer el contenido de la imagen como binario
+                    imagen_binaria = foto.read()
+
+                    # Crear una nueva instancia de Foto
+                    nueva_foto = Foto(
+                        filename=foto.filename,
+                        data=imagen_binaria,
+                        id_material=nuevo_material.id_material  # Relacionar la foto con el material
+                    )
+
+                    # Guardar la foto en la base de datos
+                    db.session.add(nueva_foto)
+
+        db.session.commit()
+
         return jsonify({
             'message': 'Material registrado exitosamente',
             'data': {
@@ -57,7 +87,7 @@ def registrar_material():
                 'precio_material': nuevo_material.precio_material,
                 'descripcion_material': nuevo_material.descripcion_material,
                 'id_usuario': nuevo_material.id_usuario,
-                'id_tipo_material': nuevo_material.id_tipo_material
+                'id_tipo_material': nuevo_material.id_tipo_material,
             }
         }), 201
 
@@ -83,7 +113,14 @@ def obtener_materiales():
             'precio_material': material.precio_material,
             'descripcion_material': material.descripcion_material,
             'id_usuario': material.id_usuario,
-            'id_tipo_material': material.id_tipo_material
+            'id_tipo_material': material.id_tipo_material,
+            'fotos': [
+                {
+                    'id': foto.id,
+                    'filename': foto.filename,
+                    'data': base64.b64encode(foto.data).decode('utf-8')  # Codificar la imagen en base64
+                } for foto in material.fotos  # Obtener todas las fotos asociadas al material
+            ]   
         } for material in materiales]
 
         return jsonify({

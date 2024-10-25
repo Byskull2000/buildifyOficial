@@ -3,7 +3,7 @@ import Cropper from "react-easy-crop";
 
 const MAX_SIZE_MB = 5 * 1024 * 1024; 
 const MAX_RESOLUTION = 1024; 
-const MAX_IMAGES = 10; 
+const MAX_IMAGES = 5; 
 
 const SubirImagenes: React.FC = () => {
     const [images, setImages] = useState<File[]>([]);
@@ -74,9 +74,7 @@ const SubirImagenes: React.FC = () => {
                 const height = image.height;
 
                 
-                if (width !== height) {
-                    error = `La imagen ${file.name} debe tener formato 1:1 (cuadrada).`;
-                } else if (width > MAX_RESOLUTION || height > MAX_RESOLUTION) {
+                 if (width > MAX_RESOLUTION || height > MAX_RESOLUTION) {
                     error = `La imagen ${file.name} no debe exceder 1024x1024 píxeles.`;
                 }
 
@@ -234,6 +232,23 @@ const SubirImagenes: React.FC = () => {
             return;
         }
 
+        // Verificar si todas las imágenes son cuadradas
+        const errors = await Promise.all(
+            images.map(async (image) => {
+                const img = await createImage(URL.createObjectURL(image));
+                return img.width !== img.height
+                    ? `La imagen ${image.name} no es cuadrada.`
+                    : null;
+            })
+        );
+
+        const hasError = errors.find((error) => error !== null);
+
+        if (hasError) {
+            setErrorMessage(hasError);
+            return;
+        }
+
         setUploading(true);
         setErrorMessage("");
         setProgress(0);
@@ -303,8 +318,6 @@ const SubirImagenes: React.FC = () => {
 
     return (
         <div>
-                {/* Mostrar mensaje de error si hay alguno */}
-                {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
 
                 {/* Mostrar mensaje sobre la imagen recortada */}
                 {imagenRecortada ? (<p></p>) : (<p></p>)}
@@ -491,7 +504,7 @@ const SubirImagenes: React.FC = () => {
                                         style={{
                                             position:"relative",
                                             width: "100%",
-                                            height: "450px",
+                                            height: "400px",
                                             marginBottom:"20px",  
                                         }}
                                     >
@@ -505,6 +518,10 @@ const SubirImagenes: React.FC = () => {
                                         onZoomChange={setZoom}
                                         onCropComplete={onCropComplete}
                                         rotation={rotation}
+                                        //cropSize={{ width: 450, height: 450 }} // Tamaño del área de recorte, puedes ajustar a un valor mayor si es necesario
+                                        /*style={{
+                                            containerStyle: { height: "450px" }, // Ajusta la altura del contenedor del recorte
+                                        }}*/
                                     />
                                 </div>
                                 )}

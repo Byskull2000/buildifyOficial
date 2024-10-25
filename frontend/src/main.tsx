@@ -14,6 +14,8 @@ import PublicProfile from './pages/PublicProfile.tsx'
 import InterestList from './components/InteresList.tsx';
 import SubirImagenes from './components/subirImagenes.tsx';
 import Galeria from './components/Galeria.tsx';
+import ViewGalery from './components/ViewGalery.tsx';
+
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -31,6 +33,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/profile" element={<Profile/>}/>
         <Route path="/subirImagenes" element={<SubirImagenes/>}/>
         <Route path="/galeria" element={<Galeria/>}/>
+        <Route path="viewGalery" element={<ViewGalery/>}/>
+        
       </Routes>
     </Router>
     </GoogleOAuthProvider>
