@@ -61,6 +61,7 @@ def upload_file():
         try:
             img = Image.open(file)
             img.verify()  # Verifica que el archivo sea una imagen
+            
 
             # Esta validacion esta mal ya que te obliga que la imagen sea 1080 x 1080
             # if img.size != (1080, 1080):
