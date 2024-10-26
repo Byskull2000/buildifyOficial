@@ -46,7 +46,7 @@ const MaterialesFiltrados = () => {
       </div>
 
       {/* Mensaje descriptivo debajo de los botones */}
-      <div className="text-center text-lg font-medium mt-4 text-gray-800 bg-[#FDBC3F] p-2 rounded-md shadow-md text-white">
+      <div className="text-center text-lg font-medium mt-4 text-gray-800 bg-[#FDBC3F] p-2 rounded-md shadow-md">
         Descubra los productos disponibles en esta categoría de materiales
       </div>
 

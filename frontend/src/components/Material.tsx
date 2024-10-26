@@ -14,7 +14,7 @@ export interface MaterialProps {
 const Material = ({ material }: MaterialProps) => {
     return (
         <Link
-            to={"/materiales/" + material.id_material}
+            to={"/material/" + material.id_material}
             className="flex-shrink-0 hover:scale-105 transform transition"
         >
             <img

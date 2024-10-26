@@ -16,6 +16,7 @@ import Galeria from "./components/galeria.tsx";
 import Buscar from "./pages/Buscar.tsx";
 import MatRegister from "./pages/MatRegister.tsx";
 import MaterialesFiltrados from "./pages/MaterialesFiltrados.tsx"; // Importamos MaterialesFiltrados
+import Material from "./pages/Material.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -39,6 +40,8 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/buscar" element={<Buscar />} />
         <Route path="/matRegister" element={<MatRegister />} />
         <Route path="/materiales" element={<MaterialesFiltrados />} />
+        <Route path="/material" element={<Material />} />
+        
       </Routes>
     </Router>
     {
