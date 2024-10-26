@@ -40,7 +40,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/buscar" element={<Buscar />} />
         <Route path="/matRegister" element={<MatRegister />} />
         <Route path="/materiales" element={<MaterialesFiltrados />} />
-        <Route path="/material" element={<Material />} />
+        <Route path="/material/:id" element={<Material />} />
         
       </Routes>
     </Router>
