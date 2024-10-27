@@ -1,12 +1,12 @@
 import buildifyLogo from "../assets/Buildify.png";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import Mapa from "../components/Mapa";
 import { MdLocationOn } from "react-icons/md";
-import SubirImagenes from "../components/subirImagenes";
-
-
-
+import Cropper from 'react-easy-crop';
+import { getCroppedImg } from '../components/cropImage';
+import Modal from 'react-modal';
+Modal.setAppElement('#root');
 const page = () => {
 
     interface Ubicacion {
@@ -22,8 +22,49 @@ const page = () => {
     const [condicion, setCondicion] = useState("");
     const [descripcion, setDescripcion] = useState("");
     const [unidad, setUnidad] = useState("");
+    const [cantidad, setCantidad] = useState("");
     console.log(coordenadasSeleccionadas)
 
+    //Para las imagenes
+    const [image, setImage] = useState<string | null>(null);
+    const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState<number>(1);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+    const [croppedImage, setCroppedImage] = useState<string | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImage(reader.result as string);
+                setIsModalOpen(true); // Abre el modal al cargar la imagen
+            };
+            reader.readAsDataURL(file);
+        } else {
+            alert('Por favor, sube una imagen JPG o PNG.');
+        }
+    };
+    const handleUploadClick = () => {
+        const fileInput = document.getElementById('dropzone-file') as HTMLInputElement;
+        fileInput.click(); // Simula un clic en el input de archivo
+    };
+    const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: any) => {
+        setCroppedAreaPixels(croppedAreaPixels);
+    }, []);
+
+    const handleCrop = async () => {
+        if (image && croppedAreaPixels) {
+            try {
+                const croppedImage = await getCroppedImg(image, croppedAreaPixels);
+                setCroppedImage(croppedImage);
+            } catch (error) {
+                console.error('Error recortando la imagen:', error);
+            }
+            setIsModalOpen(false);
+        }
+    };
 
     return (
         <div>
@@ -124,6 +165,20 @@ const page = () => {
                                 </select>
                             </div>
                             <div>
+                                <label htmlFor="units" className="block text-sm font-medium text-gray-500 ml-2">Cantidad disponible</label>
+                                <input
+                                    required
+                                    placeholder="Cantidad disponible:"
+                                    type="number"
+                                    id="unidad"
+                                    name="unidad"
+                                    className="w-3/5 bg-gray-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                    value={cantidad}
+                                    onChange={(e) => setCantidad(e.target.value)}
+                                    min="0"
+                                />
+                            </div>
+                            <div>
                                 <label htmlFor="description" className="block text-sm font-medium text-gray-500 ml-2">Descripción</label>
                                 <textarea
                                     required
@@ -185,7 +240,7 @@ const page = () => {
                                 </div>
                             )}
                         </div>
-                        <div className="flex mt-3">
+                        <div className="flex mt-3 mb-5">
                             <button
                                 type="submit"
                                 className="text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
@@ -203,12 +258,62 @@ const page = () => {
                         </div>
                     </form>
                 </div>
-                <div className="mr-60">
-                    <SubirImagenes></SubirImagenes>
+                <div className="w-[80%]">
+                    <div className="flex flex-col items-center justify-center w-full">
+                        <label className="flex flex-col items-center justify-center w-full h-80 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"> {/* Cambiado a h-80 */}
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                {/* Aquí se muestra la imagen recortada si existe */}
+                                {croppedImage ? (
+                                    <div className="w-64 h-64 overflow-hidden border-2 border-gray-300 rounded"> {/* Tamaño de imagen recortada */}
+                                        <img src={croppedImage} alt="Cropped" className="w-full h-full object-cover" />
+                                    </div>
+                                ) : (
+                                    <>
+                                        <svg className="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                                        </svg>
+                                        <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Presiona para subir</span> O arrastra y suelta</p>
+                                        <p className="text-xs text-gray-500">PNG o JPG</p>
+                                    </>
+                                )}
+                            </div>
+                            <input id="dropzone-file" type="file" className="hidden" onChange={handleImageChange} />
+                        </label>
+
+
+                        <button
+                            onClick={handleUploadClick}
+                            className="mt-4 px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+                        >
+                            Seleccionar imagenes
+                        </button>
+                    </div>
+
+                    <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} className="fixed inset-0 flex items-center justify-center bg-white rounded-lg shadow-lg">
+                        <div className="p-4 max-w-md w-full">
+                            <h2 className="text-lg font-semibold mb-4">Recortar Imagen</h2>
+                            {image && (
+                                <div className="relative w-full h-96 mb-4">
+                                    <Cropper
+                                        image={image}
+                                        crop={crop}
+                                        zoom={zoom}
+                                        aspect={1} // Mantiene el aspecto 1:1
+                                        onCropChange={setCrop}
+                                        onZoomChange={setZoom}
+                                        onCropComplete={onCropComplete}
+                                    />
+                                </div>
+                            )}
+                            <div className="flex justify-between">
+                                <button onClick={handleCrop} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Recortar Imagen</button>
+                                <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Cancelar</button>
+                            </div>
+                        </div>
+                    </Modal>
                 </div>
             </div>
         </div>
-
     );
 }
 

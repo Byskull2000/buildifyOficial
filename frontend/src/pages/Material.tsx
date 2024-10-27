@@ -11,6 +11,7 @@ const Material = () => {
         ubicacion: "Avenida América esq Libertador N200",
         condicion: "Nuevo",
         precio: "Bs. 200",
+        cantidadDisponible:"10",
         descripcion: "Cemento de calidad alemana premmiun"
     };
 
@@ -33,11 +34,17 @@ const Material = () => {
                                 <label className="block font-semibold text-gray-700">Precio:</label>
                                 <p className="text-gray-800 text-lg font-semibold">{materialData.precio}</p>
                             </div>
-                            <div>
-                                <label className="block font-semibold text-gray-700">Tipo de material:</label>
-                                <p className="text-gray-800 text-lg">{materialData.tipoMaterial}</p>
-                            </div>
+                            <div className="grid lg:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block font-semibold text-gray-700">Tipo de material:</label>
+                                    <p className="text-gray-800 text-lg">{materialData.tipoMaterial}</p>
+                                </div>
+                                <div>
+                                    <label className="block font-semibold text-gray-700">Cantidad disponible:</label>
+                                    <p className="text-gray-800 text-lg">{materialData.cantidadDisponible}</p>
+                                </div>
 
+                            </div>
                             <div className="grid lg:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block font-semibold text-gray-700">Medida:</label>
