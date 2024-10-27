@@ -1,5 +1,5 @@
 import buildifyLogo from "../assets/Buildify.png";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Mapa from "../components/Mapa";
 import { MdLocationOn } from "react-icons/md";
@@ -12,8 +12,7 @@ const Page = () => {
         lat: number;
         lng: number;
     }
-    const [coordenadasSeleccionadas, setCoordenadasSeleccionadas] =
-        useState<Ubicacion | null>(null);
+    const [coordenadasSeleccionadas, setCoordenadasSeleccionadas] =  useState<Ubicacion | null>(null);
     const [openMap, setOpenMap] = useState(false);
     const [UbicacionMaterial, setUbicacionMaterial] = useState("");
     const [titulo, setTitulo] = useState("");
@@ -23,20 +22,18 @@ const Page = () => {
     const [descripcion, setDescripcion] = useState("");
     const [unidad, setUnidad] = useState("");
     const [cantidad, setCantidad] = useState("");
-    console.log(coordenadasSeleccionadas);
 
     //Para las imagenes
     const [image, setImage] = useState<string | null>(null);
     const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
     const [zoom, setZoom] = useState<number>(1);
-    const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
     const [croppedImage, setCroppedImage] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [images, setImages] = useState<string[]>([]);
     const [imagesPerCrop, setImagesPerCrop] = useState<File[]>([]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files ? Array.from(e.target.files): [];
+        const files = e.target.files ? Array.from(e.target.files) : [];
         const newImages: File[] = [];
         if (files) {
             files.forEach((file) => {
@@ -51,15 +48,16 @@ const Page = () => {
             });
         }
         setImagesPerCrop(newImages);
-
     };
     useEffect(() => {
         if (imagesPerCrop.length > 0) {
             const file = imagesPerCrop[0];
             const reader = new FileReader();
-            reader.onloadend = () => {
-                setImage(reader.result as string);
-                setIsModalOpen(true); // Abre el modal al cargar la imagen
+            reader.onloadend = (e) => {
+                if (e.target && typeof e.target.result === "string") {
+                    setImage(e.target.result);
+                    setIsModalOpen(true); // Abre el modal al cargar la imagen
+                }
             };
             reader.readAsDataURL(file);
         }
@@ -71,21 +69,27 @@ const Page = () => {
         ) as HTMLInputElement;
         fileInput.click(); // Simula un clic en el input de archivo
     };
-    const onCropComplete = useCallback((croppedAreaPixels: any) => {
-        setCroppedAreaPixels(croppedAreaPixels);
-    }, []);
+
+    const onCropComplete = async (
+        croppedArea: { x: number; y: number; width: number; height: number },
+        croppedAreaPixels: {
+            x: number;
+            y: number;
+            width: number;
+            height: number;
+        }
+    ) => {
+        console.log("Cropped Area: ", croppedArea);
+        if (image) {
+            const croppedImage = await getCroppedImg(image, croppedAreaPixels);
+            setCroppedImage(croppedImage); // Guardar la imagen recortada para mostrarla
+        }
+    };
 
     const handleCrop = async () => {
-        if (image && croppedAreaPixels) {
+        if (croppedImage) {
             try {
-                const croppedImage = await getCroppedImg(
-                    image,
-                    croppedAreaPixels
-                );
-                setCroppedImage(croppedImage);
                 setImages([...images, croppedImage]);
-                console.log(imagesPerCrop);
-
                 imagesPerCrop.shift();
                 setImagesPerCrop([...imagesPerCrop]);
             } catch (error) {
@@ -101,9 +105,11 @@ const Page = () => {
                 <Link to="/">
                     <div className="flex items-center gap-2 px-2">
                         <Link to="/">
-                            <img src={buildifyLogo}
+                            <img
+                                src={buildifyLogo}
                                 alt="Logo de buildifyF"
-                                className={`h-14 w-14 mr-2 hidden sm:block`} />
+                                className={`h-14 w-14 mr-2 hidden sm:block`}
+                            />
                         </Link>
                         <h1 className="self-center text-2xl font-black  whitespace-nowrap hidden sm:block">
                             Buildify
@@ -362,44 +368,33 @@ const Page = () => {
                             {/* Cambiado a h-80 */}
                             <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                 {/* Aquí se muestra la imagen recortada si existe */}
-                                {croppedImage ? (
-                                    <div className="w-64 h-64 overflow-hidden border-2 border-gray-300 rounded">
-                                        {" "}
-                                        {/* Tamaño de imagen recortada */}
-                                        <img
-                                            src={croppedImage}
-                                            alt="Cropped"
-                                            className="w-full h-full object-cover"
+
+                                <>
+                                    <svg
+                                        className="w-8 h-8 mb-4 text-gray-500"
+                                        aria-hidden="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 20 16"
+                                    >
+                                        <path
+                                            stroke="currentColor"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
                                         />
-                                    </div>
-                                ) : (
-                                    <>
-                                        <svg
-                                            className="w-8 h-8 mb-4 text-gray-500"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 20 16"
-                                        >
-                                            <path
-                                                stroke="currentColor"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                                            />
-                                        </svg>
-                                        <p className="mb-2 text-sm text-gray-500">
-                                            <span className="font-semibold">
-                                                Presiona para subir
-                                            </span>{" "}
-                                            O arrastra y suelta
-                                        </p>
-                                        <p className="text-xs text-gray-500">
-                                            PNG o JPG
-                                        </p>
-                                    </>
-                                )}
+                                    </svg>
+                                    <p className="mb-2 text-sm text-gray-500">
+                                        <span className="font-semibold">
+                                            Presiona para subir
+                                        </span>{" "}
+                                        O arrastra y suelta
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                        PNG o JPG
+                                    </p>
+                                </>
                             </div>
                             <input
                                 id="dropzone-file"
@@ -418,8 +413,12 @@ const Page = () => {
                     </div>
 
                     <div className="grid grid-cols-3 mt-3">
-                        {images.map((image) => (
-                            <img src={image} className="w-40 h-40" />
+                        {images.map((image, index) => (
+                            <img
+                                src={image}
+                                key={index}
+                                className="w-full h-full object-cover"
+                            />
                         ))}
                     </div>
 
