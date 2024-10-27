@@ -50,7 +50,7 @@ const page = () => {
         const fileInput = document.getElementById('dropzone-file') as HTMLInputElement;
         fileInput.click(); // Simula un clic en el input de archivo
     };
-    const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: any) => {
+    const onCropComplete = useCallback((croppedAreaPixels: any) => {
         setCroppedAreaPixels(croppedAreaPixels);
     }, []);
 
