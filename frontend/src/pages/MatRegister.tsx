@@ -69,16 +69,18 @@ const page = () => {
     return (
         <div>
             <div className="bg-white border-gray-200 font-nunito flex justify-between w-full sm:px-4 py-4">
-                <div className="flex items-center gap-2 px-2">
-                    <Link to="./">
-                        <img src={buildifyLogo}
-                            alt="Logo de buildifyF"
-                            className={`h-14 w-14 mr-2 hidden sm:block`} />
-                    </Link>
-                    <h1 className="self-center text-2xl font-black  whitespace-nowrap hidden sm:block">
-                        Buildify
-                    </h1>
-                </div>
+                <Link to="/">
+                    <div className="flex items-center gap-2 px-2">
+                        <Link to="/">
+                            <img src={buildifyLogo}
+                                alt="Logo de buildifyF"
+                                className={`h-14 w-14 mr-2 hidden sm:block`} />
+                        </Link>
+                        <h1 className="self-center text-2xl font-black  whitespace-nowrap hidden sm:block">
+                            Buildify
+                        </h1>
+                    </div>
+                </Link>
             </div>
             <div className="lg:grid lg:grid-cols-2 gap-4">
                 <div className="lg:ml-20 ml-5">
@@ -240,22 +242,6 @@ const page = () => {
                                 </div>
                             )}
                         </div>
-                        <div className="flex mt-3 mb-5">
-                            <button
-                                type="submit"
-                                className="text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                            >
-                                Publicar
-                            </button>
-                            <Link to="/">
-                                <button
-                                    type="button"
-                                    className="ml-4 text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center transition-colors duration-300"
-                                >
-                                    Cancelar
-                                </button>
-                            </Link>
-                        </div>
                     </form>
                 </div>
                 <div className="w-[80%]">
@@ -312,6 +298,22 @@ const page = () => {
                         </div>
                     </Modal>
                 </div>
+            </div>
+            <div className="flex mt-3 mb-5 justify-end mr-[10%]">
+                <button
+                    type="submit"
+                    className="text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                >
+                    Publicar
+                </button>
+                <Link to="/">
+                    <button
+                        type="button"
+                        className="ml-4 text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center transition-colors duration-300"
+                    >
+                        Cancelar
+                    </button>
+                </Link>
             </div>
         </div>
     );
