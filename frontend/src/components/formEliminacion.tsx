@@ -20,7 +20,6 @@ const FormEliminacion = () => {
       alert('Por favor, especifica el motivo si seleccionaste "OTRO".');
     } else {
       alert(`Motivo seleccionado: ${selectedOption === 'otro' ? otroMotivo : selectedOption}`);
-      // Aquí puedes manejar el envío, como enviar los datos al servidor.
     }
   };
 

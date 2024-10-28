@@ -1,6 +1,14 @@
 import Header from "../components/simpleNavBar";
 import { useParams } from "react-router-dom";
 import { MdLocationOn } from "react-icons/md";
+import { useEffect, useState } from "react";
+import material1 from "../assets/material1.png";
+import material2 from "../assets/material2.png";
+import material3 from "../assets/material3.png";
+import material4 from "../assets/material4.png";
+import material5 from "../assets/material5.png";
+import { MaterialProp } from "../components/Material";
+import ListarMateriales from "../components/ListarMateriales";
 const Material = () => {
     const { id } = useParams<{ id: string }>();
     // Ejemplo de datos; estos valores deberían venir del backend.
@@ -14,6 +22,48 @@ const Material = () => {
         cantidadDisponible:"10",
         descripcion: "Cemento de calidad alemana premmiun"
     };
+    const [similares, setSimilares] = useState<MaterialProp[]>([]);
+
+    //Esta lista reemplazar por la API de similares
+    useEffect(() => {
+        // esta lista debe ser reemplazada por la API de recomendados
+
+        const similares = [
+            {
+                id_material: 1,
+                imagenUrl: material1,
+                precio_material: 200,
+                nombre_material: "Ladrillos 6 huecos",
+            },
+            {
+                id_material: 2,
+                imagenUrl: material2,
+                precio_material: 200,
+                nombre_material: "Ladrillos 6 huecos",
+            },
+            {
+                id_material: 3,
+                imagenUrl: material3,
+                precio_material: 200,
+                nombre_material: "Ladrillos 6 huecos",
+            },
+            {
+                id_material: 4,
+                imagenUrl: material4,
+                precio_material: 200,
+                nombre_material: "Ladrillos 6 huecos",
+            },
+            {
+                id_material: 5,
+                imagenUrl: material5,
+                precio_material: 80,
+                nombre_material: "Arena lavada",
+            },
+        ];
+
+        setSimilares(similares);
+    }, []);
+    
 
     return (
         <div className="font-nunito min-h-screen bg-gray-50">
@@ -86,7 +136,7 @@ const Material = () => {
                 </div>
 
                 <h1 className="font-bold text-2xl text-gray-800 mt-4 mb-6">Publicaciones similares:</h1>
-                {/* ACA CARGAR SIMILARES */}
+                <ListarMateriales materiales={similares} />
             </div>
         </div>
     );

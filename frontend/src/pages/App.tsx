@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 import ListarMateriales from "../components/ListarMateriales";
 import Categorias from "../components/Categorias"
 import FormEliminacion from "../components/formEliminacion"
-
+import Confirmacion from "../components/Confirmacion";
 
 
 
@@ -124,8 +124,8 @@ function App() {
                         </button>
                     </div>
                 )}
+                <Confirmacion></Confirmacion>
                 {!user && <PopupRegristro></PopupRegristro>}
-
             </div>
         </>
     );
