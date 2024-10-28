@@ -1,7 +1,7 @@
+import { useState, useEffect } from "react";
 import Header from "../components/simpleNavBar";
 import { useParams } from "react-router-dom";
 import { MdLocationOn } from "react-icons/md";
-import { useEffect, useState } from "react";
 import material1 from "../assets/material1.png";
 import material2 from "../assets/material2.png";
 import material3 from "../assets/material3.png";
@@ -9,25 +9,57 @@ import material4 from "../assets/material4.png";
 import material5 from "../assets/material5.png";
 import { MaterialProp } from "../components/Material";
 import ListarMateriales from "../components/ListarMateriales";
+
 const Material = () => {
     const { id } = useParams<{ id: string }>();
-    // Ejemplo de datos; estos valores deberían venir del backend.
-    const materialData = {
-        nombre: "Cemento Coboce 50Kg",
-        medida: "Paquete",
-        tipoMaterial: "Cemento",
-        ubicacion: "Avenida América esq Libertador N200",
-        condicion: "Nuevo",
-        precio: "Bs. 200",
-        cantidadDisponible:"10",
-        descripcion: "Cemento de calidad alemana premmiun"
-    };
+
+    // Estado para guardar los datos del material específico
+    const [materialData, setMaterialData] = useState<{
+        nombre: string;
+        medida: string;
+        tipoMaterial: string;
+        ubicacion: string;
+        condicion: string;
+        precio: string;
+        cantidadDisponible: string;
+        descripcion: string;
+    } | null>(null);
+
+    // Estado para manejar los materiales similares
     const [similares, setSimilares] = useState<MaterialProp[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    //Esta lista reemplazar por la API de similares
+    // Cargar datos del material desde el backend
     useEffect(() => {
-        // esta lista debe ser reemplazada por la API de recomendados
+        const fetchMaterialData = async () => {
+            try {
+                const response = await fetch(`/api/materiales/${id}`);
+                if (!response.ok) {
+                    throw new Error("Error al cargar los datos del material");
+                }
+                const data = await response.json();
+                setMaterialData({
+                    nombre: data.data.nombre_material,
+                    medida: data.data.medida,
+                    tipoMaterial: data.data.tipo_material,
+                    ubicacion: data.data.descripcion_direccion_material,
+                    condicion: data.data.estado_material,
+                    precio: data.data.precio_material,
+                    cantidadDisponible: data.data.cantidad_material,
+                    descripcion: data.data.descripcion_material
+                });
+            } catch (err) {
+                setError("Error al cargar los datos del material");
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchMaterialData();
+    }, [id]);
 
+    // esta lista debe ser reemplazada por la API de recomendados
+    useEffect(() => {
         const similares = [
             {
                 id_material: 1,
@@ -63,7 +95,9 @@ const Material = () => {
 
         setSimilares(similares);
     }, []);
-    
+
+    if (loading) return <p>Cargando...</p>;
+    if (error) return <p>{error}</p>;
 
     return (
         <div className="font-nunito min-h-screen bg-gray-50">
@@ -78,41 +112,40 @@ const Material = () => {
                         <div className="space-y-6 bg-white rounded-lg shadow-lg p-8 ml-[5%]">
                             <div>
                                 <label className="block font-semibold text-gray-700">Nombre del Material:</label>
-                                <p className="text-gray-800 text-lg">{materialData.nombre}</p>
+                                <p className="text-gray-800 text-lg">{materialData?.nombre}</p>
                             </div>
                             <div>
                                 <label className="block font-semibold text-gray-700">Precio:</label>
-                                <p className="text-gray-800 text-lg font-semibold">{materialData.precio}</p>
+                                <p className="text-gray-800 text-lg font-semibold">{materialData?.precio}</p>
                             </div>
                             <div className="grid lg:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block font-semibold text-gray-700">Tipo de material:</label>
-                                    <p className="text-gray-800 text-lg">{materialData.tipoMaterial}</p>
+                                    <p className="text-gray-800 text-lg">{materialData?.tipoMaterial}</p>
                                 </div>
                                 <div>
                                     <label className="block font-semibold text-gray-700">Cantidad disponible:</label>
-                                    <p className="text-gray-800 text-lg">{materialData.cantidadDisponible}</p>
+                                    <p className="text-gray-800 text-lg">{materialData?.cantidadDisponible}</p>
                                 </div>
-
                             </div>
                             <div className="grid lg:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block font-semibold text-gray-700">Medida:</label>
-                                    <p className="text-gray-800 text-lg">{materialData.medida}</p>
+                                    <p className="text-gray-800 text-lg">{materialData?.medida}</p>
                                 </div>
                                 <div>
                                     <label className="block font-semibold text-gray-700">Condición:</label>
-                                    <p className="text-gray-800 text-lg">{materialData.condicion}</p>
+                                    <p className="text-gray-800 text-lg">{materialData?.condicion}</p>
                                 </div>
                             </div>
                             <div>
                                 <label className="block font-semibold text-gray-700">Descripcion:</label>
-                                <p className="text-gray-800 text-lg">{materialData.descripcion}</p>
+                                <p className="text-gray-800 text-lg">{materialData?.descripcion}</p>
                             </div>
                             <div className="flex items-center">
                                 <div className="flex-1">
                                     <label className="block font-semibold text-gray-700">Ubicación:</label>
-                                    <p className="text-gray-800 text-lg">{materialData.ubicacion}</p>
+                                    <p className="text-gray-800 text-lg">{materialData?.ubicacion}</p>
                                 </div>
                                 <div
                                     className="ml-2 p-2 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 hover:cursor-pointer transition-colors duration-300"
