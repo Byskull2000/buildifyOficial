@@ -462,7 +462,7 @@ const Editar = () => {
                     type="submit"
                     className="text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
                 >
-                    Publicar
+                    Guardar
                 </button>
                 <Link to="/">
                     <button
