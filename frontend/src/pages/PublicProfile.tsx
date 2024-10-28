@@ -1,7 +1,15 @@
 import imgEjemploPerfil from "../assets/ejemploPerfil.jpg";
 import { useEffect, useState } from "react";
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SimpleNavBar from "../components/simpleNavBar"
+import material1 from "../assets/material1.png";
+import material2 from "../assets/material2.png";
+import material3 from "../assets/material3.png";
+import material4 from "../assets/material4.png";
+import material5 from "../assets/material5.png";
+import { MaterialProp } from "../components/Material";
+import { Link } from "react-router-dom";
+import ListarPropios from "../components/ListarPropios";
 const Page = () => {
     const [nombre_usuario, setNombre] = useState("");
     //const [numero_telefono, setTelefono] = useState("");
@@ -9,6 +17,48 @@ const Page = () => {
     const [imagen_perfil, setImagenPerfil] = useState("");
     //const [id, setId] = useState("");
     const navigate = useNavigate();
+    // Ejemplo de datos; estos valores deberían venir del backend.
+    const [propios, setPropios] = useState<MaterialProp[]>([]);
+
+    //Esta lista reemplazar por la API de similares
+    useEffect(() => {
+        // esta lista debe ser reemplazada por la API de recomendados
+
+        const propios = [
+            {
+                id_material: 1,
+                imagenUrl: material1,
+                precio_material: 200,
+                nombre_material: "Ladrillos 6 huecos",
+            },
+            {
+                id_material: 2,
+                imagenUrl: material2,
+                precio_material: 200,
+                nombre_material: "Ladrillos 6 huecos",
+            },
+            {
+                id_material: 3,
+                imagenUrl: material3,
+                precio_material: 200,
+                nombre_material: "Ladrillos 6 huecos",
+            },
+            {
+                id_material: 4,
+                imagenUrl: material4,
+                precio_material: 200,
+                nombre_material: "Ladrillos 6 huecos",
+            },
+            {
+                id_material: 5,
+                imagenUrl: material5,
+                precio_material: 80,
+                nombre_material: "Arena lavada",
+            },
+        ];
+
+        setPropios(propios);
+    }, []);
 
     useEffect(() => {
         const data =
@@ -119,11 +169,6 @@ const Page = () => {
                                             <label className="text-sm hover:underline hover:text-blue-400 text-gray-700">
                                                 9.2/10
                                             </label>
-
-                                            {/* Botón Calificar */}
-                                            <button className="text-yellow-400 rounded-md text-sm border-yellow-400 px-2 py-1 border">
-                                                Calificar
-                                            </button>
                                         </div>
 
                                         {/* Botón Contactar */}
@@ -132,7 +177,7 @@ const Page = () => {
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 512 512">
                                                     <path fill="#ffffff" d="M160 368c26.5 0 48 21.5 48 48l0 16 72.5-54.4c8.3-6.2 18.4-9.6 28.8-9.6L448 368c8.8 0 16-7.2 16-16l0-288c0-8.8-7.2-16-16-16L64 48c-8.8 0-16 7.2-16 16l0 288c0 8.8 7.2 16 16 16l96 0zm48 124l-.2 .2-5.1 3.8-17.1 12.8c-4.8 3.6-11.3 4.2-16.8 1.5s-8.8-8.2-8.8-14.3l0-21.3 0-6.4 0-.3 0-4 0-48-48 0-48 0c-35.3 0-64-28.7-64-64L0 64C0 28.7 28.7 0 64 0L448 0c35.3 0 64 28.7 64 64l0 288c0 35.3-28.7 64-64 64l-138.7 0L208 492z" />
                                                 </svg>
-                                                <span>Contactar</span>
+                                                <span>Contacto</span>
                                             </button>
                                         </div>
                                     </div>
@@ -143,12 +188,20 @@ const Page = () => {
                                     Reseñas
                                 </h2>
                             </div>
-                            <div>
-                                <h2 className="text-2xl font-bold sm:text-xl mt-10">
-                                    Catálogo de venta
-                                </h2>
-                            </div>
                         </div>
+                    </div>
+                    <div>
+                        <div className="flex justify-between items-center mt-10">
+                            <h2 className="text-2xl font-bold sm:text-xl">
+                                Catálogo de venta
+                            </h2>
+                            <Link to="/propios">
+                                <a href="#ver-todo" className="text-[#FDBC3F] hover:underline">
+                                    Ver Todo
+                                </a>
+                            </Link>
+                        </div>
+                        <ListarPropios materiales={propios} />
                     </div>
                 </main>
             </div>
