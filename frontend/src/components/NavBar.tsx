@@ -1,15 +1,25 @@
 "use client";
 import { useState } from "react";
 import buildifyLogo from "../assets/Buildify.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import imgProfile from "../assets/ejemploPerfil.jpg";
-import logoMobile from "../assets/logo_mobile.png"
+import logoMobile from "../assets/logo_mobile.png";
 
-const NavBar = () => {
+const NavBar = ({ buscar}: { buscar?: string }) => {
+    const [search, setSearch] = useState(buscar || '');
     const [openSearch, setOpenSearch] = useState(false);
     const userStorage =
         sessionStorage.getItem("user") || localStorage.getItem("user") || null;
     const user = userStorage ? JSON.parse(userStorage) : null;
+    const navigate = useNavigate();
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log(search);
+        if (search.trim()) {
+            navigate(`/buscar?query=${search}`);
+        }
+    };
 
     return (
         <div>
@@ -29,7 +39,6 @@ const NavBar = () => {
                             openSearch ? "sm:w-full" : ""
                         } `}
                     >
-                        
                         <img
                             src={buildifyLogo}
                             alt="Buildify Logo"
@@ -48,49 +57,57 @@ const NavBar = () => {
                         <div className={`block sm:hidden w-12`}>
                             <img src={logoMobile} alt="logo" />
                         </div>
-                        
                     </Link>
 
-                    <div className={`flex justify-start ${openSearch ? "w-full" : ""}`}>
-                        <input
-                            type="text"
-                            id="search-navbar"
-                            className={`${
-                                openSearch ? "flex" : "hidden"
-                            } sm:block md:w-56 lg:w-80 py-2 pl-6 text-sm text-gray-900 border border-gray-200 rounded-lg bg-gray-200 focus:ring-blue-500 focus:border-blue-500 md:hover:text-blue-700`}
-                            placeholder="Materiales, insumos"
-                        />
-                        <button
-                            className={`
+                    <form onSubmit={handleSearch}>
+                        <div
+                            className={`flex justify-start ${
+                                openSearch ? "w-full" : ""
+                            }`}
+                        >
+                            <input
+                                type="text"
+                                id="search-navbar"
+                                className={`${
+                                    openSearch ? "flex" : "hidden"
+                                } sm:block md:w-56 lg:w-80 py-2 pl-6 text-sm text-gray-900 border border-gray-200 rounded-lg bg-gray-200 focus:ring-blue-500 focus:border-blue-500 `}
+                                placeholder="Materiales, insumos"
+                                onChange={(e) => setSearch(e.target.value)}
+                                value={search}
+                            />
+                            <button
+                                type="submit"
+                                className={`
                                   z-50 flex items-center rounded-full 
                                   ${!openSearch && "bg-gray-200 p-2 sm:p-0 "}
                                 `}
-                            onClick={() => setOpenSearch(!openSearch)}
-                        >
-                            <svg
-                                className={`w-4 h-4 -ml-9  text-gray-500 ${
-                                    openSearch ? "" : "ml-0 sm:-ml-9"
-                                }`}
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 20 20"
+                                onClick={() => setOpenSearch(!openSearch)}
                             >
-                                <path
-                                    stroke="currentColor"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                                />
-                            </svg>
-                        </button>
-                    </div>
+                                <svg
+                                    className={`w-4 h-4 -ml-9  text-gray-500 ${
+                                        openSearch ? "" : "ml-0 sm:-ml-9"
+                                    }`}
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                    />
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
                 </div>
                 <div
                     className={`${
                         openSearch ? "hidden" : ""
-                    } flex p-0 md:pr-[10%] lg:pr-[20%] gap-3 md:gap-6  items-center sm:flex `}
+                    } flex p-0 md:pr-[5%]  lg:pr-[20%] gap-3 md:gap-6  items-center sm:flex `}
                 >
                     <Link to={"/"} className="">
                         <svg
