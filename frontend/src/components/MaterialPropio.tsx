@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import imagenDefecto from '../assets/material_imagen_defecto.png';
-import { useRef, useEffect } from "react";
-import FormEliminacion from "../components/formEliminacion"
+import FormEliminacion from "../components/formEliminacion";
 
 export interface MaterialProp {
     id_material: number;
@@ -19,11 +18,14 @@ export interface MaterialProps {
 
 const Material = ({ material }: MaterialProps) => {
     const [menuOpen, setMenuOpen] = useState(false);
-    const menuRef = useRef<HTMLDivElement>(null);
     const [isPopupVisible, setIsPopupVisible] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
+
     const togglePopup = () => {
         setIsPopupVisible(!isPopupVisible);
     };
+
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -59,7 +61,7 @@ const Material = ({ material }: MaterialProps) => {
                     <button
                         className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
                         onClick={() => {
-                            console.log(`Editar ${material.nombre_material}`);
+                            navigate(`/editarMaterial/${material.id_material}`);
                             setMenuOpen(false);
                         }}
                     >
@@ -76,6 +78,7 @@ const Material = ({ material }: MaterialProps) => {
                     </button>
                 </div>
             )}
+
             {isPopupVisible && (
                 <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50 z-50">
                     <FormEliminacion />
