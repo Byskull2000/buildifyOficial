@@ -25,7 +25,13 @@ const FormEliminacion = () => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
+        <button 
+          className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
+          onClick={() => console.log("Cerrar")} 
+        >
+          &times; 
+        </button>
         <h2 className="text-xl font-bold mb-4">Motivo para eliminar la publicación</h2>
         <form onSubmit={handleSubmit}>
           <div className="space-y-2">
