@@ -18,6 +18,7 @@ from routes.direcciones_entrega import direcciones_entrega
 from routes.interes import interes
 from routes.tipo_material import tipo_material
 from routes.material import material
+from routes.productos_similares import productos_similares  
 
 app = Flask(__name__)
 
@@ -30,6 +31,7 @@ app.register_blueprint(direcciones_entrega)
 app.register_blueprint(interes)
 app.register_blueprint(tipo_material)
 app.register_blueprint(material)
+app.register_blueprint(productos_similares) 
 
 
 # CONEXION PARA PRUEBAS EN PYTHONANYWHERE

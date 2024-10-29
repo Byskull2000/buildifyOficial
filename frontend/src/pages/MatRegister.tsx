@@ -21,7 +21,7 @@ const page = () => {
     const [categoria, setCategoria] = useState("");
     const [condicion, setCondicion] = useState("");
     const [descripcion, setDescripcion] = useState("");
-
+    const [unidad, setUnidad] = useState("");
     console.log(coordenadasSeleccionadas)
 
 
@@ -103,6 +103,24 @@ const page = () => {
                                     <option value="nuevo">Nuevo</option>
                                     <option value="usado">Usado</option>
                                     <option value="remanufacturado">Remanufacturado</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-gray-700">Unidad</label>
+                                <select
+                                    value={unidad}
+                                    onChange={(e) => setUnidad(e.target.value)}
+                                    className="w-3/5 bg-gray-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+                                >
+                                    <option value="">Selecciona una unidad</option>
+                                    <option value="metroLineal">Metro lineal</option>
+                                    <option value="metroCuadrado">Metro Cuadrado</option>
+                                    <option value="metroCubico">Metro Cúbico</option>
+                                    <option value="unidad">Unidad</option>
+                                    <option value="kilogramo">Kilogramo</option>
+                                    <option value="paquete">Paquete</option>
+                                    <option value="litro">Litro</option>
+                                    <option value="docena">Docena</option>
                                 </select>
                             </div>
                             <div>
