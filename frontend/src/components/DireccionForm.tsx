@@ -1,5 +1,3 @@
-// src/components/DireccionForm.tsx
-
 import React, { useState, useEffect } from "react";
 
 interface DireccionFormProps {
@@ -36,6 +34,14 @@ const DireccionForm: React.FC<DireccionFormProps> = ({
     setFormValido(todosCamposLlenos);
   }, [nombre, direccionEditable, telefono, coordenadasSeleccionadas]);
 
+  // Validar que solo haya números y longitud máxima de 8
+  const handleTelefonoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const valor = e.target.value;
+    if (/^\d*$/.test(valor) && valor.length <= 8) {
+      setTelefono(valor);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMensaje(null);
@@ -64,7 +70,7 @@ const DireccionForm: React.FC<DireccionFormProps> = ({
 
       <input
         className="block w-full p-2 mb-2 rounded"
-        placeholder="Nombre de usuario"
+        placeholder="Nombre del destinatario"
         value={nombre}
         onChange={(e) => setNombre(e.target.value)}
       />
@@ -80,7 +86,8 @@ const DireccionForm: React.FC<DireccionFormProps> = ({
         className="block w-full p-2 mb-2 rounded"
         placeholder="Teléfono"
         value={telefono}
-        onChange={(e) => setTelefono(e.target.value)}
+        onChange={handleTelefonoChange}
+        maxLength={8} // Limita el número máximo de caracteres a 8
       />
 
       {coordenadasSeleccionadas && (

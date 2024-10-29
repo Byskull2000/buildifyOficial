@@ -3,7 +3,7 @@ import NavBar from "../components/NavBar";
 import PopupRegristro from "../components/RegistroRapidoPP";
 import ImagenPrueba from "../pages/ImagenPrueba";
 import { Link } from "react-router-dom";
-import DireccionesEntrega from "./DireccionesEntrega";
+import DireccionesEntrega from "../components/DireccionesEntrega";
 function App() {
   return (
     <>

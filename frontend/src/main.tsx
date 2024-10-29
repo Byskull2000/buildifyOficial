@@ -9,7 +9,8 @@ import Register from "./pages/Register.tsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import RegistroRapido from "./pages/RegistroRapido.tsx";
 import EditProfile from "./pages/EditProfile.tsx";
-import Ubicaciones from "./pages/DireccionesEntrega.tsx";
+import Ubicaciones from "./components/DireccionesEntrega.tsx";
+import PaginasDirecciones from "./pages/PaginasDirecciones.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -23,6 +24,7 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/imagenprueba" element={<ImagenPrueba />} />
           <Route path="/editProfile" element={<EditProfile />} />
           <Route path="/ubicaciones" element={<Ubicaciones />} />
+          <Route path="/nueva-direccion" element={<PaginasDirecciones />} />
         </Routes>
       </Router>
     </GoogleOAuthProvider>
