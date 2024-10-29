@@ -1,5 +1,7 @@
 from flask import Blueprint, jsonify, request
 import base64
+
+from sqlalchemy import func
 from utils.db import db
 from models.material import Material
 from models.tipo_material import TipoMaterial
@@ -535,6 +537,8 @@ def marcar_inactivo(id):
 
         # Cambiar el estado de publicación a "inactivo"
         material.estado_publicacion_material = 'inactivo'
+        # Establecer la fecha de terminación a la fecha actual
+        material.fecha_terminacion = func.now()
 
         # Guardar los cambios
         db.session.commit()
