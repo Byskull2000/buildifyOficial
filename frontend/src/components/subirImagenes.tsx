@@ -22,9 +22,9 @@ const SubirImagenes: React.FC = () => {
     const [imageToEdit, setImageToEdit] = useState<string | null>(null); // Imagen seleccionada para editar
 
 
-    useEffect(()=>{
+    useEffect(() => {
         setIsModalOpen(true);
-    }, []) 
+    }, [])
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
@@ -42,9 +42,9 @@ const SubirImagenes: React.FC = () => {
 
     const rotateImage = () => {
         const newRotation = (rotation + 90) % 360; // Incrementa la rotación en 90 grados
-        setRotation(newRotation); 
-      };
-    
+        setRotation(newRotation);
+    };
+
 
     const validateAndAddImages = (selectedFiles: File[]) => {
         if (images.length + selectedFiles.length > MAX_IMAGES) {
@@ -73,15 +73,15 @@ const SubirImagenes: React.FC = () => {
                 const width = image.width;
                 const height = image.height;
 
-                
-                 if (width > MAX_RESOLUTION || height > MAX_RESOLUTION) {
+
+                if (width > MAX_RESOLUTION || height > MAX_RESOLUTION) {
                     error = `La imagen ${file.name} no debe exceder 1024x1024 píxeles.`;
                 }
 
                 if (!error) {
                     newImages.push(file);
                     newPreviews.push(URL.createObjectURL(file));
-                    setErrorMessage(""); 
+                    setErrorMessage("");
                 } else {
                     setErrorMessage(error);
                 }
@@ -102,7 +102,7 @@ const SubirImagenes: React.FC = () => {
         });
     };
 
-    
+
     const getCroppedImg = async (
         imageSrc: string,
         crop: { x: number; y: number; width: number; height: number }
@@ -186,9 +186,9 @@ const SubirImagenes: React.FC = () => {
         setImageToEdit(null);
         setCrop({ x: 0, y: 0 });
         setZoom(1);
-      };
+    };
 
-      
+
 
     const handleEditImage = (imageSrc: string) => {
         setImageToEdit(imageSrc); // Seleccionar imagen para editar
@@ -206,7 +206,7 @@ const SubirImagenes: React.FC = () => {
                 setPreviewImages((prevImages) =>
                     prevImages.map((image) => (image === imageToEdit ? URL.createObjectURL(croppedImage) : image))
                 );
-    
+
                 // Reemplazar la imagen editada en el estado images
                 setImages((prevImages) =>
                     prevImages.map((file, index) => {
@@ -267,7 +267,7 @@ const SubirImagenes: React.FC = () => {
 
             if (!response.ok) {
                 throw new Error("Error en la subida de imágenes");
-                
+
             }
 
             const interval = setInterval(() => {
@@ -318,58 +318,27 @@ const SubirImagenes: React.FC = () => {
 
     return (
         <div>
+            {/* Mostrar mensaje sobre la imagen recortada */}
+            {imagenRecortada ? (<p></p>) : (<p></p>)}
 
-                {/* Mostrar mensaje sobre la imagen recortada */}
-                {imagenRecortada ? (<p></p>) : (<p></p>)}
-
-                {/* Modal para subir imágenes */}
-                {isModalOpen && (
+            {/* Modal para subir imágenes */}
+            {isModalOpen && (
                 <div
-                    
+
                 >
-                    <div
-                        style={{
-                            backgroundColor: "white",
-                            padding: "20px",
-                            width: "900px",
-                            height: "560px",
-                            borderRadius: "10px",
-                            position: "relative",
-                        }}
-                    >   
-                        
+                    <div className="bg-white p-5 w-[900px] h-[560px] rounded-lg relative">
                         <button
                             onClick={toggleModal}
-                            style={{
-                                position: "absolute",
-                                top: "10px",
-                                right: "10px",
-                                background: "none",
-                                border: "none",
-                                fontSize: "18px",
-                                cursor: "pointer",
-                            }}
+                            className="absolute top-[10px] right-[10px] bg-none border-none text-[18px] cursor-pointer"
                         >
                             &times;
                         </button>
-
                         <div
                             onDrop={handleDrop}
                             onDragOver={handleDragOver}
-                            style={{
-                                border: "2px dashed #ccc",
-                                padding: "40px",
-                                width: "100%",
-                                height: "400px",
-                                cursor: "pointer",
-                                textAlign: "center",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                flexDirection: "column",
-                                marginBottom: "10px",
-                            }}
+                            className="border-2 border-dashed border-gray-300 p-10 w-full h-[400px] cursor-pointer text-center flex justify-center items-center flex-col mb-2.5"
                         >
+
                             {/* Texto que desaparecerá cuando haya imágenes */}
                             {previewImages.length === 0 && (
                                 <p style={{ margin: 0 }}>Arrastra y suelta tus imágenes aquí</p>
@@ -387,39 +356,22 @@ const SubirImagenes: React.FC = () => {
                                 }}
                             >
                                 {previewImages.map((src, index) => (
-                                    <div key={index} style={{ position: "relative", width: "150px", height: "150px" }}>
+                                    <div key={index} className="relative w-[150px] h-[150px] m-2.5">
                                         <img
-                                            //key={index}
                                             src={src}
                                             alt={`preview-${index}`}
                                             onDragStart={handleDragStart}
-                                            style={{
-                                                width: "150px",
-                                                height: "150px",
-                                                objectFit: "cover",
-                                                borderRadius: "10px",
-                                                margin: "10px",
-                                        }}
-                                    />
+                                            className="w-[150px] h-[150px] object-cover rounded-lg m-2.5"
+                                        />
 
                                         <button
-                                        onClick={() => handleEditImage(src)} // Llamada a la función para editar la imagen
-                                        style={{
-                                            //position: "absolute",
-                                            //bottom: "10px",
-                                            //left: "10px",
-                                            padding: "5px 10px",
-                                            backgroundColor: "#007bff",
-                                            color: "white",
-                                            //border: "none",
-                                            borderRadius: "5px",
-                                            cursor: "pointer",
-                                            marginTop: "5px", 
-                                        }}
-                                    >
-                                        Editar
-                                    </button>
-                                    </div>    
+                                            onClick={() => handleEditImage(src)}
+                                            className="mt-1.5 px-2.5 py-1 bg-blue-500 text-white rounded cursor-pointer"
+                                        >
+                                            Editar
+                                        </button>
+                                    </div>
+
                                 ))}
                             </div>
                         </div>
@@ -488,7 +440,7 @@ const SubirImagenes: React.FC = () => {
                                     backgroundColor: "white",
                                     padding: "20px",
                                     width: "80vw",
-                                    maxWidth:"800px",
+                                    maxWidth: "800px",
                                     height: "600px",
                                     borderRadius: "10px",
                                     position: "relative",
@@ -499,159 +451,155 @@ const SubirImagenes: React.FC = () => {
 
                                 {imageToEdit && (
 
-                                    <div 
+                                    <div
                                         style={{
-                                            position:"relative",
+                                            position: "relative",
                                             width: "100%",
-                                            height: "400px",
-                                            marginBottom:"20px",  
+                                            height: "450px",
+                                            marginBottom: "20px",
                                         }}
                                     >
 
-                                    <Cropper
-                                        image={imageToEdit}
-                                        crop={crop}
-                                        zoom={zoom}
-                                        aspect={1}
-                                        onCropChange={setCrop}
-                                        onZoomChange={setZoom}
-                                        onCropComplete={onCropComplete}
-                                        rotation={rotation}
-                                        //cropSize={{ width: 450, height: 450 }} // Tamaño del área de recorte, puedes ajustar a un valor mayor si es necesario
-                                        /*style={{
-                                            containerStyle: { height: "450px" }, // Ajusta la altura del contenedor del recorte
-                                        }}*/
-                                    />
-                                </div>
+                                        <Cropper
+                                            image={imageToEdit}
+                                            crop={crop}
+                                            zoom={zoom}
+                                            aspect={1}
+                                            onCropChange={setCrop}
+                                            onZoomChange={setZoom}
+                                            onCropComplete={onCropComplete}
+                                            rotation={rotation}
+                                        />
+                                    </div>
                                 )}
 
                                 {/* Botón para rotar la imagen 90 grados */}
                                 {isEditing && (
                                     <div style={{ display: "flex", justifyContent: "center", marginBottom: "10px" }}>
-                                    <button
-                                        onClick={rotateImage}
-                                        style={{
-                                            padding: "10px 20px",
-                                            backgroundColor: "#007bff",
-                                            color: "white",
-                                            borderRadius: "5px",
-                                            cursor: "pointer",
-                                            //margin: "0 20px",
-                                            width: "150px",
-                                            zIndex: 1002,
-                                            //marginBottom: "10px",
-                                        }}
-                                    >
-                                        Rotar
-                                    </button>
-                                    </div>
-                                )}
-
-                                {/* Botón para guardar los cambios del recorte */}
-                                <div style={{   
-                                                display: "flex", 
-                                                justifyContent: "space-between",
-                                                position:"absolute", 
-                                                bottom: "20px",
-                                                left: "20px",
-                                                right: "20px",
-                                                //marginTop:"20px"   
-                                            }}>
-                                
-                                
-                                <button
-                                    onClick={saveEditedImage}
-                                    style={{
-                                        padding: "10px 20px",
-                                        backgroundColor: "#28a745",
-                                        color: "white",
-                                        borderRadius: "5px",
-                                        cursor: "pointer",
-                                        //marginTop: "10px",
-                                    }}
-                                >
-                                    Guardar cambios
-                                </button>
-
-                                {/* Botón para cerrar el modal */}
-                                <button
-                                    onClick={closeEditModal}
-                                    style={{
-                                        padding: "10px 20px",
-                                        backgroundColor: "#dc3545",
-                                        color: "white",
-                                        borderRadius: "5px",
-                                        cursor: "pointer",
-                                        //marginTop: "10px",
-                                    }}
-                                >
-                                    Cancelar
-                                </button>
-                                </div>
-                            </div>
-                        </div>
-                        )}
-
-                    {/* Modal de confirmación */}
-                    {showCloseConfirmation && (
-                            <div
-                                style={{
-                                    position: "fixed",
-                                    top: 0,
-                                    left: 0,
-                                    width: "100%",
-                                    height: "100%",
-                                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <div
-                                    style={{
-                                        backgroundColor: "white",
-                                        padding: "20px",
-                                        width: "400px",
-                                        borderRadius: "10px",
-                                        textAlign: "center",
-                                    }}
-                                >
-                                    <h3 style={{ marginBottom: "20px" }}>¿Estás seguro de que deseas cancelar?</h3>
-                                        <p style={{ marginBottom: "30px" }}>Perderás todas las imágenes seleccionadas</p>
-
-                                    <div style={{ display: "flex", justifyContent: "space-between" }}>
                                         <button
-                                            onClick={closeModal}
+                                            onClick={rotateImage}
                                             style={{
                                                 padding: "10px 20px",
                                                 backgroundColor: "#007bff",
                                                 color: "white",
-                                                border: "none",
                                                 borderRadius: "5px",
                                                 cursor: "pointer",
+                                                //margin: "0 20px",
+                                                width: "150px",
+                                                zIndex: 1002,
+                                                //marginBottom: "10px",
                                             }}
                                         >
-                                            Confirmar
-                                        </button>
-                                        <button
-                                            onClick={() => setShowCloseConfirmation(false)}
-                                            style={{
-                                                padding: "10px 20px",
-                                                backgroundColor: "#dc3545",
-                                                color: "white",
-                                                border: "none",
-                                                borderRadius: "5px", 
-                                                cursor: "pointer",
-                                            }}
-                                        >
-                                            Cancelar
+                                            Rotar
                                         </button>
                                     </div>
+                                )}
+
+                                {/* Botón para guardar los cambios del recorte */}
+                                <div style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    position: "absolute",
+                                    bottom: "20px",
+                                    left: "20px",
+                                    right: "20px",
+                                    //marginTop:"20px"   
+                                }}>
+
+
+                                    <button
+                                        onClick={saveEditedImage}
+                                        style={{
+                                            padding: "10px 20px",
+                                            backgroundColor: "#28a745",
+                                            color: "white",
+                                            borderRadius: "5px",
+                                            cursor: "pointer",
+                                            //marginTop: "10px",
+                                        }}
+                                    >
+                                        Guardar cambios
+                                    </button>
+
+                                    {/* Botón para cerrar el modal */}
+                                    <button
+                                        onClick={closeEditModal}
+                                        style={{
+                                            padding: "10px 20px",
+                                            backgroundColor: "#dc3545",
+                                            color: "white",
+                                            borderRadius: "5px",
+                                            cursor: "pointer",
+                                            //marginTop: "10px",
+                                        }}
+                                    >
+                                        Cancelar
+                                    </button>
                                 </div>
                             </div>
-                        )}
-                    </div>
-                )}
+                        </div>
+                    )}
+
+                    {/* Modal de confirmación */}
+                    {showCloseConfirmation && (
+                        <div
+                            style={{
+                                position: "fixed",
+                                top: 0,
+                                left: 0,
+                                width: "100%",
+                                height: "100%",
+                                backgroundColor: "rgba(0, 0, 0, 0.5)",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    backgroundColor: "white",
+                                    padding: "20px",
+                                    width: "400px",
+                                    borderRadius: "10px",
+                                    textAlign: "center",
+                                }}
+                            >
+                                <h3 style={{ marginBottom: "20px" }}>¿Estás seguro de que deseas cancelar?</h3>
+                                <p style={{ marginBottom: "30px" }}>Perderás todas las imágenes seleccionadas</p>
+
+                                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                    <button
+                                        onClick={closeModal}
+                                        style={{
+                                            padding: "10px 20px",
+                                            backgroundColor: "#007bff",
+                                            color: "white",
+                                            border: "none",
+                                            borderRadius: "5px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        Confirmar
+                                    </button>
+                                    <button
+                                        onClick={() => setShowCloseConfirmation(false)}
+                                        style={{
+                                            padding: "10px 20px",
+                                            backgroundColor: "#dc3545",
+                                            color: "white",
+                                            border: "none",
+                                            borderRadius: "5px",
+                                            cursor: "pointer",
+                                        }}
+                                    >
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
 
         </div>
     );

@@ -476,44 +476,52 @@ def buscar_materiales_avanzado():
 
 @material.route('/api/editar-material/<int:id>',methods=['PUT'])
 def actualizar_material(id):
-    
-    material = Material.query.get(id)
-    
-    if not material:
-        return jsonify({'message': 'Material no encontrado'}), 400
-    
-    data = request.get_json()
-    nombre_material = data["nombre_material"]
-    cantidad_material = data["cantidad_material"]
-    estado_material = data["estado_material"]
-    precio_material = data["precio_material"]
-    descripcion_material = data["descripcion_material"]
-    id_tipo_material = data["id_tipo_material"]
-    estado_publicacion_material = data["estado_publicacion_material"]
-    latitud_publicacion_material = data["latitud_publicacion_material"]
-    longitud_publicacion_material = data["longitud_publicacion_material"]
-    descripcion_direccion_material = data["descripcion_direccion_material"]  
-    
-    tipo_material = TipoMaterial.query.get(id_tipo_material)
-    if not tipo_material:
-        return jsonify({'message': 'Tipo de material no válido'}), 400
-    
-    
-    material.nombre_material = nombre_material
-    material.estado_material = estado_material
-    material.precio_material = precio_material
-    material.descripcion_material = descripcion_material
-    material.id_tipo_material = id_tipo_material
-    material.cantidad_material = cantidad_material
-    material.estado_publicacion_material = estado_publicacion_material
-    material.latitud_publicacion_material = latitud_publicacion_material  # Actualizar latitud
-    material.longitud_publicacion_material = longitud_publicacion_material  # Actualizar longitud
-    material.descripcion_direccion_material = descripcion_direccion_material  # Actualizar descripción de dirección
-    
-    db.session.commit()
-    
-    return jsonify({'message': 'material actualizado'})     
-
+    try:
+        
+        material = Material.query.get(id)
+        
+        if not material:
+            return jsonify({'message': 'Material no encontrado'}), 400
+        
+        data = request.get_json()
+        nombre_material = data["nombre_material"]
+        cantidad_material = data["cantidad_material"]
+        estado_material = data["estado_material"]
+        precio_material = data["precio_material"]
+        descripcion_material = data["descripcion_material"]
+        id_tipo_material = data["id_tipo_material"]
+        estado_publicacion_material = data["estado_publicacion_material"]
+        latitud_publicacion_material = data["latitud_publicacion_material"]
+        longitud_publicacion_material = data["longitud_publicacion_material"]
+        descripcion_direccion_material = data["descripcion_direccion_material"] 
+        tipo_unidad_material = data["tipo_unidad_material"]
+        tipo_material = TipoMaterial.query.get(id_tipo_material)
+        if not tipo_material:
+            return jsonify({'message': 'Tipo de material no válido'}), 400
+        
+        
+        material.nombre_material = nombre_material
+        material.estado_material = estado_material
+        material.precio_material = precio_material
+        material.descripcion_material = descripcion_material
+        material.id_tipo_material = id_tipo_material
+        material.cantidad_material = cantidad_material
+        material.estado_publicacion_material = estado_publicacion_material
+        material.latitud_publicacion_material = latitud_publicacion_material  # Actualizar latitud
+        material.longitud_publicacion_material = longitud_publicacion_material  # Actualizar longitud
+        material.descripcion_direccion_material = descripcion_direccion_material  # Actualizar descripción de dirección
+        material.tipo_unidad_material = tipo_unidad_material
+        
+        db.session.commit()
+        
+        return jsonify({'message': 'material actualizado'})     
+    except Exception as e:
+        db.session.rollback()
+        
+        return jsonify({
+            'message': 'Error al actualizar el material',
+            'error': str(e)
+        }), 400
 
 
 @material.route('/api/marcar-inactivo/<int:id>', methods=['PUT'])

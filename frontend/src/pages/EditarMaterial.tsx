@@ -1,18 +1,21 @@
-import buildifyLogo from "../assets/Buildify.png";
+import { useParams } from "react-router-dom";
+import NavBar from "../components/simpleNavBar";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import Mapa from "../components/Mapa";
 import { MdLocationOn } from "react-icons/md";
+import Mapa from "../components/Mapa";
+import { Link } from "react-router-dom";
 import Cropper from "react-easy-crop";
 import { getCroppedImg } from "../components/cropImage";
 import Modal from "react-modal";
 Modal.setAppElement("#root");
-const Page = () => {
+
+const Editar = () => {
     interface Ubicacion {
         lat: number;
         lng: number;
     }
-    const [, setCoordenadasSeleccionadas] =  useState<Ubicacion | null>(null);
+    const [, setCoordenadasSeleccionadas] = useState<Ubicacion | null>(null);
+    const { id_material } = useParams<{ id_material: string }>();
     const [openMap, setOpenMap] = useState(false);
     const [UbicacionMaterial, setUbicacionMaterial] = useState("");
     const [titulo, setTitulo] = useState("");
@@ -22,15 +25,14 @@ const Page = () => {
     const [descripcion, setDescripcion] = useState("");
     const [unidad, setUnidad] = useState("");
     const [cantidad, setCantidad] = useState("");
-
-    //Para las imagenes
-    const [image, setImage] = useState<string | null>(null);
-    const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-    const [zoom, setZoom] = useState<number>(1);
-    const [croppedImage, setCroppedImage] = useState<string | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-    const [images, setImages] = useState<string[]>([]);
-    const [imagesPerCrop, setImagesPerCrop] = useState<File[]>([]);
+     //Para las imagenes
+     const [image, setImage] = useState<string | null>(null);
+     const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+     const [zoom, setZoom] = useState<number>(1);
+     const [croppedImage, setCroppedImage] = useState<string | null>(null);
+     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+     const [images, setImages] = useState<string[]>([]);
+     const [imagesPerCrop, setImagesPerCrop] = useState<File[]>([]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files ? Array.from(e.target.files) : [];
@@ -101,27 +103,16 @@ const Page = () => {
 
     return (
         <div>
-            <div className="bg-white border-gray-200 font-nunito flex justify-between w-full sm:px-4 py-4">
-                <Link to="/">
-                    <div className="flex items-center gap-2 px-2">
-                        <Link to="/">
-                            <img
-                                src={buildifyLogo}
-                                alt="Logo de buildifyF"
-                                className={`h-14 w-14 mr-2 hidden sm:block`}
-                            />
-                        </Link>
-                        <h1 className="self-center text-2xl font-black  whitespace-nowrap hidden sm:block">
-                            Buildify
-                        </h1>
-                    </div>
-                </Link>
+            <div>
+                <NavBar />
+
+                <div className="p-4 font-nunito">
+                    <h2 className="text-2xl font-bold">Editar Material</h2>
+                    <p>ID del Material: {id_material}</p>
+                </div>
             </div>
             <div className="lg:grid lg:grid-cols-2 gap-4">
                 <div className="lg:ml-20 ml-5">
-                    <h1 className="font-bold lg:text-2xl text-lg">
-                        Publicar un material
-                    </h1>
                     <form
                         action="#"
                         method="POST"
@@ -471,7 +462,7 @@ const Page = () => {
                     type="submit"
                     className="text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
                 >
-                    Publicar
+                    Guardar
                 </button>
                 <Link to="/">
                     <button
@@ -486,4 +477,4 @@ const Page = () => {
     );
 };
 
-export default Page;
+export default Editar;

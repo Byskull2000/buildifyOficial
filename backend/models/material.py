@@ -13,6 +13,7 @@ class Material(db.Model):
     longitud_publicacion_material = db.Column(db.String(255), nullable=True)
     descripcion_direccion_material = db.Column(db.String(255), nullable=True)
     estado_publicacion_material = db.Column(db.String(255), default="Activo", nullable=True)
+    tipo_unidad_material = db.Column(db.String(255), nullable=False)
 
     fecha_publicacion = db.Column(db.DateTime, default=func.now(), nullable=True)
 
