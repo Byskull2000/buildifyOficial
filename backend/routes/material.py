@@ -556,7 +556,7 @@ def marcar_inactivo(id):
 
 
 @material.route('/api/marcar-activo/<int:id>', methods=['PUT'])
-def marcar_inactivo(id):
+def marcar_activo(id):
     try:
         # Buscar el material por ID
         material = Material.query.get(id)
