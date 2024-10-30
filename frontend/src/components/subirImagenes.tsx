@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Cropper from "react-easy-crop";
 
-const MAX_SIZE_MB = 5 * 1024 * 1024;
-const MAX_RESOLUTION = 1024;
-const MAX_IMAGES = 10;
+const MAX_SIZE_MB = 5 * 1024 * 1024; 
+const MAX_RESOLUTION = 1024; 
+const MAX_IMAGES = 5; 
 
 const SubirImagenes: React.FC = () => {
     const [images, setImages] = useState<File[]>([]);

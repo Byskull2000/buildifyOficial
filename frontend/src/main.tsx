@@ -44,8 +44,10 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/materiales" element={<MaterialesFiltrados />} />
         <Route path="/material/:id" element={<Material />} />
         <Route path="/propios" element={<Propios />} />
-        <Route path="/editarMaterial/:id_material" element={<EditarMaterial />} />
-        
+        <Route
+          path="/editarMaterial/:id_material"
+          element={<EditarMaterial />}
+        />
       </Routes>
     </Router>
     {

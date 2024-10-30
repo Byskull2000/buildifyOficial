@@ -1,9 +1,17 @@
 from flask import Blueprint, jsonify, request
+import base64
+
+from sqlalchemy import func
 from utils.db import db
 from models.material import Material
 from models.tipo_material import TipoMaterial
-
+from models.foto import Foto
 material = Blueprint("material", __name__)
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
+# Función para verificar si la extensión de archivo es permitida
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @material.route('/api/registrar_material', methods=['POST'])
 def registrar_material():
@@ -35,6 +43,8 @@ def registrar_material():
             return jsonify({'message': 'El ID del usuario es obligatorio'}), 400
         if not id_tipo_material:
             return jsonify({'message': 'El ID del tipo de material es obligatorio'}), 400
+        if 'imagen' not in request.files:
+            return jsonify({'message': 'La imagen del material es obligatoria'}), 400
 
         # Crear una nueva instancia del modelo Material
         nuevo_material = Material(
@@ -54,6 +64,27 @@ def registrar_material():
         db.session.add(nuevo_material)
         db.session.commit()
 
+        # Procesar las fotos enviadas (si las hay)
+        if 'fotos' in request.files:
+            fotos = request.files.getlist('fotos')  # Obtener todas las fotos subidas
+
+            for foto in fotos:
+                if foto and allowed_file(foto.filename):
+                    # Leer el contenido de la imagen como binario
+                    imagen_binaria = foto.read()
+
+                    # Crear una nueva instancia de Foto
+                    nueva_foto = Foto(
+                        filename=foto.filename,
+                        data=imagen_binaria,
+                        id_material=nuevo_material.id_material  # Relacionar la foto con el material
+                    )
+
+                    # Guardar la foto en la base de datos
+                    db.session.add(nueva_foto)
+
+        db.session.commit()
+
         return jsonify({
             'message': 'Material registrado exitosamente',
             'data': {
@@ -69,7 +100,7 @@ def registrar_material():
                 'estado_publicacion_material': nuevo_material.estado_publicacion_material,
                 'fecha_publicacion': nuevo_material.fecha_publicacion,
                 'id_usuario': nuevo_material.id_usuario,
-                'id_tipo_material': nuevo_material.id_tipo_material
+                'id_tipo_material': nuevo_material.id_tipo_material,
             }
         }), 201
 
@@ -96,11 +127,13 @@ def obtener_materiales():
             'descripcion_material': material.descripcion_material,
             'id_usuario': material.id_usuario,
             'id_tipo_material': material.id_tipo_material,
-            'latitud_publicacion_material': material.latitud_publicacion_material,
-            'longitud_publicacion_material': material.longitud_publicacion_material,
-            'descripcion_direccion_material': material.descripcion_direccion_material,
-            'estado_publicacion_material': material.estado_publicacion_material,
-            'fecha_publicacion': material.fecha_publicacion
+            'fotos': [
+                {
+                    'id': foto.id,
+                    'filename': foto.filename,
+                    'data': base64.b64encode(foto.data).decode('utf-8')  # Codificar la imagen en base64
+                } for foto in material.fotos  # Obtener todas las fotos asociadas al material
+            ]   
         } for material in materiales]
 
         return jsonify({
@@ -445,44 +478,52 @@ def buscar_materiales_avanzado():
 
 @material.route('/api/editar-material/<int:id>',methods=['PUT'])
 def actualizar_material(id):
-    
-    material = Material.query.get(id)
-    
-    if not material:
-        return jsonify({'message': 'Material no encontrado'}), 400
-    
-    data = request.get_json()
-    nombre_material = data["nombre_material"]
-    cantidad_material = data["cantidad_material"]
-    estado_material = data["estado_material"]
-    precio_material = data["precio_material"]
-    descripcion_material = data["descripcion_material"]
-    id_tipo_material = data["id_tipo_material"]
-    estado_publicacion_material = data["estado_publicacion_material"]
-    latitud_publicacion_material = data["latitud_publicacion_material"]
-    longitud_publicacion_material = data["longitud_publicacion_material"]
-    descripcion_direccion_material = data["descripcion_direccion_material"]  
-    
-    tipo_material = TipoMaterial.query.get(id_tipo_material)
-    if not tipo_material:
-        return jsonify({'message': 'Tipo de material no válido'}), 400
-    
-    
-    material.nombre_material = nombre_material
-    material.estado_material = estado_material
-    material.precio_material = precio_material
-    material.descripcion_material = descripcion_material
-    material.id_tipo_material = id_tipo_material
-    material.cantidad_material = cantidad_material
-    material.estado_publicacion_material = estado_publicacion_material
-    material.latitud_publicacion_material = latitud_publicacion_material  # Actualizar latitud
-    material.longitud_publicacion_material = longitud_publicacion_material  # Actualizar longitud
-    material.descripcion_direccion_material = descripcion_direccion_material  # Actualizar descripción de dirección
-    
-    db.session.commit()
-    
-    return jsonify({'message': 'material actualizado'})     
-
+    try:
+        
+        material = Material.query.get(id)
+        
+        if not material:
+            return jsonify({'message': 'Material no encontrado'}), 400
+        
+        data = request.get_json()
+        nombre_material = data["nombre_material"]
+        cantidad_material = data["cantidad_material"]
+        estado_material = data["estado_material"]
+        precio_material = data["precio_material"]
+        descripcion_material = data["descripcion_material"]
+        id_tipo_material = data["id_tipo_material"]
+        estado_publicacion_material = data["estado_publicacion_material"]
+        latitud_publicacion_material = data["latitud_publicacion_material"]
+        longitud_publicacion_material = data["longitud_publicacion_material"]
+        descripcion_direccion_material = data["descripcion_direccion_material"] 
+        tipo_unidad_material = data["tipo_unidad_material"]
+        tipo_material = TipoMaterial.query.get(id_tipo_material)
+        if not tipo_material:
+            return jsonify({'message': 'Tipo de material no válido'}), 400
+        
+        
+        material.nombre_material = nombre_material
+        material.estado_material = estado_material
+        material.precio_material = precio_material
+        material.descripcion_material = descripcion_material
+        material.id_tipo_material = id_tipo_material
+        material.cantidad_material = cantidad_material
+        material.estado_publicacion_material = estado_publicacion_material
+        material.latitud_publicacion_material = latitud_publicacion_material  # Actualizar latitud
+        material.longitud_publicacion_material = longitud_publicacion_material  # Actualizar longitud
+        material.descripcion_direccion_material = descripcion_direccion_material  # Actualizar descripción de dirección
+        material.tipo_unidad_material = tipo_unidad_material
+        
+        db.session.commit()
+        
+        return jsonify({'message': 'material actualizado'})     
+    except Exception as e:
+        db.session.rollback()
+        
+        return jsonify({
+            'message': 'Error al actualizar el material',
+            'error': str(e)
+        }), 400
 
 
 @material.route('/api/marcar-inactivo/<int:id>', methods=['PUT'])
@@ -496,12 +537,45 @@ def marcar_inactivo(id):
 
         # Cambiar el estado de publicación a "inactivo"
         material.estado_publicacion_material = 'inactivo'
+        # Establecer la fecha de terminación a la fecha actual
+        material.fecha_terminacion = func.now()
 
         # Guardar los cambios
         db.session.commit()
 
         return jsonify({
             'message': 'Material marcado como inactivo exitosamente',
+            'data': {
+                'id_material': material.id_material,
+                'estado_publicacion_material': material.estado_publicacion_material
+            }
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'message': 'Error al cambiar el estado de publicación',
+            'error': str(e)
+        }), 400
+
+
+@material.route('/api/marcar-activo/<int:id>', methods=['PUT'])
+def marcar_activo(id):
+    try:
+        # Buscar el material por ID
+        material = Material.query.get(id)
+        
+        if not material:
+            return jsonify({'message': 'Material no encontrado'}), 404
+
+        # Cambiar el estado de publicación a "inactivo"
+        material.estado_publicacion_material = 'activo'
+
+        # Guardar los cambios
+        db.session.commit()
+
+        return jsonify({
+            'message': 'Material marcado como activo exitosamente',
             'data': {
                 'id_material': material.id_material,
                 'estado_publicacion_material': material.estado_publicacion_material

@@ -13,8 +13,10 @@ class Material(db.Model):
     longitud_publicacion_material = db.Column(db.String(255), nullable=True)
     descripcion_direccion_material = db.Column(db.String(255), nullable=True)
     estado_publicacion_material = db.Column(db.String(255), default="Activo", nullable=True)
+    tipo_unidad_material = db.Column(db.String(255), nullable=False)
 
     fecha_publicacion = db.Column(db.DateTime, default=func.now(), nullable=True)
+    fecha_terminacion = db.Column(db.DateTime, nullable=True)  # Nuevo campo
 
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuario.id_usuario', ondelete="CASCADE"), nullable=False)
     id_tipo_material = db.Column(db.Integer, db.ForeignKey('tipo_material.id_tipo_material', ondelete="CASCADE"), nullable=False)
