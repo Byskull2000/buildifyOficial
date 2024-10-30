@@ -32,6 +32,18 @@ const Page = () => {
     const [imagenRecortada, setImagenRecortada] = useState<Blob | null>(null);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
+    const [zonas, setZonas] = useState<string[]>([]); // Nuevo estado para almacenar las zonas
+
+    const obtenerZonaPorCoordenadas = async (lat: number, lng: number) => {
+        try {
+            // Aquí iría tu lógica para obtener la zona, por ejemplo, mediante una API o un arreglo local
+            const response = await fetch(`tu_api_zonas?lat=${lat}&lng=${lng}`);
+            const data = await response.json();
+            setZonas(data.zonas); // Asumiendo que la respuesta contiene un campo 'zonas'
+        } catch (error) {
+            console.error("Error al obtener las zonas", error);
+        }
+    };
 
     useEffect(() => {
         const data =
@@ -424,27 +436,19 @@ const Page = () => {
                                                     }}
                                                 />
                                             </div>
-                                            <div className="mb-3">
-                                                <label className="block mb-2 text-sm font-medium ">
-                                                    Ubicacion
-                                                </label>
-                                                <div className="flex">
+                                            <div className="mb-3 w-3/5">
+                                                <label className="block mb-2 text-sm font-medium ml-2">Ubicación</label>
+                                                <div className="flex mt-1">
                                                     <input
                                                         type="text"
-                                                        className="bg-yellow-100 border border-orange-200 text-black text-sm rounded-lg w-full p-2.5 "
-                                                        placeholder="Tu ubicacion"
+                                                        className="bg-yellow-100 border border-orange-200 text-black text-sm rounded-lg w-full p-2.5"
+                                                        placeholder="Tu ubicación"
                                                         required
-                                                        value={zona_trabajo}
-                                                        onChange={(e) =>
-                                                            setZonaTrabajo(
-                                                                e.target.value
-                                                            )
-                                                        }
+                                                        value={zona_trabajo} // Debe contener la dirección formateada
+                                                        onChange={(e) => setZonaTrabajo(e.target.value)}
                                                     />
                                                     <div
-                                                        onClick={() =>
-                                                            setOpenMap(!openMap)
-                                                        }
+                                                        onClick={() => setOpenMap(!openMap)}
                                                         className="ml-2 p-2 bg-yellow-100 border hover:bg-yellow-500 border-orange-200 rounded-lg hover:cursor-pointer"
                                                     >
                                                         <MdLocationOn className="text-xl text-black" />
@@ -453,47 +457,47 @@ const Page = () => {
                                                 {openMap && (
                                                     <div
                                                         className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
-                                                        onClick={() =>
-                                                            setOpenMap(false)
-                                                        } // Cerrar modal al hacer clic fuera
+                                                        onClick={() => setOpenMap(false)}
                                                     >
                                                         <div
-                                                            className="bg-white p-6 rounded-lg"
-                                                            onClick={(e) =>
-                                                                e.stopPropagation()
-                                                            } // Prevenir cierre al hacer clic dentro del modal
+                                                            className="bg-white p-6 rounded-lg w-full max-w-2xl h-[400px] lg:h-[600px] flex flex-col"
+                                                            onClick={(e) => e.stopPropagation()}
                                                         >
-                                                            <button
-                                                                className="text-black font-bold mb-4"
-                                                                onClick={() =>
-                                                                    setOpenMap(
-                                                                        false
-                                                                    )
-                                                                } // Botón para cerrar el modal
-                                                            >
-                                                                Cerrar
-                                                            </button>
-
                                                             <Mapa
-                                                                onUbicacionSeleccionada={(
-                                                                    lat: number,
-                                                                    lng: number
-                                                                ) => {
-                                                                    setCoordenadasSeleccionadas(
-                                                                        {
-                                                                            lat,
-                                                                            lng,
-                                                                        }
-                                                                    );
-                                                                    setOpenMap(
-                                                                        false
-                                                                    ); 
+                                                                onUbicacionSeleccionada={(lat: number, lng: number) => {
+                                                                    setCoordenadasSeleccionadas({ lat, lng });
+                                                                    obtenerZonaPorCoordenadas(lat, lng); // Obtener zona cuando se selecciona una ubicación
+                                                                    setOpenMap(false);
                                                                 }}
-                                                                onDireccionObtenida={
-                                                                    setZonaTrabajo
-                                                                }
+                                                                onDireccionObtenida={(direccion: string) => {
+                                                                    // Divide la dirección en partes
+                                                                    const partes = direccion.split(' ');
+
+                                                                    // Obtiene los últimos 3 elementos de la dirección
+                                                                    const zona = partes.slice(-3).join(' '); // 'zona departamento país'
+                                                                    setZonaTrabajo(zona); // Actualiza zona de trabajo con los últimos 3 campos
+                                                                }} 
+                                                                className="w-full h-full"
                                                             />
+                                                            <div className="mt-4 flex justify-end">
+                                                                <button
+                                                                    className="bg-red-600 text-white font-semibold rounded-lg px-4 py-2 hover:bg-red-700 transition-colors duration-300"
+                                                                    onClick={() => setOpenMap(false)}
+                                                                >
+                                                                    Cerrar
+                                                                </button>
+                                                            </div>
                                                         </div>
+                                                    </div>
+                                                )}
+                                                {zonas.length > 0 && (
+                                                    <div className="mt-4">
+                                                        <h3 className="font-semibold">Zonas seleccionadas:</h3>
+                                                        <ul className="list-disc pl-5">
+                                                            {zonas.map((zona, index) => (
+                                                                <li key={index}>{zona}</li>
+                                                            ))}
+                                                        </ul>
                                                     </div>
                                                 )}
                                             </div>
