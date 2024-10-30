@@ -12,7 +12,7 @@ import Profile from "./pages/Profile.tsx";
 import PublicProfile from "./pages/PublicProfile.tsx";
 import InterestList from "./components/InteresList.tsx";
 import SubirImagenes from "./components/subirImagenes.tsx";
-import Galeria from "./components/Galeria.tsx";
+import Galeria from "./components/galeria.tsx";
 import Buscar from "./pages/Buscar.tsx";
 import MatRegister from "./pages/MatRegister.tsx";
 import MaterialesFiltrados from "./pages/MaterialesFiltrados.tsx"; // Importamos MaterialesFiltrados
@@ -44,8 +44,10 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/materiales" element={<MaterialesFiltrados />} />
         <Route path="/material/:id" element={<Material />} />
         <Route path="/propios" element={<Propios />} />
-        <Route path="/editarMaterial/:id_material" element={<EditarMaterial />} />
-        
+        <Route
+          path="/editarMaterial/:id_material"
+          element={<EditarMaterial />}
+        />
       </Routes>
     </Router>
     {

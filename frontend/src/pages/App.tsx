@@ -14,121 +14,126 @@ import material5 from "../assets/material5.png";
 import { MaterialProp } from "../components/Material";
 import { Link } from "react-router-dom";
 import ListarMateriales from "../components/ListarMateriales";
-import Categorias from "../components/Categorias"
-import FormEliminacion from "../components/formEliminacion"
+import Categorias from "../components/Categorias";
+import FormEliminacion from "../components/formEliminacion";
 import Confirmacion from "../components/Confirmacion";
 
-
-
-
 function App() {
-    const userStorage =
-        sessionStorage.getItem("user") || localStorage.getItem("user") || null;
-    const user = userStorage ? JSON.parse(userStorage) : null;
+  const userStorage =
+    sessionStorage.getItem("user") || localStorage.getItem("user") || null;
+  const user = userStorage ? JSON.parse(userStorage) : null;
 
-    const [recomendados, setRecomendados] = useState<MaterialProp[]>([]);
-    const [isPopupVisible, setIsPopupVisible] = useState(false);
+  const [recomendados, setRecomendados] = useState<MaterialProp[]>([]);
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
 
-    useEffect(() => {
-        // esta lista debe ser reemplazada por la API de recomendados
+  useEffect(() => {
+    // esta lista debe ser reemplazada por la API de recomendados
+    const recomendados = [
+      {
+        id_material: 1,
+        imagenUrl: material1,
+        precio_material: 200,
+        nombre_material: "Ladrillos 6 huecos",
+      },
+      {
+        id_material: 2,
+        imagenUrl: material2,
+        precio_material: 200,
+        nombre_material: "Ladrillos 6 huecos",
+      },
+      {
+        id_material: 3,
+        imagenUrl: material3,
+        precio_material: 200,
+        nombre_material: "Ladrillos 6 huecos",
+      },
+      {
+        id_material: 4,
+        imagenUrl: material4,
+        precio_material: 200,
+        nombre_material: "Ladrillos 6 huecos",
+      },
+      {
+        id_material: 5,
+        imagenUrl: material5,
+        precio_material: 80,
+        nombre_material: "Arena lavada",
+      },
+    ];
 
-        const recomendados = [
-            {
-                id_material: 1,
-                imagenUrl: material1,
-                precio_material: 200,
-                nombre_material: "Ladrillos 6 huecos",
-            },
-            {
-                id_material: 2,
-                imagenUrl: material2,
-                precio_material: 200,
-                nombre_material: "Ladrillos 6 huecos",
-            },
-            {
-                id_material: 3,
-                imagenUrl: material3,
-                precio_material: 200,
-                nombre_material: "Ladrillos 6 huecos",
-            },
-            {
-                id_material: 4,
-                imagenUrl: material4,
-                precio_material: 200,
-                nombre_material: "Ladrillos 6 huecos",
-            },
-            {
-                id_material: 5,
-                imagenUrl: material5,
-                precio_material: 80,
-                nombre_material: "Arena lavada",
-            },
-        ];
+    setRecomendados(recomendados);
+  }, []);
 
-        setRecomendados(recomendados);
-    }, []);
-    const togglePopup = () => {
-        setIsPopupVisible(!isPopupVisible);
-    };
+  const togglePopup = () => {
+    setIsPopupVisible(!isPopupVisible);
+  };
 
-    return (
-        <>
-            <NavBar />
-            <div className="bg-white  w-[90%] mx-auto">
-                <div className="flex justify-between items-center mb-5">
-                    <h2 className="font-semibold text-xl md:text-2xl ">
-                        Categorías
-                    </h2>
-                    <Link
-                        to={"/materiales/recomendados"}
-                        className="text-[#FDBC3F]"
-                    >
-                        Ver Mas
-                    </Link>
-                </div>
-                <Categorias></Categorias>
-                <div className="flex justify-between items-center">
-                    <h2 className="font-semibold text-xl md:text-2xl ">
-                        Recomendados para ti
-                    </h2>
-                    <Link
-                        to={"/materiales/recomendados"}
-                        className="text-[#FDBC3F]"
-                    >
-                        Ver Mas
-                    </Link>
-                </div>
-                <ListarMateriales materiales={recomendados} />
-                <ImagenPrueba></ImagenPrueba>
-                <InterestList></InterestList>
-                <DireccionesEntrega />
-                <Link to={"/matRegister"}>
-                    <button className="mr-5 *:mb-2 py-2 bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">Registrar material</button>
-                </Link>
-                <button
-                    className="mt-5 mb-2 py-2 bg-red-600 text-white p-2 font-semibold rounded-lg hover:bg-red-700 focus:outline-none"
-                    onClick={togglePopup}
-                >
-                    Eliminar Material
-                </button>
+  // Función para manejar la confirmación de eliminación
+  const handleConfirm = (motivo: string) => {
+    console.log("Material eliminado por el motivo:", motivo);
+    setIsPopupVisible(false);
+  };
 
-                {/* Mostrar el PopUp de eliminación solo si el estado está activo */}
-                {isPopupVisible && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50 z-50">
-                        <FormEliminacion />
-                        <button
-                            onClick={togglePopup}
-                            className="absolute top-0 right-0 m-4 text-white bg-black p-2 rounded-full hover:bg-gray-800"
-                        >
-                            Cerrar
-                        </button>
-                    </div>
-                )}
-                <Confirmacion></Confirmacion>
-                {!user && <PopupRegristro></PopupRegristro>}
-            </div>
-        </>
-    );
+  // Función para manejar la cancelación de eliminación
+  const handleCancel = () => {
+    setIsPopupVisible(false);
+  };
+
+  return (
+    <>
+      <NavBar />
+      <div className="bg-white w-[90%] mx-auto">
+        <div className="flex justify-between items-center mb-5">
+          <h2 className="font-semibold text-xl md:text-2xl ">Categorías</h2>
+          <Link to={"/materiales/recomendados"} className="text-[#FDBC3F]">
+            Ver Mas
+          </Link>
+        </div>
+        <Categorias />
+        <div className="flex justify-between items-center">
+          <h2 className="font-semibold text-xl md:text-2xl ">
+            Recomendados para ti
+          </h2>
+          <Link to={"/materiales/recomendados"} className="text-[#FDBC3F]">
+            Ver Mas
+          </Link>
+        </div>
+        <ListarMateriales materiales={recomendados} />
+        <ImagenPrueba />
+        <InterestList />
+        <DireccionesEntrega />
+        <Link to={"/matRegister"}>
+          <button className="mr-5 *:mb-2 py-2 bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">
+            Registrar material
+          </button>
+        </Link>
+        <button
+          className="mt-5 mb-2 py-2 bg-red-600 text-white p-2 font-semibold rounded-lg hover:bg-red-700 focus:outline-none"
+          onClick={togglePopup}
+        >
+          Eliminar Material
+        </button>
+
+        {/* Mostrar el PopUp de eliminación solo si el estado está activo */}
+        {isPopupVisible && (
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50 z-50">
+            <FormEliminacion
+              onConfirm={handleConfirm}
+              onCancel={handleCancel}
+            />
+            <button
+              onClick={togglePopup}
+              className="absolute top-0 right-0 m-4 text-white bg-black p-2 rounded-full hover:bg-gray-800"
+            >
+              Cerrar
+            </button>
+          </div>
+        )}
+        <Confirmacion />
+        {!user && <PopupRegristro />}
+      </div>
+    </>
+  );
 }
 
 export default App;
