@@ -23,6 +23,7 @@ const Material = () => {
         precio: string;
         cantidadDisponible: string;
         descripcion: string;
+        unidad: string;
     } | null>(null);
 
     // Estado para manejar los materiales similares
@@ -34,21 +35,28 @@ const Material = () => {
     useEffect(() => {
         const fetchMaterialData = async () => {
             try {
-                const response = await fetch(`/api/materiales/${id}`);
+                {console.log('manda')}
+                const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
+                const response = await fetch(URL_BACKEND + `/api/materiales/${id}`);
                 if (!response.ok) {
                     throw new Error("Error al cargar los datos del material");
                 }
+                {console.log('recibe')}
+            
                 const data = await response.json();
+                {console.log(data.nombre_material)}
                 setMaterialData({
                     nombre: data.data.nombre_material,
                     medida: data.data.medida,
-                    tipoMaterial: data.data.tipo_material,
+                    tipoMaterial: data.data.nombre_tipo_material,
                     ubicacion: data.data.descripcion_direccion_material,
                     condicion: data.data.estado_material,
                     precio: data.data.precio_material,
                     cantidadDisponible: data.data.cantidad_material,
-                    descripcion: data.data.descripcion_material
+                    descripcion: data.data.descripcion_material,
+                    unidad: data.data.tipo_unidad_material
                 });
+                {console.log('mapeo')}
             } catch (err) {
                 setError("Error al cargar los datos del material");
             } finally {
@@ -131,7 +139,7 @@ const Material = () => {
                             <div className="grid lg:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block font-semibold text-gray-700">Medida:</label>
-                                    <p className="text-gray-800 text-lg">{materialData?.medida}</p>
+                                    <p className="text-gray-800 text-lg">{materialData?.unidad}</p>
                                 </div>
                                 <div>
                                     <label className="block font-semibold text-gray-700">Condición:</label>
