@@ -1,17 +1,26 @@
 import buildifyLogo from "../assets/Buildify.png";
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import Mapa from "../components/Mapa";
 import { MdLocationOn } from "react-icons/md";
 import Cropper from "react-easy-crop";
 import { getCroppedImg } from "../components/cropImage";
 import Modal from "react-modal";
 Modal.setAppElement("#root");
+
 const Page = () => {
     interface Ubicacion {
         lat: number;
         lng: number;
     }
+    const userStorage =
+    sessionStorage.getItem("user") || localStorage.getItem("user") || null;
+    const user = userStorage ? JSON.parse(userStorage) : null;
+
+    const [, setLoading] = useState(false);
+    const [, setError] = useState("");
+    const navigate = useNavigate();
+
     const [, setCoordenadasSeleccionadas] =  useState<Ubicacion | null>(null);
     const [openMap, setOpenMap] = useState(false);
     const [UbicacionMaterial, setUbicacionMaterial] = useState("");
@@ -32,6 +41,55 @@ const Page = () => {
     const [images, setImages] = useState<string[]>([]);
     const [imagesPerCrop, setImagesPerCrop] = useState<File[]>([]);
 
+    
+    const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const body = {
+            nombre_material: titulo,  // Asumiendo que 'titulo' corresponde a 'nombre_material'
+            cantidad_material: cantidad,
+            estado_material: condicion, // Asumiendo que 'condicion' corresponde a 'estado_material'
+            precio_material: precio,
+            descripcion_material: descripcion,
+            latitud_publicacion_material:  1.0, // Ajusta según cómo guardas las coordenadas
+            longitud_publicacion_material: 1.0, // Ajusta según cómo guardas las coordenadas
+            descripcion_direccion_material: UbicacionMaterial,
+            id_usuario: user.id_usuario, // Debes tener este valor disponible
+            id_tipo_material: categoria, // Asegúrate de que esto sea el ID correcto
+            tipo_unidad_material: unidad,
+        };
+
+        try {
+            setLoading(true);
+            const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
+            const res = await fetch(URL_BACKEND + "/api/registrar_material", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body),
+            });
+
+            if (!res.ok) {
+                const errorResponse = await res.json();
+                setError(errorResponse.message || "Error al registrar usuario");
+                setLoading(false);
+                return;
+            }
+
+            const { data } = await res.json();
+            if (!data || data !== undefined) {
+                console.log("data: ", data);
+                navigate("/");
+            }
+        } catch (e) {
+            console.error(e);
+            setError("Error en la conexión con el servidor");
+            setLoading(false);
+        }
+    };
+
+    
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files ? Array.from(e.target.files) : [];
         const newImages: File[] = [];
@@ -123,7 +181,7 @@ const Page = () => {
                         Publicar un material
                     </h1>
                     <form
-                        action="#"
+                        onSubmit={handleSubmit}
                         method="POST"
                         className="space-y-4 lg:mt-10 mt-5"
                     >
@@ -184,20 +242,23 @@ const Page = () => {
                                     <option value="">
                                         Selecciona una categoría
                                     </option>
-                                    <option value="obra-fina">Obra Fina</option>
+                                    {/*<option value="obra-fina">Obra Fina</option>
                                     <option value="plomeria">Plomería</option>
                                     <option value="electricidad">
                                         Instalaciones Eléctricas
-                                    </option>
-                                    <option value="herramientas">
+                                    </option>*/}
+                                    <option value="7">
                                         Herramientas Manuales
                                     </option>
-                                    <option value="obra-gruesa">
+                                    {/*<option value="obra-gruesa">
                                         Obra Gruesa
-                                    </option>
-                                    <option value="cemento">Cemento</option>
+                                    </option>*/}
+                                    <option value="2">Cemento</option>
                                     <option value="iluminacion">
                                         Iluminacion
+                                    </option>
+                                    <option value="1">
+                                        Ladrillo
                                     </option>
                                 </select>
                             </div>
@@ -359,6 +420,12 @@ const Page = () => {
                                 </div>
                             )}
                         </div>
+                        <button
+                            type="submit"
+                            className="text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                        >
+                            Publicar
+                        </button>
                     </form>
                 </div>
                 <div className="w-[80%]">
@@ -467,12 +534,7 @@ const Page = () => {
                 </div>
             </div>
             <div className="flex mt-3 mb-5 justify-end mr-[10%]">
-                <button
-                    type="submit"
-                    className="text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                >
-                    Publicar
-                </button>
+                
                 <Link to="/">
                     <button
                         type="button"

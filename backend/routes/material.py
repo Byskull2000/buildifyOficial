@@ -29,6 +29,7 @@ def registrar_material():
         descripcion_direccion_material = data.get('descripcion_direccion_material')
         id_usuario = data.get('id_usuario')
         id_tipo_material = data.get('id_tipo_material')
+        tipo_unidad_material = data.get('tipo_unidad_material')
 
         # Validación de campos obligatorios
         if not nombre_material:
@@ -43,8 +44,8 @@ def registrar_material():
             return jsonify({'message': 'El ID del usuario es obligatorio'}), 400
         if not id_tipo_material:
             return jsonify({'message': 'El ID del tipo de material es obligatorio'}), 400
-        if 'imagen' not in request.files:
-            return jsonify({'message': 'La imagen del material es obligatoria'}), 400
+        #if 'imagen' not in request.files:
+         #   return jsonify({'message': 'La imagen del material es obligatoria'}), 400
 
         # Crear una nueva instancia del modelo Material
         nuevo_material = Material(
@@ -57,7 +58,8 @@ def registrar_material():
             longitud_publicacion_material=longitud_publicacion_material,
             descripcion_direccion_material=descripcion_direccion_material,
             id_usuario=id_usuario,
-            id_tipo_material=id_tipo_material
+            id_tipo_material=id_tipo_material,
+            tipo_unidad_material=tipo_unidad_material
         )
 
         # Añadir el nuevo material a la base de datos
