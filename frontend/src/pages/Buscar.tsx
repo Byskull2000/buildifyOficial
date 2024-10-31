@@ -103,9 +103,9 @@ const Buscar = () => {
                                             e.target.value === ""
                                                 ? null
                                                 : Math.max(
-                                                      0,
-                                                      Number(e.target.value)
-                                                  );
+                                                    0,
+                                                    Number(e.target.value)
+                                                );
                                         setMinPrecio(value);
                                     }}
                                 />
@@ -124,18 +124,21 @@ const Buscar = () => {
                                     className="border rounded-md px-3 py-2 w-full max-w-full"
                                     placeholder="MAX"
                                     min="0"
+                                    max="20000"
                                     onChange={(e) => {
-                                        const value =
-                                            e.target.value === ""
-                                                ? null
-                                                : Math.max(
-                                                      min_precio || 0,
-                                                      Number(e.target.value)
-                                                  );
+                                        let value = Number(e.target.value);
+
+                                        if (value > 20000) {
+                                            value = 20000;
+                                        }
+
+                                        value = Math.max(min_precio || 0, value);
                                         setMaxPrecio(value);
+                                        e.target.value = value.toString();
                                     }}
                                 />
                             </div>
+
                         </div>
                         <div className="flex flex-col mb-4">
                             <label
@@ -183,11 +186,10 @@ const Buscar = () => {
                                         name="orden_precio"
                                         checked={orden_precio === null}
                                         onChange={() => setOrdenPrecio(null)}
-                                        className={`w-5 h-5 ${
-                                            !orden_precio
+                                        className={`w-5 h-5 ${!orden_precio
                                                 ? "text-blue-600"
                                                 : "text-gray-300"
-                                        } border-gray-300 focus:ring-blue-500`}
+                                            } border-gray-300 focus:ring-blue-500`}
                                     />
                                     <label
                                         htmlFor="ninguno-radio"
@@ -204,11 +206,10 @@ const Buscar = () => {
                                         name="orden_precio"
                                         checked={orden_precio === "asc"}
                                         onChange={() => setOrdenPrecio("asc")}
-                                        className={`w-5 h-5 ${
-                                            orden_precio === "asc"
+                                        className={`w-5 h-5 ${orden_precio === "asc"
                                                 ? "text-blue-600"
                                                 : "text-gray-300"
-                                        } border-gray-300 focus:ring-blue-500`}
+                                            } border-gray-300 focus:ring-blue-500`}
                                     />
                                     <label
                                         htmlFor="barato-radio"
@@ -225,11 +226,10 @@ const Buscar = () => {
                                         name="orden_precio"
                                         checked={orden_precio === "desc"}
                                         onChange={() => setOrdenPrecio("desc")}
-                                        className={`w-5 h-5 ${
-                                            orden_precio === "desc"
+                                        className={`w-5 h-5 ${orden_precio === "desc"
                                                 ? "text-blue-600"
                                                 : "text-gray-300"
-                                        } border-gray-300 focus:ring-blue-500`}
+                                            } border-gray-300 focus:ring-blue-500`}
                                     />
                                     <label
                                         htmlFor="caro-radio"
