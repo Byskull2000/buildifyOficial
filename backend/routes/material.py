@@ -29,6 +29,7 @@ def registrar_material():
         descripcion_direccion_material = data.get('descripcion_direccion_material')
         id_usuario = data.get('id_usuario')
         id_tipo_material = data.get('id_tipo_material')
+        tipo_unidad_material = data.get('tipo_unidad_material')
 
         # Validación de campos obligatorios
         if not nombre_material:
@@ -43,8 +44,8 @@ def registrar_material():
             return jsonify({'message': 'El ID del usuario es obligatorio'}), 400
         if not id_tipo_material:
             return jsonify({'message': 'El ID del tipo de material es obligatorio'}), 400
-        if 'imagen' not in request.files:
-            return jsonify({'message': 'La imagen del material es obligatoria'}), 400
+        #if 'imagen' not in request.files:
+         #   return jsonify({'message': 'La imagen del material es obligatoria'}), 400
 
         # Crear una nueva instancia del modelo Material
         nuevo_material = Material(
@@ -57,7 +58,8 @@ def registrar_material():
             longitud_publicacion_material=longitud_publicacion_material,
             descripcion_direccion_material=descripcion_direccion_material,
             id_usuario=id_usuario,
-            id_tipo_material=id_tipo_material
+            id_tipo_material=id_tipo_material,
+            tipo_unidad_material=tipo_unidad_material
         )
 
         # Añadir el nuevo material a la base de datos
@@ -225,13 +227,16 @@ def obtener_materiales_por_tipo_material(id_tipo_material):
 @material.route('/api/materiales/<int:id_material>', methods=['GET'])
 def obtener_material_por_id(id_material):
     try:
-        # Buscar el material por su ID
-        material = Material.query.get(id_material)
+        # Realizar un join con la tabla 'tipo_material' y buscar el material por su ID
+        print('inicia')
+        resultado = db.session.query(Material, TipoMaterial).join(TipoMaterial, Material.id_tipo_material == TipoMaterial.id_tipo_material).filter(Material.id_material == id_material).first()
 
-        if not material:
+        if not resultado:
             return jsonify({'message': 'Material no encontrado'}), 404
 
-        # Convertir el material a JSON
+        material, tipo_material = resultado
+
+        # Convertir el material a JSON, incluyendo el nombre del tipo de material
         data = {
             'id_material': material.id_material,
             'nombre_material': material.nombre_material,
@@ -241,11 +246,13 @@ def obtener_material_por_id(id_material):
             'descripcion_material': material.descripcion_material,
             'id_usuario': material.id_usuario,
             'id_tipo_material': material.id_tipo_material,
+            'nombre_tipo_material': tipo_material.nombre_tipo_material,  # Agregar el nombre del tipo de material
             'latitud_publicacion_material': material.latitud_publicacion_material,
             'longitud_publicacion_material': material.longitud_publicacion_material,
             'descripcion_direccion_material': material.descripcion_direccion_material,
             'estado_publicacion_material': material.estado_publicacion_material,
-            'fecha_publicacion': material.fecha_publicacion
+            'fecha_publicacion': material.fecha_publicacion,
+            'tipo_unidad_material': material.tipo_unidad_material
         }
 
         return jsonify({
@@ -258,6 +265,7 @@ def obtener_material_por_id(id_material):
             'message': 'Error al obtener el material',
             'error': str(e)
         }), 400
+
 
 @material.route('/api/materiales/rango_precio', methods=['GET'])
 def obtener_materiales_por_rango_precio():
