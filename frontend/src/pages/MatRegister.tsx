@@ -283,9 +283,7 @@ const Page = () => {
                                     </option>
                                     <option value="nuevo">Nuevo</option>
                                     <option value="usado">Usado</option>
-                                    <option value="remanufacturado">
-                                        Remanufacturado
-                                    </option>
+                                    
                                 </select>
                             </div>
                             <div>

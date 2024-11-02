@@ -158,9 +158,7 @@ const Buscar = () => {
                                 <option value="">Ninguno</option>
                                 <option value="nuevo">Nuevo</option>
                                 <option value="usado">Usado</option>
-                                <option value="remanufacturado">
-                                    Remanufacturado
-                                </option>
+                                
                             </select>
                         </div>
                         <div className="flex flex-col mb-6">
