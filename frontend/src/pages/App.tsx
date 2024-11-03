@@ -91,6 +91,7 @@ function App() {
   return (
     <>
       <NavBar />
+      {user &&(
       <Link to={"/matRegister"}>
         <div className="flex justify-end items-start mt-5 mr-5">
           <button className="py-2 bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">
@@ -98,7 +99,7 @@ function App() {
           </button>
         </div>
         </Link>
-
+      )}
 
       <div className="bg-white w-[90%] mx-auto">
         <div className="flex justify-between items-center mb-5">
