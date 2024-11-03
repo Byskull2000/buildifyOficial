@@ -101,7 +101,7 @@ const Page = () => {
                 ) {
                     newImages.push(file);
                 } else {
-                    alert("Por favor, sube una imagen JPG o PNG.");
+                    alert("Formato Incorrecto: Por favor, sube una imagen JPG o PNG.");
                 }
             });
         }
