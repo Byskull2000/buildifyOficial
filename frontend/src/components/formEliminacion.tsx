@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 
+// Define la interfaz para las props
 interface FormEliminacionProps {
-  onConfirm: (motivo: string) => void;
+  onConfirm: (motivo: string) => void; // Asegúrate de que la firma sea correcta
   onCancel: () => void;
 }
 
-const FormEliminacion: React.FC<FormEliminacionProps> = ({
-  onConfirm,
-  onCancel,
-}) => {
+const FormEliminacion: React.FC<FormEliminacionProps> = ({ onConfirm, onCancel }) => {
   const [selectedOption, setSelectedOption] = useState("");
   const [otroMotivo, setOtroMotivo] = useState("");
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+  const [showConfirmPopup, setShowConfirmPopup] = useState(false);
 
   const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedOption(event.target.value);
@@ -31,18 +30,18 @@ const FormEliminacion: React.FC<FormEliminacionProps> = ({
       alert("Por favor, selecciona un motivo para continuar.");
       return;
     }
-    onConfirm(motivo); // Llama a onConfirm con el motivo seleccionado
+    setShowConfirmPopup(true); // Mostrar el popup de confirmación
+  };
+
+  const handleConfirm = () => {
+    const motivo = selectedOption === "otro" ? otroMotivo : selectedOption;
+    onConfirm(motivo); // Llama a onConfirm con el motivo
+    setShowConfirmPopup(false); // Cerrar el popup después de confirmar
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full relative">
-        <button
-          className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
-          onClick={onCancel} // Llama a onCancel para cerrar el formulario sin confirmar
-        >
-          &times;
-        </button>
         <h2 className="text-xl font-bold mb-4">
           Motivo para eliminar la publicación
         </h2>
@@ -102,18 +101,49 @@ const FormEliminacion: React.FC<FormEliminacionProps> = ({
               />
             )}
           </div>
-          <button
-            type="submit"
-            disabled={isSubmitDisabled}
-            className={`mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded ${
-              isSubmitDisabled
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-blue-600"
-            }`}
-          >
-            Enviar
-          </button>
+          <div>
+            <button
+              type="submit"
+              disabled={isSubmitDisabled}
+              className={`mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded ${
+                isSubmitDisabled
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-blue-600"
+              }`}
+            >
+              Enviar
+            </button>
+          </div>
         </form>
+
+        {/* Popup de confirmación */}
+        {showConfirmPopup && (
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50 z-50">
+            <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full align-middle relative">
+              <h1>¿Está seguro de desactivar la publicación?</h1>
+              <button
+                onClick={onCancel}
+                className="absolute top-0 right-0 m-4 text-black hover:bg-gray-200 rounded-full p-1"
+              >
+                &times;
+              </button>
+              <div className="mt-4 flex justify-end">
+                <button
+                  onClick={onCancel}
+                  className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 mr-2"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleConfirm}
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  Confirmar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

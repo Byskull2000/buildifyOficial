@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 import ListarMateriales from "../components/ListarMateriales";
 import Categorias from "../components/Categorias";
 import FormEliminacion from "../components/formEliminacion";
-import Confirmacion from "../components/Confirmacion";
+
 
 function App() {
   const userStorage =
@@ -82,6 +82,12 @@ function App() {
   return (
     <>
       <NavBar />
+      <div className="flex justify-end items-start mt-5 mr-5">
+        <button className="py-2 bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">
+          Registrar material
+        </button>
+      </div>
+
       <div className="bg-white w-[90%] mx-auto">
         <div className="flex justify-between items-center mb-5">
           <h2 className="font-semibold text-xl md:text-2xl ">Categorías</h2>
@@ -103,9 +109,6 @@ function App() {
         <InterestList />
         <DireccionesEntrega />
         <Link to={"/matRegister"}>
-          <button className="mr-5 *:mb-2 py-2 bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">
-            Registrar material
-          </button>
         </Link>
         <button
           className="mt-5 mb-2 py-2 bg-red-600 text-white p-2 font-semibold rounded-lg hover:bg-red-700 focus:outline-none"
@@ -129,7 +132,6 @@ function App() {
             </button>
           </div>
         )}
-        <Confirmacion />
         {!user && <PopupRegristro />}
       </div>
     </>
