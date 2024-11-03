@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { MdLocationOn } from "react-icons/md";
 import Mapa from "../components/Mapa";
 import Cropper from "react-easy-crop";
-import { getCroppedImg } from "../components/cropImage";
+import { getCroppedImg } from "../components/getCroppedImg";
 import Modal from "react-modal";
 Modal.setAppElement("#root");
 
@@ -37,6 +37,7 @@ const Editar = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [images, setImages] = useState<string[]>([]);
   const [imagesPerCrop, setImagesPerCrop] = useState<File[]>([]);
+  const [rotation, setRotation] = useState<number>(0);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
@@ -80,7 +81,11 @@ const Editar = () => {
   ) => {
     console.log("Cropped Area: ", croppedArea);
     if (image) {
-      const croppedImage = await getCroppedImg(image, croppedAreaPixels);
+      const croppedImage = await getCroppedImg(
+        image,
+        croppedAreaPixels,
+        rotation
+      );
       setCroppedImage(croppedImage); // Guardar la imagen recortada para mostrarla
     }
   };
@@ -96,6 +101,11 @@ const Editar = () => {
       }
       setIsModalOpen(false);
     }
+  };
+
+  // Funcion para rotar la imagen
+  const rotateImage = () => {
+    setRotation((prev) => (prev + 90) % 360); // Aumentar la rotacion en 90 grados
   };
 
   // Función para pre-poblar los datos del material
@@ -421,6 +431,7 @@ const Editar = () => {
               />
             ))}
           </div>
+          {/* Modal de recorte y rotacion */}
           <Modal
             isOpen={isModalOpen}
             onRequestClose={() => setIsModalOpen(false)}
@@ -434,9 +445,11 @@ const Editar = () => {
                     image={image}
                     crop={crop}
                     zoom={zoom}
-                    aspect={1}
+                    rotation={rotation} // Añadir rotación al Cropper
+                    aspect={1} // Mantiene el aspecto 1:1
                     onCropChange={setCrop}
                     onZoomChange={setZoom}
+                    onRotationChange={setRotation}
                     onCropComplete={onCropComplete}
                   />
                 </div>
@@ -447,6 +460,12 @@ const Editar = () => {
                   className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
                 >
                   Recortar Imagen
+                </button>
+                <button
+                  onClick={rotateImage}
+                  className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600"
+                >
+                  Rotar Imagen
                 </button>
                 <button
                   onClick={() => {
