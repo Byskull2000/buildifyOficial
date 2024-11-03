@@ -17,7 +17,7 @@ const Material = ({ material }: MaterialProps) => {
     return (
         <Link
             to={"/material/" + material.id_material}
-            className="flex-shrink-0 hover:scale-105 transform transition"
+            className="relative flex-shrink-0 transform transition-colors hover:bg-slate-50 bg-white shadow-lg rounded-2xl p-6 w-60 md:w-64 lg:w-72"
         >
             <img
                 className="w-36 h-24 md:w-52 md:h-52 object-cover rounded-xl md:rounded-2xl"
