@@ -6,6 +6,8 @@ export interface MaterialProp {
     nombre_material: string;
     imagenUrl?: string;
     precio_material: number;
+    tipo_unidad_material?: string;
+    estado_material?: string;
 }
 export interface MaterialProps {
     material: MaterialProp;
@@ -23,7 +25,10 @@ const Material = ({ material }: MaterialProps) => {
                 alt={"imagen de " + material.nombre_material}
             />
             <p className="font-semibold ">Bs.{material.precio_material}</p>
+            <p className="font-semibold"></p>
             <p className="">{material.nombre_material}</p>
+            <p className="font-semibold text-orange-600">Estado: {material.estado_material}</p>
+            <p className="font-semibold text-blue-600">Medida: {material.tipo_unidad_material}</p>
         </Link>
     );
 };
