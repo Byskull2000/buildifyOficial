@@ -28,7 +28,7 @@ const Editar = () => {
   const [descripcion, setDescripcion] = useState("");
   const [unidad, setUnidad] = useState("");
   const [cantidad, setCantidad] = useState("");
-  
+
   //Para las imagenes
   const [image, setImage] = useState<string | null>(null);
   const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -68,7 +68,9 @@ const Editar = () => {
   }, [imagesPerCrop]);
 
   const handleUploadClick = () => {
-    const fileInput = document.getElementById("dropzone-file") as HTMLInputElement;
+    const fileInput = document.getElementById(
+      "dropzone-file"
+    ) as HTMLInputElement;
     fileInput.click(); // Simula un clic en el input de archivo
   };
 
@@ -100,8 +102,11 @@ const Editar = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${URL_BACKEND}/api/materiales/${id_material}`);
-        if (!response.ok) throw new Error("Error al obtener los datos del material");
+        const response = await fetch(
+          `${URL_BACKEND}/api/materiales/${id_material}`
+        );
+        if (!response.ok)
+          throw new Error("Error al obtener los datos del material");
 
         const data = await response.json();
         const material = data.data;
@@ -130,17 +135,20 @@ const Editar = () => {
       descripcion_material: descripcion,
       tipo_unidad_material: unidad,
       cantidad_material: cantidad,
-      descripcion_direccion_material: UbicacionMaterial
+      descripcion_direccion_material: UbicacionMaterial,
     };
 
     try {
-      const response = await fetch(`${URL_BACKEND}/api/editar-material/${id_material}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedData),
-      });
+      const response = await fetch(
+        `${URL_BACKEND}/api/editar-material/${id_material}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedData),
+        }
+      );
 
       if (!response.ok) throw new Error("Error al actualizar el material");
 
@@ -170,7 +178,12 @@ const Editar = () => {
           <form action="#" method="POST" className="space-y-4 lg:mt-10 mt-5">
             <div className="space-y-4">
               <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-500 ml-2">Título</label>
+                <label
+                  htmlFor="title"
+                  className="block text-sm font-medium text-gray-500 ml-2"
+                >
+                  Título
+                </label>
                 <input
                   required
                   placeholder="Título del material"
@@ -183,7 +196,12 @@ const Editar = () => {
                 />
               </div>
               <div>
-                <label htmlFor="price" className="block text-sm font-medium text-gray-500 ml-2">Precio</label>
+                <label
+                  htmlFor="price"
+                  className="block text-sm font-medium text-gray-500 ml-2"
+                >
+                  Precio
+                </label>
                 <input
                   required
                   placeholder="Precio en Bs."
@@ -192,12 +210,25 @@ const Editar = () => {
                   name="price"
                   className="w-3/5 bg-gray-100 mt-1 p-2 border rounded-md"
                   value={precio}
-                  onChange={(e) => setPrecio(e.target.value)}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value, 10);
+                    if (value <= 20000) {
+                      setPrecio(e.target.value);
+                    } else {
+                      setPrecio("");
+                    }
+                  }}
                   min="0"
+                  max="20000"
                 />
               </div>
               <div>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-500 ml-2">Categoría</label>
+                <label
+                  htmlFor="category"
+                  className="block text-sm font-medium text-gray-500 ml-2"
+                >
+                  Categoría
+                </label>
                 <select
                   id="category"
                   name="category"
@@ -216,7 +247,12 @@ const Editar = () => {
                 </select>
               </div>
               <div>
-                <label htmlFor="condition" className="block text-sm font-medium text-gray-500 ml-2">Condición del Material</label>
+                <label
+                  htmlFor="condition"
+                  className="block text-sm font-medium text-gray-500 ml-2"
+                >
+                  Condición del Material
+                </label>
                 <select
                   id="condition"
                   name="condition"
@@ -249,7 +285,12 @@ const Editar = () => {
                 </select>
               </div>
               <div>
-                <label htmlFor="units" className="block text-sm font-medium text-gray-500 ml-2">Cantidad disponible</label>
+                <label
+                  htmlFor="units"
+                  className="block text-sm font-medium text-gray-500 ml-2"
+                >
+                  Cantidad disponible
+                </label>
                 <input
                   required
                   placeholder="Cantidad disponible:"
@@ -263,7 +304,12 @@ const Editar = () => {
                 />
               </div>
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-500 ml-2">Descripción</label>
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-gray-500 ml-2"
+                >
+                  Descripción
+                </label>
                 <textarea
                   required
                   placeholder="Descripción del material"
@@ -277,7 +323,9 @@ const Editar = () => {
               </div>
             </div>
             <div className="mb-4 w-3/5">
-              <label className="block text-sm font-medium text-gray-500 ml-2">Ubicación</label>
+              <label className="block text-sm font-medium text-gray-500 ml-2">
+                Ubicación
+              </label>
               <div className="flex mt-1">
                 <input
                   type="text"
@@ -287,13 +335,22 @@ const Editar = () => {
                   value={UbicacionMaterial}
                   onChange={(e) => setUbicacionMaterial(e.target.value)}
                 />
-                <div onClick={() => setOpenMap(!openMap)} className="ml-2 p-2 bg-gray-100 border rounded-md">
+                <div
+                  onClick={() => setOpenMap(!openMap)}
+                  className="ml-2 p-2 bg-gray-100 border rounded-md"
+                >
                   <MdLocationOn className="text-xl text-black" />
                 </div>
               </div>
               {openMap && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" onClick={() => setOpenMap(false)}>
-                  <div className="bg-white p-6 rounded-lg w-full max-w-2xl h-[400px] lg:h-[600px] flex flex-col" onClick={(e) => e.stopPropagation()}>
+                <div
+                  className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+                  onClick={() => setOpenMap(false)}
+                >
+                  <div
+                    className="bg-white p-6 rounded-lg w-full max-w-2xl h-[400px] lg:h-[600px] flex flex-col"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Mapa
                       onUbicacionSeleccionada={(lat: number, lng: number) => {
                         setCoordenadasSeleccionadas({ lat, lng });
@@ -303,7 +360,12 @@ const Editar = () => {
                       className="w-full h-full"
                     />
                     <div className="mt-4 flex justify-end">
-                      <button className="bg-red-600 text-white font-semibold rounded-lg px-4 py-2" onClick={() => setOpenMap(false)}>Cerrar</button>
+                      <button
+                        className="bg-red-600 text-white font-semibold rounded-lg px-4 py-2"
+                        onClick={() => setOpenMap(false)}
+                      >
+                        Cerrar
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -315,41 +377,108 @@ const Editar = () => {
           <div className="flex flex-col items-center justify-center w-full">
             <label className="flex flex-col items-center justify-center w-full h-80 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg className="w-8 h-8 mb-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                  <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
+                <svg
+                  className="w-8 h-8 mb-4 text-gray-500"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 16"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                  />
                 </svg>
-                <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Presiona para subir</span> O arrastra y suelta</p>
+                <p className="mb-2 text-sm text-gray-500">
+                  <span className="font-semibold">Presiona para subir</span> O
+                  arrastra y suelta
+                </p>
                 <p className="text-xs text-gray-500">PNG o JPG</p>
               </div>
-              <input id="dropzone-file" type="file" className="hidden" multiple onChange={handleImageChange} />
+              <input
+                id="dropzone-file"
+                type="file"
+                className="hidden"
+                multiple
+                onChange={handleImageChange}
+              />
             </label>
-            <button onClick={handleUploadClick} className="mt-4 px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Seleccionar imágenes</button>
+            <button
+              onClick={handleUploadClick}
+              className="mt-4 px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+            >
+              Seleccionar imágenes
+            </button>
           </div>
           <div className="grid grid-cols-3 mt-3">
             {images.map((image, index) => (
-              <img src={image} key={index} className="w-full h-full object-cover" />
+              <img
+                src={image}
+                key={index}
+                className="w-full h-full object-cover"
+              />
             ))}
           </div>
-          <Modal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} className="fixed inset-0 flex items-center justify-center bg-white rounded-lg shadow-lg">
+          <Modal
+            isOpen={isModalOpen}
+            onRequestClose={() => setIsModalOpen(false)}
+            className="fixed inset-0 flex items-center justify-center bg-white rounded-lg shadow-lg"
+          >
             <div className="p-4 max-w-md w-full">
               <h2 className="text-lg font-semibold mb-4">Recortar Imagen</h2>
               {image && (
                 <div className="relative w-full h-96 mb-4">
-                  <Cropper image={image} crop={crop} zoom={zoom} aspect={1} onCropChange={setCrop} onZoomChange={setZoom} onCropComplete={onCropComplete} />
+                  <Cropper
+                    image={image}
+                    crop={crop}
+                    zoom={zoom}
+                    aspect={1}
+                    onCropChange={setCrop}
+                    onZoomChange={setZoom}
+                    onCropComplete={onCropComplete}
+                  />
                 </div>
               )}
               <div className="flex justify-between">
-                <button onClick={handleCrop} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600">Recortar Imagen</button>
-                <button onClick={() => { setIsModalOpen(false); imagesPerCrop.shift(); setImagesPerCrop([...imagesPerCrop]); }} className="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">Cancelar</button>
+                <button
+                  onClick={handleCrop}
+                  className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+                >
+                  Recortar Imagen
+                </button>
+                <button
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    imagesPerCrop.shift();
+                    setImagesPerCrop([...imagesPerCrop]);
+                  }}
+                  className="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300"
+                >
+                  Cancelar
+                </button>
               </div>
             </div>
           </Modal>
         </div>
       </div>
       <div className="flex mt-3 mb-5 justify-end mr-[10%]">
-        <button type="button" onClick={handleSave} className="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5">Guardar</button>
+        <button
+          type="button"
+          onClick={handleSave}
+          className="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5"
+        >
+          Guardar
+        </button>
         <Link to="/perfil-comercial">
-          <button type="button" onClick={handleCancel} className="ml-4 text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm px-5 py-2.5">Cancelar</button>
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="ml-4 text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm px-5 py-2.5"
+          >
+            Cancelar
+          </button>
         </Link>
       </div>
     </div>
