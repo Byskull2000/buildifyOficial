@@ -75,24 +75,16 @@ function App() {
   return (
     <>
       <NavBar />
-<<<<<<< HEAD
       {user &&(
       <Link to={"/matRegister"}>
-=======
-      {user && <Link to={"/matRegister"}>
->>>>>>> 9d7375f4cc46aa45aabe543ff1a4b54eb9909f0e
         <div className="flex justify-end items-start mt-5 mr-5">
           <button className="py-2 bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">
             Registrar material
           </button>
         </div>
-<<<<<<< HEAD
         </Link>
       )}
 
-=======
-        </Link>}
->>>>>>> 9d7375f4cc46aa45aabe543ff1a4b54eb9909f0e
       <div className="bg-white w-[90%] mx-auto">
         <div className="flex justify-between items-center mb-5">
           <h2 className="font-semibold text-xl md:text-2xl ">
