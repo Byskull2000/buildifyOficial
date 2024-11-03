@@ -1,10 +1,8 @@
 // Todas las imagenes deben estar en /src/assets
 import NavBar from "../components/NavBar";
-import PopupRegristro from "../components/RegistroRapidoPP";
 import ImagenPrueba from "../pages/ImagenPrueba";
 import InterestList from "../components/InteresList";
 //import { Link } from "react-router-dom";
-import DireccionesEntrega from "./DireccionesEntrega";
 import { useEffect, useState } from "react";
 import material1 from "../assets/material1.png";
 import material2 from "../assets/material2.png";
@@ -15,7 +13,7 @@ import { MaterialProp } from "../components/Material";
 import { Link } from "react-router-dom";
 import ListarMateriales from "../components/ListarMateriales";
 import Categorias from "../components/Categorias";
-import FormEliminacion from "../components/formEliminacion";
+
 
 function App() {
   const userStorage =
@@ -23,7 +21,6 @@ function App() {
   const user = userStorage ? JSON.parse(userStorage) : null;
 
   const [recomendados, setRecomendados] = useState<MaterialProp[]>([]);
-  const [isPopupVisible, setIsPopupVisible] = useState(false);
 
   useEffect(() => {
     // esta lista debe ser reemplazada por la API de recomendados
@@ -73,33 +70,18 @@ function App() {
     setRecomendados(recomendados);
   }, []);
 
-  const togglePopup = () => {
-    setIsPopupVisible(!isPopupVisible);
-  };
 
-  // Función para manejar la confirmación de eliminación
-  const handleConfirm = (motivo: string) => {
-    console.log("Material eliminado por el motivo:", motivo);
-    setIsPopupVisible(false);
-  };
-
-  // Función para manejar la cancelación de eliminación
-  const handleCancel = () => {
-    setIsPopupVisible(false);
-  };
 
   return (
     <>
       <NavBar />
-      <Link to={"/matRegister"}>
+      {user && <Link to={"/matRegister"}>
         <div className="flex justify-end items-start mt-5 mr-5">
           <button className="py-2 bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">
             Registrar material
           </button>
         </div>
-        </Link>
-
-
+        </Link>}
       <div className="bg-white w-[90%] mx-auto">
         <div className="flex justify-between items-center mb-5">
           <h2 className="font-semibold text-xl md:text-2xl ">
@@ -127,30 +109,6 @@ function App() {
         <ListarMateriales materiales={recomendados} />
         <ImagenPrueba />
         <InterestList />
-        <DireccionesEntrega />
-        <button
-          className="mt-5 mb-2 py-2 bg-red-600 text-white p-2 font-semibold rounded-lg hover:bg-red-700 focus:outline-none"
-          onClick={togglePopup}
-        >
-          Eliminar Material
-        </button>
-
-        {/* Mostrar el PopUp de eliminación solo si el estado está activo */}
-        {isPopupVisible && (
-          <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-50 z-50">
-            <FormEliminacion
-              onConfirm={handleConfirm}
-              onCancel={handleCancel}
-            />
-            <button
-              onClick={togglePopup}
-              className="absolute top-0 right-0 m-4 text-white bg-black p-2 rounded-full hover:bg-gray-800"
-            >
-              Cerrar
-            </button>
-          </div>
-        )}
-        {!user && <PopupRegristro />}
       </div>
     </>
   );
