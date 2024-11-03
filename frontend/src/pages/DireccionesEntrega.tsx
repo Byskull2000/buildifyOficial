@@ -11,44 +11,46 @@ interface Ubicacion {
 
 const DireccionesEntrega: React.FC = () => {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [coordenadasSeleccionadas, setCoordenadasSeleccionadas] =
-    useState<Ubicacion | null>(null);
+  const [coordenadasSeleccionadas, setCoordenadasSeleccionadas] = useState<Ubicacion | null>(null);
   const [direccionSeleccionada, setDireccionSeleccionada] = useState("");
+  const [mensaje, setMensaje] = useState<string | null>(null);
 
   const formRef = useRef<HTMLDivElement | null>(null);
 
-  const guardarUbicacion = async (
-    nombre: string,
-    direccion: string,
-    telefono: string
-  ) => {
-    const userStorage =
-      sessionStorage.getItem("user") || localStorage.getItem("user") || null;
+  const guardarUbicacion = async (nombre: string, direccion: string, telefono: string) => {
+    const userStorage = sessionStorage.getItem("user") || localStorage.getItem("user") || null;
     const user = userStorage ? JSON.parse(userStorage) : null;
     const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
+
     if (coordenadasSeleccionadas) {
       const { lat, lng } = coordenadasSeleccionadas;
-      const usuario = user.id_usuario;
+      const usuario = user?.id_usuario;
       const data = { nombre, direccion, telefono, lat, lng, usuario };
 
-      try {
-        const response = await fetch(
-          `${URL_BACKEND}/api/guardar-direccion-entrega`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          }
-        );
+      console.log("Datos a guardar:", data); // Para verificar el objeto
 
-        if (!response.ok) throw new Error("Error al guardar");
+      try {
+        const response = await fetch(`${URL_BACKEND}/api/guardar-direccion-entrega`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          const errorResponse = await response.text(); // Obtener el texto de la respuesta
+          throw new Error(`Error al guardar: ${errorResponse}`); // Lanzar el error con el mensaje detallado
+        }
+
+        setMensaje("Dirección guardada exitosamente.");
+        cerrarFormulario(); // Cerrar formulario después de guardar
       } catch (error) {
-        throw new Error("Error al guardar la dirección de entrega");
+        console.error("Error al guardar la dirección:", error); // Registro del error
+        setMensaje("Error al guardar la dirección de entrega. Por favor, inténtalo nuevamente.");
       }
     } else {
-      throw new Error("Por favor, selecciona una ubicación en el mapa.");
+      setMensaje("Por favor, selecciona una ubicación en el mapa.");
     }
   };
 
@@ -60,9 +62,9 @@ const DireccionesEntrega: React.FC = () => {
     setMostrarFormulario(false);
     setCoordenadasSeleccionadas(null);
     setDireccionSeleccionada("");
+    setMensaje(null);
   };
 
-  // Detectar clics fuera del formulario para cerrarlo
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (formRef.current && !formRef.current.contains(event.target as Node)) {
@@ -79,8 +81,7 @@ const DireccionesEntrega: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [mostrarFormulario]);
 
-  const userStorage =
-    sessionStorage.getItem("user") || localStorage.getItem("user") || null;
+  const userStorage = sessionStorage.getItem("user") || localStorage.getItem("user") || null;
   const user = userStorage ? JSON.parse(userStorage) : null;
 
   return (
@@ -101,6 +102,12 @@ const DireccionesEntrega: React.FC = () => {
             >
               Cerrar
             </button>
+          )}
+
+          {mensaje && (
+            <p className={`text-center ${mensaje.includes("exitosamente") ? "text-green-500" : "text-red-500"}`}>
+              {mensaje}
+            </p>
           )}
 
           {user && (

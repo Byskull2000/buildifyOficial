@@ -36,6 +36,14 @@ const DireccionForm: React.FC<DireccionFormProps> = ({
     setFormValido(todosCamposLlenos);
   }, [nombre, direccionEditable, telefono, coordenadasSeleccionadas]);
 
+  const handleTelefonoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const valor = e.target.value;
+    // Solo permitir números en el campo de teléfono
+    if (/^\d*$/.test(valor)) {
+      setTelefono(valor);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setMensaje(null);
@@ -80,7 +88,7 @@ const DireccionForm: React.FC<DireccionFormProps> = ({
         className="block w-full p-2 mb-2 rounded"
         placeholder="Teléfono"
         value={telefono}
-        onChange={(e) => setTelefono(e.target.value)}
+        onChange={handleTelefonoChange} // Cambia aquí
       />
 
       {coordenadasSeleccionadas && (
