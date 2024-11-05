@@ -470,7 +470,8 @@ def buscar_materiales_avanzado():
             'longitud_publicacion_material': material.longitud_publicacion_material,
             'descripcion_direccion_material': material.descripcion_direccion_material,
             'estado_publicacion_material': material.estado_publicacion_material,
-            'fecha_publicacion': material.fecha_publicacion
+            'fecha_publicacion': material.fecha_publicacion,
+            'tipo_unidad_material': material.tipo_unidad_material, 
         } for material in materiales]
 
         return jsonify({
