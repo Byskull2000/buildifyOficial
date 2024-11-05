@@ -244,7 +244,7 @@ const Buscar = () => {
                         </div>
                     </div>
                 </aside>
-                <div className="ml-3">
+                <div className="ml-3 w-full">
                     <div className="flex justify-between items-center my-3">
                         <h1 className="text-xl font-semibold">
                             Resultados de la búsqueda "{searchQuery}"
@@ -253,7 +253,7 @@ const Buscar = () => {
                     {loading ? (
                         <Loading />
                     ) : (
-                        <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 place-items-center">
+                        <div className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4 place-items-center">
                             {resultados.length > 0 ? (
                                 resultados.map((material) => (
                                     <Material
