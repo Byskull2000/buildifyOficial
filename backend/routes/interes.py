@@ -28,6 +28,7 @@ def registrar_interes():
         
          # Primero, eliminar los intereses previos del usuario
         intereses_previos = Interes.query.filter_by(id_usuario=usuario).all()
+        print("eliminados:")
 
         if intereses_previos:
             for interes in intereses_previos:
@@ -53,9 +54,10 @@ def registrar_interes():
                 return jsonify({'message': 'Cada material debe tener un id_tipoMaterial válido (entero)'}), 400
 
             
+            
             # Crear una instancia de la clase interes por cada material
             nuevo_interes = Interes(
-                id_tipoMaterial=material,
+                id_tipo_material=material,
                 id_usuario=usuario,
                 #fecha_seleccion=fecha_seleccion
             )
@@ -71,7 +73,7 @@ def registrar_interes():
 
         # Preparar los datos de respuesta
         respuesta = [{
-            'material': i.id_tipoMaterial,
+            'material': i.id_tipo_material,
             'usuario': i.id_usuario,
             'fecha_seleccion': i.fecha_seleccion
         } for i in intereses_registrados]
@@ -99,7 +101,7 @@ def obtener_intereses_usuario(id_usuario):
         
         # Convertir resultados a JSON
         data = [{
-            'id_tipoMaterial': interes.id_tipoMaterial,
+            'id_tipoMaterial': interes.id_tipo_material,
         } for interes in intereses]
 
         return jsonify({
