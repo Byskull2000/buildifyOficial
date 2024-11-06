@@ -247,13 +247,18 @@ const Editar = () => {
                   onChange={(e) => setCategoria(e.target.value)}
                 >
                   <option value="">Selecciona una categoría</option>
-                  <option value="obra-fina">Obra Fina</option>
-                  <option value="plomeria">Plomería</option>
-                  <option value="electricidad">Instalaciones Eléctricas</option>
-                  <option value="herramientas">Herramientas Manuales</option>
-                  <option value="obra-gruesa">Obra Gruesa</option>
-                  <option value="cemento">Cemento</option>
-                  <option value="iluminacion">Iluminacion</option>
+                  <option value="1">Ladrillo</option>
+                  <option value="2">Cemento</option>
+                  <option value="3">Tablones</option>
+                  <option value="4">Vigas</option>
+                  <option value="5">Arena</option>
+                  <option value="6">Mezclas</option>
+                  <option value="7">Herramientas Manuales</option>
+                  <option value="8">Madera</option>
+                  <option value="9">Tejas</option>
+                  <option value="10">Yeso</option>
+                  <option value="11">Piedras</option>
+
                 </select>
               </div>
               <div>
