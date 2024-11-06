@@ -12,7 +12,7 @@ import Profile from "./pages/Profile.tsx";
 import PublicProfile from "./pages/PublicProfile.tsx";
 import InterestList from "./components/InteresList.tsx";
 import SubirImagenes from "./components/subirImagenes.tsx";
-import Galeria from "./components/galeria.tsx";
+import Galeria from "./components/Galeria.tsx";
 import Buscar from "./pages/Buscar.tsx";
 import MatRegister from "./pages/MatRegister.tsx";
 import MaterialesFiltrados from "./pages/MaterialesFiltrados.tsx"; // Importamos MaterialesFiltrados
