@@ -20,7 +20,7 @@ const Material = ({ material }: MaterialProps) => {
             className="relative flex-shrink-0 transform transition-colors hover:bg-slate-50 bg-white shadow-lg rounded-2xl p-6 w-60 md:w-64 lg:w-72"
         >
             <img
-                className="w-36 h-24 md:w-52 md:h-52 object-cover rounded-xl md:rounded-2xl"
+                className=" w-full h-36  md:h-52 object-cover rounded-xl md:rounded-2xl"
                 src={material.imagenUrl|| imagenDefecto}
                 alt={"imagen de " + material.nombre_material}
             />
