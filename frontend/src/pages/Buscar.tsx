@@ -237,8 +237,76 @@ const Buscar = () => {
                                     </label>
                                 </div>
                             </div>
-                            <hr className="border-t border-gray-300 mt-6" />
-                            <button className="py-2 bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">
+                            <hr className="border-t border-gray-300 mb-4 mt-4" />
+                            <label
+                                htmlFor="orden_precio"
+                                className="text-sm font-medium mb-3 text-gray-600"
+                            >
+                                Cercanía
+                            </label>
+                            <div className="space-y-3">
+                                <div className="flex items-center">
+                                    <input
+                                        id="ninguno-radio"
+                                        type="radio"
+                                        value="null"
+                                        name="orden_precio"
+                                        checked={orden_precio === null}
+                                        onChange={() => setOrdenPrecio(null)}
+                                        className={`w-5 h-5 ${!orden_precio
+                                            ? "text-blue-600"
+                                            : "text-gray-300"
+                                            } border-gray-300 focus:ring-blue-500`}
+                                    />
+                                    <label
+                                        htmlFor="ninguno-radio"
+                                        className="ml-3 text-sm font-medium text-gray-700"
+                                    >
+                                        Ninguno
+                                    </label>
+                                </div>
+                                <div className="flex items-center">
+                                    <input
+                                        id="barato-radio"
+                                        type="radio"
+                                        value="asc"
+                                        name="orden_precio"
+                                        checked={orden_precio === "asc"}
+                                        onChange={() => setOrdenPrecio("asc")}
+                                        className={`w-5 h-5 ${orden_precio === "asc"
+                                            ? "text-blue-600"
+                                            : "text-gray-300"
+                                            } border-gray-300 focus:ring-blue-500`}
+                                    />
+                                    <label
+                                        htmlFor="barato-radio"
+                                        className="ml-3 text-sm font-medium text-gray-700"
+                                    >
+                                        Más cercano primero
+                                    </label>
+                                </div>
+                            </div>
+                            <hr className="border-t border-gray-300 mb-4 mt-4" />
+                            <label
+                                htmlFor="orden_precio"
+                                className="text-sm font-medium mb-3 text-gray-600"
+                            >
+                                Zona
+                            </label>
+                            <select
+                                id="estado_material"
+                                name="estado_material"
+                                className="border rounded-md px-3 py-2"
+                                onChange={(e) =>
+                                    setEstadoMaterial(e.target.value)
+                                }
+                            >
+                                <option value="">Ninguno</option>
+                                <option value="cercado">Cercado</option>
+                                <option value="tiquipaya">Tiquipaya</option>
+                                <option value="sacaba">Sacaba</option>
+                            </select>
+                            <button className="py-2 bg-blue-600 text-white p-2 mt-10 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">
                                 Guardar filtros
                             </button>
                         </div>
