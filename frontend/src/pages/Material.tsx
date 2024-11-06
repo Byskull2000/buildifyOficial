@@ -13,7 +13,6 @@ import ListarMateriales from "../components/ListarMateriales";
 const Material = () => {
     const { id } = useParams<{ id: string }>();
 
-    // Estado para guardar los datos del material específico
     const [materialData, setMaterialData] = useState<{
         nombre: string;
         medida: string;
@@ -26,25 +25,31 @@ const Material = () => {
         unidad: string;
     } | null>(null);
 
-    // Estado para manejar los materiales similares
     const [similares, setSimilares] = useState<MaterialProp[]>([]);
+
+    // Estado solo de lectura para manejar las imágenes de la galería
+    const materialImages = [
+        material1, // Imagen estática
+        material2, // Imagen estática
+        material3, // Imagen estática
+        material4, // Imagen estática
+        material5  // Imagen estática
+    ];
+
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    // Cargar datos del material desde el backend
     useEffect(() => {
         const fetchMaterialData = async () => {
             try {
-                {console.log('manda')}
                 const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
                 const response = await fetch(URL_BACKEND + `/api/materiales/${id}`);
                 if (!response.ok) {
                     throw new Error("Error al cargar los datos del material");
                 }
-                {console.log('recibe')}
             
                 const data = await response.json();
-                {console.log(data.nombre_material)}
+                
                 setMaterialData({
                     nombre: data.data.nombre_material,
                     medida: data.data.medida,
@@ -56,7 +61,6 @@ const Material = () => {
                     descripcion: data.data.descripcion_material,
                     unidad: data.data.tipo_unidad_material
                 });
-                {console.log('mapeo')}
             } catch (err) {
                 setError("Error al cargar los datos del material");
             } finally {
@@ -66,7 +70,6 @@ const Material = () => {
         fetchMaterialData();
     }, [id]);
 
-    // esta lista debe ser reemplazada por la API de recomendados
     useEffect(() => {
         const similares = [
             {
@@ -115,7 +118,6 @@ const Material = () => {
                 <h1 className="font-bold text-2xl text-gray-800 mt-4 mb-6">Detalle de la Publicación</h1>
 
                 <div className="lg:grid lg:grid-cols-2 gap-2">
-                    {/* Formulario de Detalles del Material */}
                     <div className="">
                         <div className="space-y-6 bg-white rounded-lg shadow-lg p-8 ml-[5%]">
                             <div>
@@ -155,9 +157,7 @@ const Material = () => {
                                     <label className="block font-semibold text-gray-700">Ubicación:</label>
                                     <p className="text-gray-800 text-lg">{materialData?.ubicacion}</p>
                                 </div>
-                                <div
-                                    className="ml-2 p-2 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 hover:cursor-pointer transition-colors duration-300"
-                                >
+                                <div className="ml-2 p-2 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 hover:cursor-pointer transition-colors duration-300">
                                     <MdLocationOn className="text-xl text-black" />
                                 </div>
                             </div>
@@ -166,12 +166,12 @@ const Material = () => {
 
                     <div className="flex flex-col items-center space-y-4 bg-slate-50 shadow-lg">
                         <h2 className="text-xl font-semibold text-gray-800 mt-4">Galería</h2>
-                        {/* ACA LA GALERIA */}
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="w-full h-32 bg-gray-200 rounded-lg shadow-md"></div>
-                            <div className="w-full h-32 bg-gray-200 rounded-lg shadow-md"></div>
-                            <div className="w-full h-32 bg-gray-200 rounded-lg shadow-md"></div>
-                            <div className="w-full h-32 bg-gray-200 rounded-lg shadow-md"></div>
+                            {materialImages.map((image, index) => (
+                                <div key={index} className="w-full h-32 bg-gray-200 rounded-lg shadow-md">
+                                    <img src={image} alt={`Imagen ${index + 1}`} className="w-full h-full object-cover rounded-lg" />
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
