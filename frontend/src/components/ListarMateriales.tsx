@@ -14,9 +14,9 @@ const ListarMateriales = ({ materiales }: ListarMaterialesProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
 
     return (
-        <div className="relative">
+        <div className="flex justify-between items-center">
             <button
-                className="hidden sm:absolute sm:block bg-yellow-500 rounded-full left-0 hover:bg-yellow-400 hover:rounded-full text-gray-800 -translate-y-1/2 z-50  top-1/2 items-center justify-center w-10 h-10 bg-transparent focus:outline-none  "
+                className="hidden bg-yellow-500 rounded-full left-0 hover:bg-yellow-400 hover:rounded-full text-gray-800  z-50   w-10 h-10 bg-transparent focus:outline-none p-5 sm:flex items-center justify-center"
                 onClick={() => {
                     if (containerRef.current) {
                         const container = containerRef.current;
@@ -24,9 +24,7 @@ const ListarMateriales = ({ materiales }: ListarMaterialesProps) => {
                     }
                 }}
             >
-                <FontAwesomeIcon
-                    icon={faChevronLeft}
-                />
+                <FontAwesomeIcon icon={faChevronLeft} />
             </button>
             <div
                 ref={containerRef}
@@ -37,7 +35,7 @@ const ListarMateriales = ({ materiales }: ListarMaterialesProps) => {
                 ))}
             </div>
             <button
-                className="hidden sm:block sm:absolute bg-yellow-500 rounded-full right-0  hover:bg-yellow-400 hover:rounded-full text-gray-800  top-1/2 -translate-y-1/2 z-50  items-center justify-center w-10 h-10 bg-transparent focus:outline-none"
+                className="hidden bg-yellow-500 rounded-full left-0 hover:bg-yellow-400 hover:rounded-full text-gray-800  z-50   w-10 h-10 bg-transparent focus:outline-none p-5 sm:flex items-center justify-center"
                 onClick={() => {
                     if (containerRef.current) {
                         const container = containerRef.current;
@@ -45,10 +43,7 @@ const ListarMateriales = ({ materiales }: ListarMaterialesProps) => {
                     }
                 }}
             >
-                <FontAwesomeIcon
-                    icon={faChevronRight}
-                   
-                />
+                <FontAwesomeIcon icon={faChevronRight} />
             </button>
         </div>
     );
