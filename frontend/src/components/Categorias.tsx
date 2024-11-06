@@ -12,6 +12,11 @@ import Yeso from "../assets/Yeso.png";
 
 import { Link, useLocation } from "react-router-dom";
 import { useRef } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faChevronLeft,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
 
 const categoriasData = [
   { id: 1, name: "Ladrillo", imgSrc: Ladrillo },
@@ -43,7 +48,7 @@ const Categorias = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       {/* Título elegante de la sección de categorías, solo en la página de navegación */}
       {!isInicio && (
         <div className="text-center text-xl font-semibold mb-4 p-2 bg-[#FDBC3F] text-white rounded-md shadow-md">
@@ -51,43 +56,46 @@ const Categorias = () => {
         </div>
       )}
 
-      <button
-        className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-[#e3961b] text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg focus:outline-none"
-        onClick={scrollLeft}
-      >
-        ◀
-      </button>
-      <div
-        className="flex overflow-x-auto hide-scrollbar py-5 gap-4"
-        ref={scrollRef}
-      >
-        {categoriasData.map((categoria) => (
-          <Link to={`/materiales?id=${categoria.id}`} key={categoria.id}>
-            <div
-              className={`w-24 sm:w-24 md:w-28 xl:w-48 bg-[#FDBC3F] border border-gray-200 rounded-lg shadow hover:bg-[#f7a914] transition-colors ${
-                !isInicio && currentTypeId !== String(categoria.id)
-                  ? "opacity-60"
-                  : "opacity-100"
-              }`}
-            >
-              <div className="flex flex-col items-center pb-10 mt-4">
-                <img
-                  className="w-16 sm:w-16 md:w-16 xl:w-28 h-auto mb-3 rounded-full shadow-lg"
-                  src={categoria.imgSrc}
-                  alt={categoria.name}
-                />
-                <span className="text-sm">{categoria.name}</span>
+      {/* Contenedor para las flechas y la barra de categorías */}
+      <div className="flex items-center justify-center w-full">
+        <button
+          className="hidden md:flex bg-[#e3961b] text-black rounded-full w-10 h-10 items-center justify-center shadow-lg focus:outline-none mr-2"
+          onClick={scrollLeft}
+        >
+          <FontAwesomeIcon icon={faChevronLeft} />
+        </button>
+        <div
+          className="flex overflow-x-auto hide-scrollbar py-5 gap-4 w-full max-w-7xl"
+          ref={scrollRef}
+        >
+          {categoriasData.map((categoria) => (
+            <Link to={`/materiales?id=${categoria.id}`} key={categoria.id}>
+              <div
+                className={`w-24 sm:w-24 md:w-28 xl:w-48 bg-[#FDBC3F] border border-gray-200 rounded-lg shadow hover:bg-[#f7a914] transition-colors ${
+                  !isInicio && currentTypeId !== String(categoria.id)
+                    ? "opacity-60"
+                    : "opacity-100"
+                }`}
+              >
+                <div className="flex flex-col items-center pb-10 mt-4">
+                  <img
+                    className="w-16 sm:w-16 md:w-16 xl:w-28 h-auto mb-3 rounded-full shadow-lg"
+                    src={categoria.imgSrc}
+                    alt={categoria.name}
+                  />
+                  <span className="text-sm">{categoria.name}</span>
+                </div>
               </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          ))}
+        </div>
+        <button
+          className="hidden md:flex bg-[#e3961b] text-black rounded-full w-10 h-10 items-center justify-center shadow-lg focus:outline-none ml-2"
+          onClick={scrollRight}
+        >
+          <FontAwesomeIcon icon={faChevronRight} />
+        </button>
       </div>
-      <button
-        className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-[#e3961b] text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg focus:outline-none"
-        onClick={scrollRight}
-      >
-        ▶
-      </button>
     </div>
   );
 };

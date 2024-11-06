@@ -16,7 +16,8 @@ def allowed_file(filename):
 @material.route('/api/registrar_material', methods=['POST'])
 def registrar_material():
     try:
-        data = request.get_json()
+        data = request.form
+        #data = request.get_json()
 
         # Obtener datos del material del cuerpo de la petición
         nombre_material = data.get('nombre_material')
@@ -44,8 +45,7 @@ def registrar_material():
             return jsonify({'message': 'El ID del usuario es obligatorio'}), 400
         if not id_tipo_material:
             return jsonify({'message': 'El ID del tipo de material es obligatorio'}), 400
-        #if 'imagen' not in request.files:
-         #   return jsonify({'message': 'La imagen del material es obligatoria'}), 400
+        
 
         # Crear una nueva instancia del modelo Material
         nuevo_material = Material(
@@ -64,18 +64,19 @@ def registrar_material():
 
         # Añadir el nuevo material a la base de datos
         db.session.add(nuevo_material)
-        db.session.commit()
+        db.session.commit()  # Hacer commit de material y fotos
 
-        # Procesar las fotos enviadas (si las hay)
+        # Ahora vamos a manejar las fotos (si las hay) y asociarlas al material
         if 'fotos' in request.files:
             fotos = request.files.getlist('fotos')  # Obtener todas las fotos subidas
 
+            # Procesar cada foto
             for foto in fotos:
                 if foto and allowed_file(foto.filename):
                     # Leer el contenido de la imagen como binario
                     imagen_binaria = foto.read()
 
-                    # Crear una nueva instancia de Foto
+                    # Crear una nueva instancia de Foto y asociarla al material
                     nueva_foto = Foto(
                         filename=foto.filename,
                         data=imagen_binaria,
@@ -85,7 +86,7 @@ def registrar_material():
                     # Guardar la foto en la base de datos
                     db.session.add(nueva_foto)
 
-        db.session.commit()
+            db.session.commit()  # Guardar las fotos en la base de datos
 
         return jsonify({
             'message': 'Material registrado exitosamente',
@@ -103,6 +104,7 @@ def registrar_material():
                 'fecha_publicacion': nuevo_material.fecha_publicacion,
                 'id_usuario': nuevo_material.id_usuario,
                 'id_tipo_material': nuevo_material.id_tipo_material,
+                
             }
         }), 201
 
@@ -146,6 +148,55 @@ def obtener_materiales():
     except Exception as e:
         return jsonify({
             'message': 'Error al obtener los materiales',
+            'error': str(e)
+        }), 400
+    
+    
+@material.route('/api/imagenes', methods=['POST'])
+def subir_imagenes():
+    try:
+        # Verificar si el ID del material y las fotos están en la solicitud
+        id_material = request.form.get('id_material')
+        if not id_material:
+            return jsonify({'message': 'El ID del material es obligatorio'}), 400
+
+        # Validar que el material existe
+        material = Material.query.get(id_material)
+        if not material:
+            return jsonify({'message': 'El material no existe'}), 404
+
+        # Procesar las fotos enviadas
+        if 'fotos' not in request.files:
+            return jsonify({'message': 'Las imágenes son obligatorias'}), 400
+
+        fotos = request.files.getlist('fotos')  # Obtener todas las fotos subidas
+
+        for foto in fotos:
+            if foto and allowed_file(foto.filename):
+                # Leer el contenido de la imagen como binario
+                imagen_binaria = foto.read()
+
+                # Crear una nueva instancia de Foto
+                nueva_foto = Foto(
+                    filename=foto.filename,
+                    data=imagen_binaria,
+                    id_material=id_material  # Relacionar la foto con el material
+                )
+
+                # Guardar la foto en la base de datos
+                db.session.add(nueva_foto)
+
+        db.session.commit()
+
+        return jsonify({
+            'message': 'Imágenes subidas exitosamente',
+            'data': {'id_material': id_material}
+        }), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'message': 'Error al subir las imágenes',
             'error': str(e)
         }), 400
 
@@ -470,7 +521,8 @@ def buscar_materiales_avanzado():
             'longitud_publicacion_material': material.longitud_publicacion_material,
             'descripcion_direccion_material': material.descripcion_direccion_material,
             'estado_publicacion_material': material.estado_publicacion_material,
-            'fecha_publicacion': material.fecha_publicacion
+            'fecha_publicacion': material.fecha_publicacion,
+            'tipo_unidad_material': material.tipo_unidad_material, 
         } for material in materiales]
 
         return jsonify({

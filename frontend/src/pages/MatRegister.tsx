@@ -57,6 +57,7 @@ const Page = () => {
       id_usuario: user.id_usuario, // Debes tener este valor disponible
       id_tipo_material: categoria, // Asegúrate de que esto sea el ID correcto
       tipo_unidad_material: unidad,
+      imagenes_material: images, //añade las imagenes
     };
 
     try {
