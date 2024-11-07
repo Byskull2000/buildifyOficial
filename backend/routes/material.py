@@ -497,7 +497,7 @@ def buscar_materiales_avanzado():
         
         # Ordenar por precio si se proporciona el campo de orden_precio
         if orden_precio == 'asc':
-            query = query.order_by(Material.precio_material)
+            query = query.order_by(Material.precio_material.asc())
         elif orden_precio == 'desc':
             query = query.order_by(Material.precio_material.desc())
 
