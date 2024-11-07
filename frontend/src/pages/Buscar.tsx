@@ -307,7 +307,7 @@ const Buscar = () => {
                                 <option value="sacaba">Sacaba</option>
                             </select>
                             <button className="py-2 bg-blue-600 text-white p-2 mt-10 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">
-                                Guardar filtros
+                                Aplicar filtros
                             </button>
                         </div>
                     </div>

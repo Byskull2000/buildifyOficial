@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { Link } from "react-router-dom";
 // Define la interfaz para las props
 interface FormEliminacionProps {
   onConfirm: (motivo: string) => void; // Asegúrate de que la firma sea correcta
@@ -105,11 +105,10 @@ const FormEliminacion: React.FC<FormEliminacionProps> = ({ onConfirm, onCancel }
             <button
               type="submit"
               disabled={isSubmitDisabled}
-              className={`mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded ${
-                isSubmitDisabled
+              className={`mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded ${isSubmitDisabled
                   ? "opacity-50 cursor-not-allowed"
                   : "hover:bg-blue-600"
-              }`}
+                }`}
             >
               Enviar
             </button>
@@ -134,12 +133,15 @@ const FormEliminacion: React.FC<FormEliminacionProps> = ({ onConfirm, onCancel }
                 >
                   Cancelar
                 </button>
-                <button
-                  onClick={handleConfirm}
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >
-                  Confirmar
-                </button>
+                {/*Aca la logica de eliminacion*/}
+                <Link to="/publicProfile">
+                  <button
+                    onClick={handleConfirm}
+                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                  >
+                    Confirmar
+                  </button>
+                </Link>
               </div>
             </div>
           </div>

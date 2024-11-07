@@ -7,7 +7,7 @@ import Cropper from "react-easy-crop";
 import { getCroppedImg } from "../components/getCroppedImg";
 import Modal from "react-modal";
 Modal.setAppElement("#root");
-
+import FormEliminacion from "../components/formEliminacion";
 const Editar = () => {
   const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
   const { id_material } = useParams<{ id_material: string }>();
@@ -38,6 +38,7 @@ const Editar = () => {
   const [images, setImages] = useState<string[]>([]);
   const [imagesPerCrop, setImagesPerCrop] = useState<File[]>([]);
   const [rotation, setRotation] = useState<number>(0);
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files ? Array.from(e.target.files) : [];
@@ -174,13 +175,14 @@ const Editar = () => {
     navigate(-1); // Redirige a la página anterior
   };
 
+  const togglePopup = () => setIsPopupVisible(!isPopupVisible);
+
   return (
     <div>
       <div>
         <NavBar />
         <div className="p-4 font-nunito">
           <h2 className="text-2xl font-bold">Editar Material</h2>
-          <p>ID del Material: {id_material}</p>
         </div>
       </div>
       <div className="lg:grid lg:grid-cols-2 gap-4">
@@ -487,11 +489,11 @@ const Editar = () => {
           </Modal>
         </div>
       </div>
-      <div className="flex mt-3 mb-5 justify-end mr-[10%]">
+      <div className="flex mt-3 mb-5 justify-end mr-[10%] space-y-4 md:space-y-0 md:flex-row md:space-x-4">
         <button
           type="button"
           onClick={handleSave}
-          className="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5"
+          className="text-white bg-blue-500 hover:bg-blue-600 font-medium rounded-lg text-sm px-6 py-3 shadow-md"
         >
           Guardar
         </button>
@@ -499,12 +501,39 @@ const Editar = () => {
           <button
             type="button"
             onClick={handleCancel}
-            className="ml-4 text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm px-5 py-2.5"
+            className="text-white bg-gray-500 hover:bg-gray-600 font-medium rounded-lg text-sm px-6 py-3 shadow-md"
           >
             Cancelar
           </button>
         </Link>
+        <button
+          className="text-white bg-red-500 hover:bg-red-600 font-medium rounded-lg text-sm px-6 py-3 shadow-md"
+          onClick={() => {
+            togglePopup();
+          }}
+        >
+          Eliminar Publicación
+        </button>
+        {isPopupVisible && (
+          <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-60 z-50 p-4">
+            <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm">
+              <FormEliminacion
+                onConfirm={() => {
+                  togglePopup();
+                }}
+                onCancel={togglePopup}
+              />
+              <button
+                onClick={togglePopup}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
       </div>
+
     </div>
   );
 };
