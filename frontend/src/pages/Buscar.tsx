@@ -81,7 +81,6 @@ const Buscar = () => {
     return (
         <div>
             <NavBar buscar={searchQuery?.toString()} />
-
             <div className="md:w-[90%] mx-auto flex">
                 <aside className="hidden py-4 md:w-1/5 lg:w-1/5 md:block">
                     <div className="sticky flex flex-col gap-2 p-4 text-sm border-r border-indigo-100 top-12">
