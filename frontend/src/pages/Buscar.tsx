@@ -103,15 +103,23 @@ const Buscar = () => {
                                     className="border rounded-md px-3 py-2 w-full max-w-full"
                                     placeholder="MIN"
                                     min="0"
+                                    max="19999"
+                                    value={min_precio || ""}
                                     onChange={(e) => {
-                                        const value =
-                                            e.target.value === ""
-                                                ? null
-                                                : Math.max(
-                                                    0,
-                                                    Number(e.target.value)
-                                                );
-                                        setMinPrecio(value);
+                                        let value = Number(e.target.value);
+
+                                        if (e.target.value === "") {
+                                            setMinPrecio(null); 
+                                        } else {
+                                            if (value > 19999) {
+                                                value = 19999;
+                                            }
+                                            setMinPrecio(value);
+
+                                            if (max_precio !== null && value > max_precio) {
+                                                setMaxPrecio(value);
+                                            }
+                                        }
                                     }}
                                 />
                             </div>
@@ -130,20 +138,22 @@ const Buscar = () => {
                                     placeholder="MAX"
                                     min="0"
                                     max="20000"
+                                    value={max_precio || ""}
                                     onChange={(e) => {
                                         let value = Number(e.target.value);
 
-                                        if (value > 20000) {
-                                            value = 20000;
+                                        if (e.target.value === "") {
+                                            setMaxPrecio(null);
+                                        } else {
+                                            if (value > 20000) {
+                                                value = 20000;
+                                            }
+                                            value = Math.max(min_precio || 0, value);
+                                            setMaxPrecio(value);
                                         }
-
-                                        value = Math.max(min_precio || 0, value);
-                                        setMaxPrecio(value);
-                                        e.target.value = value.toString();
                                     }}
                                 />
                             </div>
-
                         </div>
                         <div className="flex flex-col mb-4">
                             <label
@@ -242,7 +252,7 @@ const Buscar = () => {
                                     </label>
                                 </div>
                             </div>
-                            
+
                             <hr className="border-t border-gray-300 mb-4 mt-4" />
                             <label
                                 htmlFor="orden_precio"
