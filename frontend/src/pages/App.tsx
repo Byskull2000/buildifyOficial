@@ -22,7 +22,7 @@ function App() {
 
 
     useEffect(() => {
-        fetchRecomendados(1,"Cochabamba",setRecomendados);
+        fetchRecomendados(setRecomendados);
         //Modificar el 1 por user.id_usuario una vez ya se tenga la proteccion si el usuario no esta registrado, sino la pagina muere
         //Modificar el "Cochabamba" cuando ya tengan para mandar la ciudad
 
@@ -59,7 +59,7 @@ function App() {
                         Recomendados para ti
                     </h2>
                     <Link
-                        to={"/"}
+                        to={"/materiales/recomendados"}
                         className="text-[#FDBC3F]"
                     >
                         Ver Mas

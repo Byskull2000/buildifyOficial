@@ -2,34 +2,61 @@ import { useEffect, useState } from "react";
 import type { MaterialProp } from "../../components/Material";
 import { URL_BACKEND } from "../../constant/url";
 import Material from "../../components/Material";
+const fetchMateriales = async (
+    setMateriales: (data: MaterialProp[]) => void
+) => {
+    const res = await fetch(`${URL_BACKEND}/api/materiales`);
+    const data = await res.json();
+    if (!res.ok) {
+        console.log(data);
+        throw new Error("Error fetching data");
+    }
+    setMateriales(data.data);
+};
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const fetchRecomendados = async (
-    id_usuario: number,
-    ciudad: string,
     setMateriales: (data: MaterialProp[]) => void
 ) => {
+    const userStorage =
+        sessionStorage.getItem("user") || localStorage.getItem("user") || null;
     try {
-        const res = await fetch(`${URL_BACKEND}/api/materiales/filtrar_interes`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ id_usuario, ciudad }),
-        });
-        const data = await res.json();
-        if (!res.ok) {
-            throw new Error("Error fetching data");
+        if (userStorage) {
+            const user = JSON.parse(userStorage);
+            const res = await fetch(
+                `${URL_BACKEND}/api/materiales/filtrar_interes`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        id_usuario: user.id_usuario,
+                        ciudad: "Cochabamba",
+                    }),
+                }
+            );
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error("Error fetching data");
+            }
+            if (data.data || data.data.length === 0) {
+                setMateriales(data.data);
+            } else {
+                fetchMateriales(setMateriales);
+                console.log("No hay materiales para recomendar");
+            }
+        } else {
+            fetchMateriales(setMateriales);
         }
-        setMateriales(data.data);
     } catch (error) {
         console.error("Error fetching data:", error);
     }
 };
-const MaterialesRecomendados = ({ id_usuario, ciudad }: { id_usuario: number; ciudad: string }) => {
+const MaterialesRecomendados = () => {
     const [materiales, setMateriales] = useState<MaterialProp[]>([]);
     useEffect(() => {
-        fetchRecomendados(id_usuario, ciudad, setMateriales);
+        fetchRecomendados(setMateriales);
     }, []);
     return (
         <div>
