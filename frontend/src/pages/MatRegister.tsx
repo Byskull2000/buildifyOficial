@@ -216,7 +216,7 @@ const Page = () => {
                   htmlFor="price"
                   className="block text-sm font-medium text-gray-500 ml-2"
                 >
-                  Precio
+                  Precio (Máximo 20,000)
                 </label>
                 <input
                   required
@@ -226,8 +226,26 @@ const Page = () => {
                   name="price"
                   className="w-3/5 bg-gray-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                   value={precio}
-                  onChange={(e) => setPrecio(e.target.value)}
-                  min="0"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (Number(value) <= 20000) {
+                      setPrecio(value);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    const input = e.target as HTMLInputElement;
+
+                    // Permitir borrar (Backspace y Delete)
+                    if (e.key === 'Backspace' || e.key === 'Delete') {
+                      return;
+                    }
+
+                    // Evitar caracteres no numéricos, negativos y valores superiores a 20000
+                    const futureValue = input.value + e.key;
+                    if (!/^[0-9]*$/.test(e.key) || Number(futureValue) > 20000 || e.key === '-' || e.key === 'e') {
+                      e.preventDefault();
+                    }
+                  }}
                 />
               </div>
               <div>
