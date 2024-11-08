@@ -341,7 +341,7 @@ const Page = () => {
                   id="description"
                   name="description"
                   rows={4}
-                  maxLength={500} 
+                  maxLength={500}
                   className="w-3/5 bg-gray-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                   value={descripcion}
                   onChange={(e) => setDescripcion(e.target.value)}
@@ -404,14 +404,11 @@ const Page = () => {
             </div>
           </form>
         </div>
-        <div className="w-[80%]">
+        <div className="w-full sm:w-[80%] mx-auto sm:mt-10 mt-10">
           <div className="flex flex-col items-center justify-center w-full">
             <label className="flex flex-col items-center justify-center w-full h-80 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
               {" "}
-              {/* Cambiado a h-80 */}
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                {/* Aquí se muestra la imagen recortada si existe */}
-
                 <>
                   <svg
                     className="w-8 h-8 mb-4 text-gray-500"
@@ -512,7 +509,7 @@ const Page = () => {
           </Modal>
         </div>
       </div>
-      <div className="flex mt-3 mb-5 justify-end mr-[10%]">
+      <div className="flex flex-wrap mt-3 mb-5 justify-center sm:justify-end w-full gap-4 sm:pr-16">
         <Link to="/">
           <button
             type="button"
@@ -521,9 +518,11 @@ const Page = () => {
           >
             Publicar
           </button>
+        </Link>
+        <Link to="/">
           <button
             type="button"
-            className="ml-4 text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5"
+            className="text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5"
           >
             Cancelar
           </button>
