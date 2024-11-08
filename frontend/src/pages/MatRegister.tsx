@@ -1,5 +1,5 @@
 import buildifyLogo from "../assets/Buildify.png";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Mapa from "../components/Mapa";
 import { MdLocationOn } from "react-icons/md";
@@ -31,7 +31,7 @@ const Page = () => {
   const [descripcion, setDescripcion] = useState("");
   const [unidad, setUnidad] = useState("");
   const [cantidad, setCantidad] = useState("");
-
+  const formRef = useRef<HTMLFormElement | null>(null);
   //Para las imagenes
   const [image, setImage] = useState<string | null>(null);
   const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -42,28 +42,28 @@ const Page = () => {
   const [imagesPerCrop, setImagesPerCrop] = useState<File[]>([]);
   const [rotation, setRotation] = useState<number>(0); //rotar las imagenes
 
-  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.SyntheticEvent<HTMLFormElement>) => {
+    if (e) e.preventDefault();
 
     const body = {
-      nombre_material: titulo, // Asumiendo que 'titulo' corresponde a 'nombre_material'
+      nombre_material: titulo,
       cantidad_material: cantidad,
-      estado_material: condicion, // Asumiendo que 'condicion' corresponde a 'estado_material'
+      estado_material: condicion,
       precio_material: precio,
       descripcion_material: descripcion,
-      latitud_publicacion_material: 1.0, // Ajusta según cómo guardas las coordenadas
-      longitud_publicacion_material: 1.0, // Ajusta según cómo guardas las coordenadas
+      latitud_publicacion_material: 1.0,
+      longitud_publicacion_material: 1.0,
       descripcion_direccion_material: UbicacionMaterial,
-      id_usuario: user.id_usuario, // Debes tener este valor disponible
-      id_tipo_material: categoria, // Asegúrate de que esto sea el ID correcto
+      id_usuario: user.id_usuario,
+      id_tipo_material: categoria,
       tipo_unidad_material: unidad,
-      imagenes_material: images, //añade las imagenes
+      imagenes_material: images,
     };
 
     try {
       setLoading(true);
       const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
-      const res = await fetch(URL_BACKEND + "/api/registrar_material", {
+      const res = await fetch(`${URL_BACKEND}/api/registrar_material`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +79,7 @@ const Page = () => {
       }
 
       const { data } = await res.json();
-      if (!data || data !== undefined) {
+      if (data) {
         console.log("data: ", data);
         navigate("/");
       }
@@ -190,6 +190,7 @@ const Page = () => {
             onSubmit={handleSubmit}
             method="POST"
             className="space-y-4 lg:mt-10 mt-5"
+            ref={formRef}
           >
             <div className="space-y-4">
               <div>
@@ -384,12 +385,6 @@ const Page = () => {
                 </div>
               )}
             </div>
-            <button
-              type="submit"
-              className="text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-            >
-              Publicar
-            </button>
           </form>
         </div>
         <div className="w-[80%]">
@@ -502,6 +497,13 @@ const Page = () => {
       </div>
       <div className="flex mt-3 mb-5 justify-end mr-[10%]">
         <Link to="/">
+          <button
+            type="button"
+            onClick={() => handleSubmit()}
+            className="text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+          >
+            Publicar
+          </button>
           <button
             type="button"
             className="ml-4 text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5"
