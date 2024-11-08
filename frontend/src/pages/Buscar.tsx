@@ -4,12 +4,11 @@ import type { MaterialProp } from "../components/Material";
 import Material from "../components/Material";
 import { URL_BACKEND } from "../constant/url";
 import Loading from "../components/Loading";
-import { useLocation } from "react-router-dom";
 
 const Buscar = () => {
     const [resultados, setResultados] = useState<MaterialProp[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
-    const location = useLocation();
+
     const searchQuery = new URLSearchParams(window.location.search).get(
         "query"
     );
