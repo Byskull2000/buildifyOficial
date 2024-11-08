@@ -33,7 +33,6 @@ const Page = () => {
             );
             const data = await response.json();
             if (response.ok) {
-                console.log("materiales",data.data);
                 setPropios(data.data)
             } else {
                 console.error("Error al obtener los materiales propios", data);
@@ -88,7 +87,6 @@ const Page = () => {
             null;
         if (data) {
             const user = JSON.parse(data);
-            console.log(user);
             //      setId(user.id_usuario || "");
             setNombre(user.nombre_usuario || "");
             //    setTelefono(user.numero_telefono || "");
