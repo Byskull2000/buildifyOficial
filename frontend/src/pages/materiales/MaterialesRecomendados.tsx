@@ -5,10 +5,18 @@ import Material from "../../components/Material";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const fetchRecomendados = async (
+    id_usuario: number,
+    ciudad: string,
     setMateriales: (data: MaterialProp[]) => void
 ) => {
     try {
-        const res = await fetch(`${URL_BACKEND}/api/materiales`);
+        const res = await fetch(`${URL_BACKEND}/api/materiales/filtrar_interes`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id_usuario, ciudad }),
+        });
         const data = await res.json();
         if (!res.ok) {
             throw new Error("Error fetching data");
@@ -18,10 +26,10 @@ export const fetchRecomendados = async (
         console.error("Error fetching data:", error);
     }
 };
-const MaterialesRecomendados = () => {
+const MaterialesRecomendados = ({ id_usuario, ciudad }: { id_usuario: number; ciudad: string }) => {
     const [materiales, setMateriales] = useState<MaterialProp[]>([]);
     useEffect(() => {
-        fetchRecomendados(setMateriales);
+        fetchRecomendados(id_usuario, ciudad, setMateriales);
     }, []);
     return (
         <div>

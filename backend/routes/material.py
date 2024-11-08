@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 import base64
 
 from sqlalchemy import func
+from models.interes import Interes
 from utils.db import db
 from models.material import Material
 from models.tipo_material import TipoMaterial
@@ -446,6 +447,68 @@ def buscar_materiales():
     except Exception as e:
         return jsonify({
             'message': 'Error al buscar materiales',
+            'error': str(e)
+        }), 400
+
+
+@material.route('/api/materiales/filtrar_interes', methods=['GET','POST'])
+def filtrar_materiales_por_interes():
+    try:
+        # Obtener los filtros desde el cuerpo de la petición
+        data = request.get_json()
+
+        if not data:
+            return jsonify({'message': 'No se proporcionaron datos JSON'}), 400
+
+        id_usuario = data.get('id_usuario', None)
+        ciudad = data.get('ciudad', None)
+
+        if id_usuario is None or ciudad is None:
+            return jsonify({'message': 'Faltan parámetros obligatorios: id_usuario o ciudad'}), 400
+
+        # Obtener todos los id_tipo_material que interesan al usuario
+        tipos_interes = Interes.query.filter_by(id_usuario=id_usuario).all()
+        id_tipos_material = [interes.id_tipo_material for interes in tipos_interes]
+
+        if not id_tipos_material:
+            return jsonify({'message': 'El usuario no tiene intereses registrados'}), 404
+
+        # Filtrar los materiales que coincidan con los intereses del usuario, ciudad y estado activo
+        materiales = Material.query \
+            .filter(Material.id_tipo_material.in_(id_tipos_material)) \
+            .filter(Material.descripcion_direccion_material.ilike(f'%{ciudad}%')) \
+            .filter_by(estado_publicacion_material='activo') \
+            .all()
+
+        if not materiales:
+            return jsonify({'message': 'No se encontraron materiales que coincidan con los intereses y filtros'}), 404
+
+        # Convertir resultados a JSON
+        data = [{
+            'id_material': material.id_material,
+            'nombre_material': material.nombre_material,
+            'cantidad_material': material.cantidad_material,
+            'estado_material': material.estado_material,
+            'precio_material': material.precio_material,
+            'descripcion_material': material.descripcion_material,
+            'id_usuario': material.id_usuario,
+            'id_tipo_material': material.id_tipo_material,
+            'latitud_publicacion_material': material.latitud_publicacion_material,
+            'longitud_publicacion_material': material.longitud_publicacion_material,
+            'descripcion_direccion_material': material.descripcion_direccion_material,
+            'estado_publicacion_material': material.estado_publicacion_material,
+            'fecha_publicacion': material.fecha_publicacion,
+            'tipo_unidad_material': material.tipo_unidad_material,
+        } for material in materiales]
+
+        return jsonify({
+            'message': 'Materiales obtenidos exitosamente',
+            'data': data
+        }), 200
+
+    except Exception as e:
+        return jsonify({
+            'message': 'Error al buscar materiales por intereses',
             'error': str(e)
         }), 400
 
