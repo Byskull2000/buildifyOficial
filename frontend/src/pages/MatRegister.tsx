@@ -262,7 +262,6 @@ const Page = () => {
                   value={categoria}
                   onChange={(e) => setCategoria(e.target.value)}
                 >
-                  <option value="">Selecciona una categoría</option>
                   <option value="1">Ladrillo</option>
                   <option value="2">Cemento</option>
                   <option value="3">Tablones</option>
@@ -290,7 +289,6 @@ const Page = () => {
                   value={condicion}
                   onChange={(e) => setCondicion(e.target.value)}
                 >
-                  <option value="">Selecciona la condición</option>
                   <option value="nuevo">Nuevo</option>
                   <option value="usado">Usado</option>
                 </select>
@@ -302,7 +300,6 @@ const Page = () => {
                   onChange={(e) => setUnidad(e.target.value)}
                   className="w-3/5 bg-gray-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                 >
-                  <option value="">Selecciona una unidad</option>
                   <option value="metroLineal">Metro lineal</option>
                   <option value="metroCuadrado">Metro Cuadrado</option>
                   <option value="metroCubico">Metro Cúbico</option>
