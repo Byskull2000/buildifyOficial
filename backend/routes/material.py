@@ -648,3 +648,14 @@ def marcar_activo(id):
             'message': 'Error al cambiar el estado de publicación',
             'error': str(e)
         }), 400
+
+
+@material.route('/api/borrar-material/<int:id>', methods=['DELETE'])
+def delete_material(id):
+    material = Material.query.get(id)
+    if not material:
+        return jsonify({'error': 'Material no encontrado'}), 404
+
+    db.session.delete(material)
+    db.session.commit()
+    return jsonify({'message': 'Material eliminado'}), 200

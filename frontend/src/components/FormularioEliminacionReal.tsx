@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 // Define la interfaz para las props
 interface FormEliminacionProps {
+  materialId: string; // Añadir el id del material
   onConfirm: (motivo: string) => void; // Asegúrate de que la firma sea correcta
   onCancel: () => void;
 }
 
-const FormEliminacion: React.FC<FormEliminacionProps> = ({ onConfirm, onCancel }) => {
+const FormEliminacion: React.FC<FormEliminacionProps> = ({ materialId, onConfirm, onCancel }) => {
+  const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
   const [selectedOption, setSelectedOption] = useState("");
   const [otroMotivo, setOtroMotivo] = useState("");
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
@@ -33,12 +35,30 @@ const FormEliminacion: React.FC<FormEliminacionProps> = ({ onConfirm, onCancel }
     setShowConfirmPopup(true); // Mostrar el popup de confirmación
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const motivo = selectedOption === "otro" ? otroMotivo : selectedOption;
-    onConfirm(motivo); // Llama a onConfirm con el motivo
-    setShowConfirmPopup(false); // Cerrar el popup después de confirmar
-    console.log('Publicación desactivada exitosamente');
-    alert('Publicación desactivada exitosamente');
+
+    try {
+      const response = await fetch(`${URL_BACKEND}/api/borrar-material/${materialId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ motivo }), // Enviar motivo al backend
+      });
+
+      if (response.ok) {
+        onConfirm(motivo);
+        alert('Publicación desactivada exitosamente');
+      } else {
+        console.error('Error al desactivar la publicación');
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Hubo un problema al intentar desactivar la publicación");
+    }
+    
+    setShowConfirmPopup(false); 
   };
 
   return (

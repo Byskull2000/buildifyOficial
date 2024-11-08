@@ -7,7 +7,7 @@ import Cropper from "react-easy-crop";
 import { getCroppedImg } from "../components/getCroppedImg";
 import Modal from "react-modal";
 Modal.setAppElement("#root");
-import FormEliminacion from "../components/formularioEliminacionReal";
+import FormEliminacion from "../components/FormularioEliminacionReal";
 const Editar = () => {
   const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
   const { id_material } = useParams<{ id_material: string }>();
@@ -518,6 +518,7 @@ const Editar = () => {
           <div className="fixed inset-0 flex items-center justify-center bg-gray-700 bg-opacity-60 z-50 p-4">
             <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm">
               <FormEliminacion
+                materialId={id_material+''}
                 onConfirm={() => {
                   togglePopup();
                 }}
