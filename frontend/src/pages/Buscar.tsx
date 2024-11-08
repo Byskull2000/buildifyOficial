@@ -306,7 +306,33 @@ const Buscar = () => {
                                 <option value="tiquipaya">Tiquipaya</option>
                                 <option value="sacaba">Sacaba</option>
                             </select>
-                            <button className="py-2 bg-blue-600 text-white p-2 mt-10 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">
+                            <label
+                                htmlFor="orden_precio"
+                                className="text-sm font-medium mb-3 text-gray-600 mt-2"
+                            >
+                                Tipo de material
+                            </label>
+                            <select
+                                id="estado_material"
+                                name="estado_material"
+                                className="border rounded-md px-3 py-2"
+                                onChange={(e) =>
+                                    setEstadoMaterial(e.target.value)
+                                }
+                            >
+                                <option value="1">Ladrillo</option>
+                                <option value="2">Cemento</option>
+                                <option value="3">Tablones</option>
+                                <option value="4">Vigas</option>
+                                <option value="5">Arena</option>
+                                <option value="6">Mezclas</option>
+                                <option value="7">Herramientas Manuales</option>
+                                <option value="8">Madera</option>
+                                <option value="9">Tejas</option>
+                                <option value="10">Yeso</option>
+                                <option value="11">Piedras</option>
+                            </select>
+                            <button className="py-2 bg-blue-600 text-white p-2 mt-5 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">
                                 Aplicar filtros
                             </button>
                         </div>

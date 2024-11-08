@@ -7,7 +7,7 @@ import Cropper from "react-easy-crop";
 import { getCroppedImg } from "../components/getCroppedImg";
 import Modal from "react-modal";
 Modal.setAppElement("#root");
-import FormEliminacion from "../components/formEliminacion";
+import FormEliminacion from "../components/formularioEliminacionReal";
 const Editar = () => {
   const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
   const { id_material } = useParams<{ id_material: string }>();
