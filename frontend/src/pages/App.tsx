@@ -59,7 +59,7 @@ function App() {
                         Recomendados para ti
                     </h2>
                     <Link
-                        to={"/materiales/recomendados"}
+                        to={"/"}
                         className="text-[#FDBC3F]"
                     >
                         Ver Mas
