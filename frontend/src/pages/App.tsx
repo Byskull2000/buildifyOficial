@@ -110,8 +110,6 @@ function App() {
           </Link>
         </div>
         <ListarMateriales materiales={recomendados} />
-        <ImagenPrueba />
-        <InterestList />
       </div>
     </>
   );
