@@ -495,7 +495,7 @@ const Editar = () => {
           onClick={handleSave}
           className="text-white bg-blue-500 hover:bg-blue-600 font-medium rounded-lg text-sm px-6 py-3 shadow-md"
         >
-          Guardar
+          Guardar Cambios
         </button>
         <Link to="/perfil-comercial">
           <button

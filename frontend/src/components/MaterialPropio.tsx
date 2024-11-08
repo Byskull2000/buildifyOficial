@@ -75,11 +75,10 @@ const Material = ({ material }: { material: MaterialProp }) => {
       className="relative flex-shrink-0 transform transition-colors hover:bg-slate-50 bg-white shadow-lg rounded-2xl p-6 w-60 md:w-64 lg:w-72"
     >
       <div
-        className={`absolute top-2 left-2 px-2 py-1 text-xs font-semibold rounded-full ${
-          estadoMaterial === "activo"
-            ? "bg-green-500 text-white"
-            : "bg-red-500 text-white"
-        }`}
+        className={`absolute top-2 left-2 px-2 py-1 text-xs font-semibold rounded-full ${estadoMaterial === "activo"
+          ? "bg-green-500 text-white"
+          : "bg-red-500 text-white"
+          }`}
       >
         {estadoMaterial === "activo" ? "Activo" : "Inactivo"}
       </div>
@@ -118,6 +117,8 @@ const Material = ({ material }: { material: MaterialProp }) => {
             <button
               className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
               onClick={() => {
+                togglePopup();
+                setMenuOpen(false);
               }}
             >
               Desactivar
@@ -147,12 +148,14 @@ const Material = ({ material }: { material: MaterialProp }) => {
           />
           <button
             onClick={togglePopup}
-            className="absolute top-0 right-0 m-4 text-white bg-black p-2 rounded-full hover:bg-gray-800"
+            className="absolute top-0 right-0 m-4 text-white bg-red-600 p-2 rounded-full hover:bg-red-800"
           >
-            Cerrar
+            <span className="text-lg">×</span>
           </button>
         </div>
       )}
+
+
     </div>
   );
 };

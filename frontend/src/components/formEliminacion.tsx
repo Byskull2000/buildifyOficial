@@ -37,6 +37,8 @@ const FormEliminacion: React.FC<FormEliminacionProps> = ({ onConfirm, onCancel }
     const motivo = selectedOption === "otro" ? otroMotivo : selectedOption;
     onConfirm(motivo); // Llama a onConfirm con el motivo
     setShowConfirmPopup(false); // Cerrar el popup después de confirmar
+    console.log('Publicación desactivada exitosamente');
+    alert('Publicación desactivada exitosamente');
   };
 
   return (
@@ -106,8 +108,8 @@ const FormEliminacion: React.FC<FormEliminacionProps> = ({ onConfirm, onCancel }
               type="submit"
               disabled={isSubmitDisabled}
               className={`mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded ${isSubmitDisabled
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-blue-600"
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-blue-600"
                 }`}
             >
               Enviar
@@ -133,7 +135,6 @@ const FormEliminacion: React.FC<FormEliminacionProps> = ({ onConfirm, onCancel }
                 >
                   Cancelar
                 </button>
-                {/*Aca la logica de eliminacion*/}
                 <Link to="/publicProfile">
                   <button
                     onClick={handleConfirm}
