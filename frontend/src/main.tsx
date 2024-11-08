@@ -19,6 +19,7 @@ import MaterialesFiltrados from "./pages/MaterialesFiltrados.tsx"; // Importamos
 import Material from "./pages/Material.tsx";
 import Propios from "./pages/Propios.tsx";
 import EditarMaterial from "./pages/EditarMaterial.tsx";
+import MaterialesRecomendados from "./pages/materiales/MaterialesRecomendados.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -42,6 +43,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/buscar" element={<Buscar />} />
         <Route path="/matRegister" element={<MatRegister />} />
         <Route path="/materiales" element={<MaterialesFiltrados />} />
+        <Route path="/materiales/recomendados" element={<MaterialesRecomendados />} />
         <Route path="/material/:id" element={<Material />} />
         <Route path="/propios" element={<Propios />} />
         <Route
