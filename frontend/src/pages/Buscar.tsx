@@ -17,8 +17,9 @@ const Buscar = () => {
     const [min_precio, setMinPrecio] = useState<number | null>(null);
     const [max_precio, setMaxPrecio] = useState<number | null>(null);
     const [estado_material, setEstadoMaterial] = useState<string | null>(null);
-    //const [id_tipo_material, setIdTipoMaterial] = useState<number | null>(null);
+    const [id_tipo_material, setIdTipoMaterial] = useState<string | null>(null);
     const [orden_precio, setOrdenPrecio] = useState<string | null>(null);
+    const [ciudad, setCiudad] = useState<string | null>(null);
 
     useEffect(() => {
         const obtenerMateriales = async () => {
@@ -30,6 +31,8 @@ const Buscar = () => {
                     max_precio,
                     estado_material,
                     orden_precio,
+                    id_tipo_material,
+                    ciudad,
                 };
                 console.log(body);
 
@@ -71,6 +74,8 @@ const Buscar = () => {
         estado_material,
         orden_precio,
         location,
+        id_tipo_material,
+        ciudad,
     ]);
 
     return (
@@ -291,20 +296,20 @@ const Buscar = () => {
                                 htmlFor="orden_precio"
                                 className="text-sm font-medium mb-3 text-gray-600"
                             >
-                                Zona
+                                Ciudad
                             </label>
                             <select
                                 id="estado_material"
                                 name="estado_material"
                                 className="border rounded-md px-3 py-2"
                                 onChange={(e) =>
-                                    setEstadoMaterial(e.target.value)
+                                    setCiudad(e.target.value)
                                 }
                             >
                                 <option value="">Ninguno</option>
-                                <option value="cercado">Cercado</option>
-                                <option value="tiquipaya">Tiquipaya</option>
-                                <option value="sacaba">Sacaba</option>
+                                <option value="La Paz">La Paz</option>
+                                <option value="Cochabamba">Cochabamba</option>
+                                <option value="Santa Cruz">Santa Cruz</option>
                             </select>
                             <label
                                 htmlFor="orden_precio"
@@ -317,7 +322,7 @@ const Buscar = () => {
                                 name="estado_material"
                                 className="border rounded-md px-3 py-2"
                                 onChange={(e) =>
-                                    setEstadoMaterial(e.target.value)
+                                    setIdTipoMaterial(e.target.value)
                                 }
                             >
                                 <option value="1">Ladrillo</option>
