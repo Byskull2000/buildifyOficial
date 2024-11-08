@@ -470,16 +470,20 @@ def filtrar_materiales_por_interes():
         tipos_interes = Interes.query.filter_by(id_usuario=id_usuario).all()
         id_tipos_material = [interes.id_tipo_material for interes in tipos_interes]
 
-        if not id_tipos_material:
-            return jsonify({'message': 'El usuario no tiene intereses registrados'}), 404
-
-        # Filtrar los materiales que coincidan con los intereses del usuario, ciudad y estado activo
-        materiales = Material.query \
-            .filter(Material.id_tipo_material.in_(id_tipos_material)) \
-            .filter(Material.descripcion_direccion_material.ilike(f'%{ciudad}%')) \
-            .filter_by(estado_publicacion_material='activo') \
-            .all()
-
+        # Filtrar los materiales en función de si el usuario tiene intereses registrados
+        if id_tipos_material:
+            # Si el usuario tiene intereses, filtrar por intereses, ciudad y estado activo
+            materiales = Material.query \
+                .filter(Material.id_tipo_material.in_(id_tipos_material)) \
+                .filter(Material.descripcion_direccion_material.ilike(f'%{ciudad}%')) \
+                .filter_by(estado_publicacion_material='activo') \
+                .all()
+        else:
+            # Si el usuario no tiene intereses, solo filtrar por ciudad y estado activo
+            materiales = Material.query \
+                .filter(Material.descripcion_direccion_material.ilike(f'%{ciudad}%')) \
+                .filter_by(estado_publicacion_material='activo') \
+                .all()
         if not materiales:
             return jsonify({'message': 'No se encontraron materiales que coincidan con los intereses y filtros'}), 404
 
