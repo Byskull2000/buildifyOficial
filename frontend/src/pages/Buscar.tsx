@@ -20,63 +20,57 @@ const Buscar = () => {
     const [id_tipo_material, setIdTipoMaterial] = useState<string | null>(null);
     const [orden_precio, setOrdenPrecio] = useState<string | null>(null);
     const [ciudad, setCiudad] = useState<string | null>(null);
+    
+    const aplicarFiltros = async () => {
+        setLoading(true);
+        try {
+            const body = {
+                nombre_material: searchQuery,
+                min_precio,
+                max_precio,
+                estado_material,
+                orden_precio,
+                id_tipo_material,
+                ciudad,
+            };
+            console.log(body);
 
-    useEffect(() => {
-        const obtenerMateriales = async () => {
-            setLoading(true);
-            try {
-                const body = {
-                    nombre_material: searchQuery,
-                    min_precio,
-                    max_precio,
-                    estado_material,
-                    orden_precio,
-                    id_tipo_material,
-                    ciudad,
-                };
-                console.log(body);
-
-                const res = await fetch(
-                    URL_BACKEND + "/api/materiales/buscar_avanzado",
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(body),
-                    }
-                );
-
-                if (!res.ok) {
-                    setResultados([]);
-                    throw new Error("Error al obtener materiales");
+            const res = await fetch(
+                URL_BACKEND + "/api/materiales/buscar_avanzado",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(body),
                 }
+            );
 
-                const { data } = await res.json();
-                setResultados(data);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
+            if (!res.ok) {
+                setResultados([]);
+                throw new Error("Error al obtener materiales");
             }
-        };
 
+            const { data } = await res.json();
+            setResultados(data);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+    useEffect(() => {
         // Fetch materials whenever searchQuery or filters change
         if (searchQuery) {
-            obtenerMateriales();
+            aplicarFiltros();
         } else {
             setResultados([]);
         }
-    }, [
-        searchQuery,
-        min_precio,
-        max_precio,
-        estado_material,
-        orden_precio,
-        location,
-        id_tipo_material,
-        ciudad,
-    ]);
+    }, [searchQuery]);
+
+    const handleFilter = async () => {
+        aplicarFiltros();
+    };
 
     return (
         <div>
@@ -109,14 +103,17 @@ const Buscar = () => {
                                         let value = Number(e.target.value);
 
                                         if (e.target.value === "") {
-                                            setMinPrecio(null); 
+                                            setMinPrecio(null);
                                         } else {
                                             if (value > 19999) {
                                                 value = 19999;
                                             }
                                             setMinPrecio(value);
 
-                                            if (max_precio !== null && value > max_precio) {
+                                            if (
+                                                max_precio !== null &&
+                                                value > max_precio
+                                            ) {
                                                 setMaxPrecio(value);
                                             }
                                         }
@@ -148,7 +145,10 @@ const Buscar = () => {
                                             if (value > 20000) {
                                                 value = 20000;
                                             }
-                                            value = Math.max(min_precio || 0, value);
+                                            value = Math.max(
+                                                min_precio || 0,
+                                                value
+                                            );
                                             setMaxPrecio(value);
                                         }
                                     }}
@@ -173,7 +173,6 @@ const Buscar = () => {
                                 <option value="">Ninguno</option>
                                 <option value="nuevo">Nuevo</option>
                                 <option value="usado">Usado</option>
-
                             </select>
                         </div>
                         <div className="flex flex-col mb-6">
@@ -199,10 +198,11 @@ const Buscar = () => {
                                         name="orden_precio"
                                         checked={orden_precio === null}
                                         onChange={() => setOrdenPrecio(null)}
-                                        className={`w-5 h-5 ${!orden_precio
-                                            ? "text-blue-600"
-                                            : "text-gray-300"
-                                            } border-gray-300 focus:ring-blue-500`}
+                                        className={`w-5 h-5 ${
+                                            !orden_precio
+                                                ? "text-blue-600"
+                                                : "text-gray-300"
+                                        } border-gray-300 focus:ring-blue-500`}
                                     />
                                     <label
                                         htmlFor="ninguno-radio"
@@ -219,10 +219,11 @@ const Buscar = () => {
                                         name="orden_precio"
                                         checked={orden_precio === "asc"}
                                         onChange={() => setOrdenPrecio("asc")}
-                                        className={`w-5 h-5 ${orden_precio === "asc"
-                                            ? "text-blue-600"
-                                            : "text-gray-300"
-                                            } border-gray-300 focus:ring-blue-500`}
+                                        className={`w-5 h-5 ${
+                                            orden_precio === "asc"
+                                                ? "text-blue-600"
+                                                : "text-gray-300"
+                                        } border-gray-300 focus:ring-blue-500`}
                                     />
                                     <label
                                         htmlFor="barato-radio"
@@ -239,10 +240,11 @@ const Buscar = () => {
                                         name="orden_precio"
                                         checked={orden_precio === "desc"}
                                         onChange={() => setOrdenPrecio("desc")}
-                                        className={`w-5 h-5 ${orden_precio === "desc"
-                                            ? "text-blue-600"
-                                            : "text-gray-300"
-                                            } border-gray-300 focus:ring-blue-500`}
+                                        className={`w-5 h-5 ${
+                                            orden_precio === "desc"
+                                                ? "text-blue-600"
+                                                : "text-gray-300"
+                                        } border-gray-300 focus:ring-blue-500`}
                                     />
                                     <label
                                         htmlFor="caro-radio"
@@ -264,11 +266,9 @@ const Buscar = () => {
                                 id="estado_material"
                                 name="estado_material"
                                 className="border rounded-md px-3 py-2"
-                                onChange={(e) =>
-                                    setCiudad(e.target.value)
-                                }
+                                onChange={(e) => setCiudad(e.target.value)}
                             >
-                                <option value="">Ninguno</option>
+                                <option value="">Cualquiera</option>
                                 <option value="La Paz">La Paz</option>
                                 <option value="Cochabamba">Cochabamba</option>
                                 <option value="Santa Cruz">Santa Cruz</option>
@@ -287,6 +287,7 @@ const Buscar = () => {
                                     setIdTipoMaterial(e.target.value)
                                 }
                             >
+                                <option value="">Cualquiera</option>
                                 <option value="1">Ladrillo</option>
                                 <option value="2">Cemento</option>
                                 <option value="3">Tablones</option>
@@ -299,7 +300,10 @@ const Buscar = () => {
                                 <option value="10">Yeso</option>
                                 <option value="11">Piedras</option>
                             </select>
-                            <button className="py-2 bg-blue-600 text-white p-2 mt-5 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">
+                            <button
+                                onClick={handleFilter}
+                                className="py-2 bg-blue-600 text-white p-2 mt-5 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
+                            >
                                 Aplicar filtros
                             </button>
                         </div>
