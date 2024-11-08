@@ -344,11 +344,13 @@ const Page = () => {
                   id="description"
                   name="description"
                   rows={4}
+                  maxLength={500} 
                   className="w-3/5 bg-gray-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                   value={descripcion}
                   onChange={(e) => setDescripcion(e.target.value)}
                 />
               </div>
+
             </div>
             <div className="mb-4 w-3/5">
               <label className="block text-sm font-medium text-gray-500 ml-2">
