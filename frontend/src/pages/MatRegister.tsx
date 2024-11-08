@@ -1,5 +1,5 @@
 import buildifyLogo from "../assets/Buildify.png";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Mapa from "../components/Mapa";
 import { MdLocationOn } from "react-icons/md";
@@ -31,7 +31,7 @@ const Page = () => {
   const [descripcion, setDescripcion] = useState("");
   const [unidad, setUnidad] = useState("");
   const [cantidad, setCantidad] = useState("");
-
+  const formRef = useRef<HTMLFormElement | null>(null);
   //Para las imagenes
   const [image, setImage] = useState<string | null>(null);
   const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -42,28 +42,28 @@ const Page = () => {
   const [imagesPerCrop, setImagesPerCrop] = useState<File[]>([]);
   const [rotation, setRotation] = useState<number>(0); //rotar las imagenes
 
-  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.SyntheticEvent<HTMLFormElement>) => {
+    if (e) e.preventDefault();
 
     const body = {
-      nombre_material: titulo, // Asumiendo que 'titulo' corresponde a 'nombre_material'
+      nombre_material: titulo,
       cantidad_material: cantidad,
-      estado_material: condicion, // Asumiendo que 'condicion' corresponde a 'estado_material'
+      estado_material: condicion,
       precio_material: precio,
       descripcion_material: descripcion,
-      latitud_publicacion_material: 1.0, // Ajusta según cómo guardas las coordenadas
-      longitud_publicacion_material: 1.0, // Ajusta según cómo guardas las coordenadas
+      latitud_publicacion_material: 1.0,
+      longitud_publicacion_material: 1.0,
       descripcion_direccion_material: UbicacionMaterial,
-      id_usuario: user.id_usuario, // Debes tener este valor disponible
-      id_tipo_material: categoria, // Asegúrate de que esto sea el ID correcto
+      id_usuario: user.id_usuario,
+      id_tipo_material: categoria,
       tipo_unidad_material: unidad,
-      imagenes_material: images, //añade las imagenes
+      imagenes_material: images,
     };
 
     try {
       setLoading(true);
       const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
-      const res = await fetch(URL_BACKEND + "/api/registrar_material", {
+      const res = await fetch(`${URL_BACKEND}/api/registrar_material`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +79,7 @@ const Page = () => {
       }
 
       const { data } = await res.json();
-      if (!data || data !== undefined) {
+      if (data) {
         console.log("data: ", data);
         navigate("/");
       }
@@ -190,6 +190,7 @@ const Page = () => {
             onSubmit={handleSubmit}
             method="POST"
             className="space-y-4 lg:mt-10 mt-5"
+            ref={formRef}
           >
             <div className="space-y-4">
               <div>
@@ -215,7 +216,7 @@ const Page = () => {
                   htmlFor="price"
                   className="block text-sm font-medium text-gray-500 ml-2"
                 >
-                  Precio
+                  Precio (Máximo 20,000)
                 </label>
                 <input
                   required
@@ -225,8 +226,26 @@ const Page = () => {
                   name="price"
                   className="w-3/5 bg-gray-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                   value={precio}
-                  onChange={(e) => setPrecio(e.target.value)}
-                  min="0"
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (Number(value) <= 20000) {
+                      setPrecio(value);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    const input = e.target as HTMLInputElement;
+
+                    // Permitir borrar (Backspace y Delete)
+                    if (e.key === 'Backspace' || e.key === 'Delete') {
+                      return;
+                    }
+
+                    // Evitar caracteres no numéricos, negativos y valores superiores a 20000
+                    const futureValue = input.value + e.key;
+                    if (!/^[0-9]*$/.test(e.key) || Number(futureValue) > 20000 || e.key === '-' || e.key === 'e') {
+                      e.preventDefault();
+                    }
+                  }}
                 />
               </div>
               <div>
@@ -243,19 +262,17 @@ const Page = () => {
                   value={categoria}
                   onChange={(e) => setCategoria(e.target.value)}
                 >
-                  <option value="">Selecciona una categoría</option>
-                  {/*<option value="obra-fina">Obra Fina</option>
-                                    <option value="plomeria">Plomería</option>
-                                    <option value="electricidad">
-                                        Instalaciones Eléctricas
-                                    </option>*/}
-                  <option value="7">Herramientas Manuales</option>
-                  {/*<option value="obra-gruesa">
-                                        Obra Gruesa
-                                    </option>*/}
-                  <option value="2">Cemento</option>
-                  <option value="iluminacion">Iluminacion</option>
                   <option value="1">Ladrillo</option>
+                  <option value="2">Cemento</option>
+                  <option value="3">Tablones</option>
+                  <option value="4">Vigas</option>
+                  <option value="5">Arena</option>
+                  <option value="6">Mezclas</option>
+                  <option value="7">Herramientas Manuales</option>
+                  <option value="8">Madera</option>
+                  <option value="9">Tejas</option>
+                  <option value="10">Yeso</option>
+                  <option value="11">Piedras</option>
                 </select>
               </div>
               <div>
@@ -272,7 +289,6 @@ const Page = () => {
                   value={condicion}
                   onChange={(e) => setCondicion(e.target.value)}
                 >
-                  <option value="">Selecciona la condición</option>
                   <option value="nuevo">Nuevo</option>
                   <option value="usado">Usado</option>
                 </select>
@@ -284,7 +300,6 @@ const Page = () => {
                   onChange={(e) => setUnidad(e.target.value)}
                   className="w-3/5 bg-gray-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                 >
-                  <option value="">Selecciona una unidad</option>
                   <option value="metroLineal">Metro lineal</option>
                   <option value="metroCuadrado">Metro Cuadrado</option>
                   <option value="metroCubico">Metro Cúbico</option>
@@ -292,7 +307,6 @@ const Page = () => {
                   <option value="kilogramo">Kilogramo</option>
                   <option value="paquete">Paquete</option>
                   <option value="litro">Litro</option>
-                  <option value="docena">Docena</option>
                 </select>
               </div>
               <div>
@@ -327,11 +341,13 @@ const Page = () => {
                   id="description"
                   name="description"
                   rows={4}
+                  maxLength={500}
                   className="w-3/5 bg-gray-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                   value={descripcion}
                   onChange={(e) => setDescripcion(e.target.value)}
                 />
               </div>
+
             </div>
             <div className="mb-4 w-3/5">
               <label className="block text-sm font-medium text-gray-500 ml-2">
@@ -386,22 +402,13 @@ const Page = () => {
                 </div>
               )}
             </div>
-            <button
-              type="submit"
-              className="text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-            >
-              Publicar
-            </button>
           </form>
         </div>
-        <div className="w-[80%]">
+        <div className="w-full sm:w-[80%] mx-auto sm:mt-10 mt-10">
           <div className="flex flex-col items-center justify-center w-full">
             <label className="flex flex-col items-center justify-center w-full h-80 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
               {" "}
-              {/* Cambiado a h-80 */}
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                {/* Aquí se muestra la imagen recortada si existe */}
-
                 <>
                   <svg
                     className="w-8 h-8 mb-4 text-gray-500"
@@ -502,11 +509,20 @@ const Page = () => {
           </Modal>
         </div>
       </div>
-      <div className="flex mt-3 mb-5 justify-end mr-[10%]">
+      <div className="flex flex-wrap mt-3 mb-5 justify-center sm:justify-end w-full gap-4 sm:pr-16">
         <Link to="/">
           <button
             type="button"
-            className="ml-4 text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5"
+            onClick={() => handleSubmit()}
+            className="text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+          >
+            Publicar
+          </button>
+        </Link>
+        <Link to="/">
+          <button
+            type="button"
+            className="text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5"
           >
             Cancelar
           </button>

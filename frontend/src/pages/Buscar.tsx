@@ -17,8 +17,9 @@ const Buscar = () => {
     const [min_precio, setMinPrecio] = useState<number | null>(null);
     const [max_precio, setMaxPrecio] = useState<number | null>(null);
     const [estado_material, setEstadoMaterial] = useState<string | null>(null);
-    //const [id_tipo_material, setIdTipoMaterial] = useState<number | null>(null);
+    const [id_tipo_material, setIdTipoMaterial] = useState<string | null>(null);
     const [orden_precio, setOrdenPrecio] = useState<string | null>(null);
+    const [ciudad, setCiudad] = useState<string | null>(null);
 
     useEffect(() => {
         const obtenerMateriales = async () => {
@@ -30,6 +31,8 @@ const Buscar = () => {
                     max_precio,
                     estado_material,
                     orden_precio,
+                    id_tipo_material,
+                    ciudad,
                 };
                 console.log(body);
 
@@ -71,6 +74,8 @@ const Buscar = () => {
         estado_material,
         orden_precio,
         location,
+        id_tipo_material,
+        ciudad,
     ]);
 
     return (
@@ -237,9 +242,55 @@ const Buscar = () => {
                                     </label>
                                 </div>
                             </div>
-                            <hr className="border-t border-gray-300 mt-6" />
-                            <button className="py-2 bg-blue-600 text-white p-2 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">
-                                Guardar filtros
+                            
+                            <hr className="border-t border-gray-300 mb-4 mt-4" />
+                            <label
+                                htmlFor="orden_precio"
+                                className="text-sm font-medium mb-3 text-gray-600"
+                            >
+                                Ciudad
+                            </label>
+                            <select
+                                id="estado_material"
+                                name="estado_material"
+                                className="border rounded-md px-3 py-2"
+                                onChange={(e) =>
+                                    setCiudad(e.target.value)
+                                }
+                            >
+                                <option value="">Ninguno</option>
+                                <option value="La Paz">La Paz</option>
+                                <option value="Cochabamba">Cochabamba</option>
+                                <option value="Santa Cruz">Santa Cruz</option>
+                            </select>
+                            <label
+                                htmlFor="orden_precio"
+                                className="text-sm font-medium mb-3 text-gray-600 mt-2"
+                            >
+                                Tipo de material
+                            </label>
+                            <select
+                                id="estado_material"
+                                name="estado_material"
+                                className="border rounded-md px-3 py-2"
+                                onChange={(e) =>
+                                    setIdTipoMaterial(e.target.value)
+                                }
+                            >
+                                <option value="1">Ladrillo</option>
+                                <option value="2">Cemento</option>
+                                <option value="3">Tablones</option>
+                                <option value="4">Vigas</option>
+                                <option value="5">Arena</option>
+                                <option value="6">Mezclas</option>
+                                <option value="7">Herramientas Manuales</option>
+                                <option value="8">Madera</option>
+                                <option value="9">Tejas</option>
+                                <option value="10">Yeso</option>
+                                <option value="11">Piedras</option>
+                            </select>
+                            <button className="py-2 bg-blue-600 text-white p-2 mt-5 font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300">
+                                Aplicar filtros
                             </button>
                         </div>
                     </div>

@@ -14,9 +14,9 @@ const ListarMateriales = ({ materiales }: ListarMaterialesProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="relative">
+    <div className="flex justify-between items-center w-full">
       <button
-        className="md:absolute left-0 hover:bg-yellow-400 hover:rounded-full text-gray-800 -translate-y-1/2 z-50 top-1/2 items-center justify-center w-10 h-10 bg-transparent focus:outline-none"
+        className="hidden sm:flex left-0 hover:bg-yellow-400 hover:rounded-full text-gray-800 -translate-y-1/2 z-50 top-1/2  items-center justify-center w-10 h-10 bg-transparent focus:outline-none p-4 "
         onClick={() => {
           if (containerRef.current) {
             containerRef.current.scrollBy({ left: -300, behavior: "smooth" });
@@ -34,7 +34,7 @@ const ListarMateriales = ({ materiales }: ListarMaterialesProps) => {
         ))}
       </div>
       <button
-        className="md:absolute right-0 hover:bg-yellow-400 hover:rounded-full text-gray-800 top-1/2 -translate-y-1/2 z-50 items-center justify-center w-10 h-10 bg-transparent focus:outline-none"
+        className="hidden sm:flex  right-0 hover:bg-yellow-400 hover:rounded-full text-gray-800 top-1/2 -translate-y-1/2 z-50  items-center justify-center w-10 h-10 bg-transparent focus:outline-none p-4"
         onClick={() => {
           if (containerRef.current) {
             containerRef.current.scrollBy({ left: 300, behavior: "smooth" });

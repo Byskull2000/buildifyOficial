@@ -7,7 +7,7 @@ class Material(db.Model):
     nombre_material = db.Column(db.String(100), nullable=False)
     cantidad_material = db.Column(db.Integer, nullable=False)
     estado_material = db.Column(db.String(20), nullable=False)
-    precio_material = db.Column(db.String(30), nullable=False)
+    precio_material = db.Column(db.Numeric(10, 2), nullable=False)
     descripcion_material = db.Column(db.String(255), nullable=True)
     latitud_publicacion_material = db.Column(db.String(255), nullable=True)
     longitud_publicacion_material = db.Column(db.String(255), nullable=True)
