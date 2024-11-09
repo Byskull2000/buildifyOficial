@@ -411,6 +411,16 @@ const Page = () => {
             Publicar
           </button>
         </Link>
+          
+        <Link to="/">
+          <button
+            type="button"
+            className="text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5"
+          >
+            Cancelar
+          </button>
+        </Link>
+        
           </form>
         </div>
         <div className="w-full sm:w-[80%] mx-auto sm:mt-10 mt-10">
@@ -519,15 +529,7 @@ const Page = () => {
         </div>
       </div>
       <div className="flex flex-wrap mt-3 mb-5 justify-center sm:justify-end w-full gap-4 sm:pr-16">
-        
-        <Link to="/">
-          <button
-            type="button"
-            className="text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5"
-          >
-            Cancelar
-          </button>
-        </Link>
+      
       </div>
     </div>
   );
