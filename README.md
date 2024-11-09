@@ -106,4 +106,8 @@ hacer lo siguiente
 - Camacho Vargas Jhoel Freddy
 - Grájeda Herrera Diego Gualberto
 - García Llanqui Jhunior Remberto
+- Huanca Zubieta Nilson Erwin
+- Jarro Choque Marcelo Edwin
+- Larrea Jimenez Fernanda
 - Limachi García Pablo Hans
+- Velarde Garcia Luis Enrrique
