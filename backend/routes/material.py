@@ -17,8 +17,8 @@ def allowed_file(filename):
 @material.route('/api/registrar_material', methods=['POST'])
 def registrar_material():
     try:
-        data = request.form
-        #data = request.get_json()
+        #data = request.form
+        data = request.get_json()
 
         # Obtener datos del material del cuerpo de la petición
         nombre_material = data.get('nombre_material')
