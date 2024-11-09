@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import ListarMateriales from "../components/ListarMateriales";
 import Categorias from "../components/Categorias";
 import { fetchRecomendados } from "./materiales/MaterialesRecomendados";
+import InterestList from "../components/InteresList";
 
 
 function App() {
@@ -66,7 +67,7 @@ function App() {
                     </Link>
                 </div>
                 <ListarMateriales materiales={recomendados} />
-                
+                <InterestList />
             </div>
         </>
     );
