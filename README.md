@@ -79,6 +79,26 @@ iniciar
 
     <http://localhost:5000>
 
+## ***En Caso de trabajar con un ORM En el backend***
+
+hacer lo siguiente
+
+### cargar la base de datos existente
+
+`flask db upgrade`
+
+### agregar tablas o modificaciones de tablas
+
+1. crear el modelo en models **poner __tablename__ = 'modelo'** debe estar en minusculas los nombres de las tablas
+2. registrar el modelo en app.py
+3. crear una migracion con un mensaje
+
+    `flask db migrate -m "Creacion de Tabla Usuario"`
+
+4. actualizar la base de datos
+
+    `flask db upgrade`
+
 ## Integrantes
 
 - Anturiano Eulate Eleonor Camile
@@ -86,8 +106,4 @@ iniciar
 - Camacho Vargas Jhoel Freddy
 - Grájeda Herrera Diego Gualberto
 - García Llanqui Jhunior Remberto
-- Huanca Zubieta Nilson Erwin
-- Jarro Choque Marcelo Edwin
-- Larrea Jimenez Fernanda
 - Limachi García Pablo Hans
-- Velarde Garcia Luis Enrrique
