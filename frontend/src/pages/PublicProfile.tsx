@@ -2,11 +2,6 @@ import imgEjemploPerfil from "../assets/ejemploPerfil.jpg";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SimpleNavBar from "../components/simpleNavBar";
-import material1 from "../assets/material1.png";
-import material2 from "../assets/material2.png";
-import material3 from "../assets/material3.png";
-import material4 from "../assets/material4.png";
-import material5 from "../assets/material5.png";
 import { MaterialProp } from "../components/Material";
 import { Link } from "react-router-dom";
 import ListarPropios from "../components/ListarPropios";
@@ -33,7 +28,7 @@ const Page = () => {
             );
             const data = await response.json();
             if (response.ok) {
-                setPropios(data.data)
+                setPropios(data.data);
             } else {
                 console.error("Error al obtener los materiales propios", data);
             }
@@ -42,41 +37,6 @@ const Page = () => {
     //Esta lista reemplazar por la API de similares
     useEffect(() => {
         // esta lista debe ser reemplazada por la API de recomendados
-
-        const propios = [
-            {
-                id_material: 1,
-                imagenUrl: material1,
-                precio_material: 200,
-                nombre_material: "Ladrillos 6 huecos",
-            },
-            {
-                id_material: 2,
-                imagenUrl: material2,
-                precio_material: 200,
-                nombre_material: "Ladrillos 6 huecos",
-            },
-            {
-                id_material: 3,
-                imagenUrl: material3,
-                precio_material: 200,
-                nombre_material: "Ladrillos 6 huecos",
-            },
-            {
-                id_material: 4,
-                imagenUrl: material4,
-                precio_material: 200,
-                nombre_material: "Ladrillos 6 huecos",
-            },
-            {
-                id_material: 5,
-                imagenUrl: material5,
-                precio_material: 80,
-                nombre_material: "Arena lavada",
-            },
-        ];
-
-        setPropios(propios);
         getMaterialesPropios();
     }, []);
 
@@ -243,7 +203,9 @@ const Page = () => {
                                 </a>
                             </Link>
                         </div>
-                        <ListarPropios materiales={propios} />
+                        {propios.length > 0 && (
+                            <ListarPropios materiales={propios} />
+                        )}
                     </div>
                 </main>
             </div>
