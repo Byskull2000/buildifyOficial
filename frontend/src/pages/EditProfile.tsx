@@ -1,5 +1,6 @@
 "use client";
 import imgEjemploPerfil from "../assets/ejemploPerfil.jpg";
+import imgEjemploQR from "../assets/EjemploQR.png";
 import { Link, useNavigate } from "react-router-dom";
 import { MdLocationOn } from "react-icons/md";
 import { useEffect, useState } from "react";
@@ -25,11 +26,19 @@ const Page = () => {
         null
     );
     const [imagen_original, setImagenOriginal] = useState(imgEjemploPerfil);
+    const [imagen_QR, setImagen_QR] = useState(imgEjemploQR);
+    const [imagenQRSeleccionada, setimagenQRSeleccionada] = useState<File | null>(
+        null
+    );
+    const [QROriginal, setQROriginal] = useState(imgEjemploQR);
+    const [imagenQRRecortada, setImagenQRRecortada] = useState<Blob | null>(null);
     const [id, setId] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const [error, setError] = useState("");
     const [imagenRecortada, setImagenRecortada] = useState<Blob | null>(null);
+    const [crop2, setCrop2] = useState({ x: 0, y: 0 });
+    const [zoom2, setZoom2] = useState(1);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
     const [zonas, setZonas] = useState<string[]>([]); // Nuevo estado para almacenar las zonas
@@ -61,6 +70,8 @@ const Page = () => {
             setZonaTrabajo(user.zona_trabajo || "");
             setImagenPerfil(user.imagen_perfil || imgEjemploPerfil);
             setImagenOriginal(user.imagen_perfil || imgEjemploPerfil);
+            setImagen_QR(user.imagen_QR|| imgEjemploQR); //CAMBIAR ACA
+            setQROriginal(user.imagen_QR || imgEjemploQR); //CAMBIAR EL USER
         }
     }, []);
 
@@ -78,6 +89,22 @@ const Page = () => {
             reader.readAsDataURL(file);
         }
     };
+
+    const handleImageChange2 = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        if (files && files.length > 0) {
+            const file = files[0];
+            setimagenQRSeleccionada(file); // Guardamos la imagen seleccionada
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                if (e.target && typeof e.target.result === "string") {
+                    setImagen_QR(e.target.result); // Actualizamos la vista previa de la imagen
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
 
     const createImage = (url: string): Promise<HTMLImageElement> => {
         return new Promise((resolve, reject) => {
@@ -165,7 +192,23 @@ const Page = () => {
             imagen_perfil,
             croppedAreaPixels
         );
-        setImagenRecortada(croppedImage); // Guardar la imagen recortada para mostrarla
+        setImagenRecortada(croppedImage);
+    };
+    const onCropComplete2 = async (
+        croppedArea: { x: number; y: number; width: number; height: number },
+        croppedAreaPixels: {
+            x: number;
+            y: number;
+            width: number;
+            height: number;
+        }
+    ) => {
+        console.log(croppedArea);
+        const croppedImage = await getCroppedImg(
+            imagen_QR,
+            croppedAreaPixels
+        );
+        setImagenQRRecortada(croppedImage);
     };
 
     const handleSaveImage = async () => {
@@ -179,6 +222,18 @@ const Page = () => {
             reader.readAsDataURL(imagenRecortada);
         }
         setImagenSeleccionada(null);
+    };
+    const handleSaveImage2 = async () => {
+        if (imagenQRRecortada) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                if (reader.result) {
+                    setImagen_QR(reader.result.toString());
+                }
+            };
+            reader.readAsDataURL(imagenQRRecortada);
+        }
+        setimagenQRSeleccionada(null);
     };
 
     const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
@@ -378,6 +433,72 @@ const Page = () => {
                                             </div>
                                         </div>
                                     )}
+                                    <h2 className="pl-6 text-2xl font-bold sm:text-xl mt-5 mb-5">QR para pagos</h2>
+                                    {imagenQRSeleccionada ? (
+                                        <div>
+                                            <div className="relative w-full h-80 bg-black">
+                                                <Cropper
+                                                    image={imagen_QR}
+                                                    crop={crop2}
+                                                    zoom={zoom2}
+                                                    aspect={1}
+                                                    onCropChange={setCrop2}
+                                                    onCropComplete={onCropComplete2}
+                                                    onZoomChange={setZoom2}
+                                                    cropShape="rect"
+                                                />
+                                            </div>
+                                            <div className="flex justify-around my-2">
+                                                <button
+                                                    className="py-3.5 px-7 text-base font-medium text-white focus:outline-none rounded-lg border border-yellow-300 bg-[#FED35F] hover:bg-yellow-500 focus:z-10 focus:ring-4 focus:ring-orange-600"
+                                                    onClick={handleSaveImage2}
+                                                >
+                                                    Guardar Imagen
+                                                </button>
+                                                <button
+                                                    className="py-3.5 px-7 text-base font-medium text-black focus:outline-none bg-white rounded-lg border hover:bg-slate-100"
+                                                    onClick={() => {
+                                                        setimagenQRSeleccionada(null);
+                                                        setImagen_QR(QROriginal)
+                                                    }}
+                                                >
+                                                    Restaurar Imagen
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col items-center space-y-5 sm:flex-row sm:space-y-0">
+                                            <img
+                                                className="object-cover w-40 h-40 p-1 rounded ring-2 ring-orange-300"
+                                                src={imagen_QR || imgEjemploQR}
+                                                alt="QR"
+                                            />
+                                            <div className="flex flex-col space-y-5 sm:ml-8">
+                                                <label
+                                                    htmlFor="QR_perfil"
+                                                    className="py-3.5 px-7 text-base font-medium text-white focus:outline-none rounded-lg border border-yellow-300 bg-[#FED35F] hover:bg-yellow-500 focus:z-10 focus:ring-4 focus:ring-orange-600"
+                                                >
+                                                    Cambiar QR de pagos
+                                                    <input
+                                                        id="QR_perfil"
+                                                        type="file"
+                                                        className="hidden"
+                                                        onChange={handleImageChange2}
+                                                    />
+                                                </label>
+                                                <button
+                                                    type="button"
+                                                    className="py-3.5 px-7 text-base font-medium text-black focus:outline-none bg-white rounded-lg border hover:bg-slate-100"
+                                                    onClick={() => {
+                                                        setimagenQRSeleccionada(null);
+                                                        setImagen_QR(QROriginal);
+                                                    }}
+                                                >
+                                                    Eliminar QR de pagos
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                     <form onSubmit={handleSubmit} method="PUT">
                                         <div className="items-center mt-8 sm:mt-14 text-[#202142]">
                                             <label className="block mb-2 text-sm font-medium  text-black">
@@ -476,7 +597,7 @@ const Page = () => {
                                                                     // Obtiene los últimos 3 elementos de la dirección
                                                                     const zona = partes.slice(-3).join(' '); // 'zona departamento país'
                                                                     setZonaTrabajo(zona); // Actualiza zona de trabajo con los últimos 3 campos
-                                                                }} 
+                                                                }}
                                                                 className="w-full h-full"
                                                             />
                                                             <div className="mt-4 flex justify-end">
