@@ -17,6 +17,7 @@ const NavBar = ({ buscar }: { buscar?: string }) => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(search);
     if (search.trim()) {
       navigate(`/buscar?query=${search}`);
     }
@@ -73,7 +74,7 @@ const NavBar = ({ buscar }: { buscar?: string }) => {
                 </svg>
               </button>
 
-              {/* Botón de inicio al lado del buscador */}
+              {/* Botón de inicio, lo que tiene forma de casita xd*/}
               <Link to="/" className="text-gray-600 hover:text-blue-500">
                 <svg
                   width="30"
@@ -93,24 +94,47 @@ const NavBar = ({ buscar }: { buscar?: string }) => {
         </div>
 
         <div className="flex items-center ml-auto gap-4 pr-4">
-          {/* Icono de carrito de compras */}
-          <Link to="/carrito" className="text-gray-600 hover:text-blue-500">
-            <FontAwesomeIcon icon={faShoppingCart} size="lg" />
-          </Link>
+          {user ? (
+            <>
+              {/* Icono del carrito */}
+              <Link to="/carrito" className="text-gray-600 hover:text-blue-500">
+                <FontAwesomeIcon icon={faShoppingCart} size="lg" />
+              </Link>
 
-          {/* Icono de guardados */}
-          <Link to="/guardados" className="text-gray-600 hover:text-blue-500">
-            <FontAwesomeIcon icon={faBookmark} size="lg" />
-          </Link>
+              {/* Icono de guardados */}
+              <Link
+                to="/guardados"
+                className="text-gray-600 hover:text-blue-500"
+              >
+                <FontAwesomeIcon icon={faBookmark} size="lg" />
+              </Link>
 
-          {/* Icono de perfil */}
-          <Link to="/profile">
-            <img
-              src={user?.imagen_perfil || imgProfile}
-              alt="Profile"
-              className="w-8 h-8 rounded-full"
-            />
-          </Link>
+              {/* Icono de perfil */}
+              <Link to="/profile">
+                <img
+                  src={user.imagen_perfil || imgProfile}
+                  alt="Profile"
+                  className="w-8 h-8 rounded-full"
+                />
+              </Link>
+            </>
+          ) : (
+            <ul className="font-nunito flex gap-4">
+              <li>
+                <Link to="/login" className="text-gray-600 hover:text-blue-500">
+                  Login
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/register"
+                  className="text-gray-600 hover:text-blue-500"
+                >
+                  Register
+                </Link>
+              </li>
+            </ul>
+          )}
         </div>
       </nav>
       <hr className="border-gray-300" /> {/* Línea de separación */}
