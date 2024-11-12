@@ -22,13 +22,13 @@ const Material = ({ material }: MaterialProps) => {
     );
 
     if (materialExistente) {
-      alert("Este material ya está en el carrito.");
+      alert("Este material ya está en el carrito de compras.");
       return;
     }
 
     const nuevoCarrito = [...carritoActual, material];
     localStorage.setItem("carrito", JSON.stringify(nuevoCarrito));
-    alert("Producto añadido al carrito.");
+    alert("Producto añadido exitosamente al carrito de compras.");
   };
 
   return (
