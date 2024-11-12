@@ -7,20 +7,19 @@ from utils.db import db
 from models.material import Material
 from models.tipo_material import TipoMaterial
 from models.foto import Foto
+from utils.imagen import subir_imagenes,guardar_imagenes
 material = Blueprint("material", __name__)
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 # Función para verificar si la extensión de archivo es permitida
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 @material.route('/api/registrar_material', methods=['POST'])
 def registrar_material():
     try:
-        #data = request.form
-        data = request.get_json()
-
         # Obtener datos del material del cuerpo de la petición
+        data = request.form
+        
         nombre_material = data.get('nombre_material')
         cantidad_material = data.get('cantidad_material')
         estado_material = data.get('estado_material')
@@ -46,9 +45,7 @@ def registrar_material():
             return jsonify({'message': 'El ID del usuario es obligatorio'}), 400
         if not id_tipo_material:
             return jsonify({'message': 'El ID del tipo de material es obligatorio'}), 400
-        
 
-        # Crear una nueva instancia del modelo Material
         nuevo_material = Material(
             nombre_material=nombre_material,
             cantidad_material=cantidad_material,
@@ -63,31 +60,18 @@ def registrar_material():
             tipo_unidad_material=tipo_unidad_material
         )
 
-        # Añadir el nuevo material a la base de datos
         db.session.add(nuevo_material)
-        db.session.commit()  # Hacer commit de material y fotos
+        db.session.commit()  
 
-        # Ahora vamos a manejar las fotos (si las hay) y asociarlas al material
-        if 'fotos' in request.files:
-            fotos = request.files.getlist('fotos')  # Obtener todas las fotos subidas
-
-            # Procesar cada foto
-            for foto in fotos:
-                if foto and allowed_file(foto.filename):
-                    # Leer el contenido de la imagen como binario
-                    imagen_binaria = foto.read()
-
-                    # Crear una nueva instancia de Foto y asociarla al material
-                    nueva_foto = Foto(
-                        filename=foto.filename,
-                        data=imagen_binaria,
-                        id_material=nuevo_material.id_material  # Relacionar la foto con el material
-                    )
-
-                    # Guardar la foto en la base de datos
-                    db.session.add(nueva_foto)
-
-            db.session.commit()  # Guardar las fotos en la base de datos
+        #fotos del material
+        fotos = request.files.getlist('fotos')
+        if fotos:
+            urls = subir_imagenes(fotos)
+            imagenes = guardar_imagenes(urls, nuevo_material.id_material)
+            print(f"urs {urls}")
+            print(imagenes)
+            db.session.add_all(imagenes)
+            db.session.commit()
 
         return jsonify({
             'message': 'Material registrado exitosamente',
@@ -105,12 +89,12 @@ def registrar_material():
                 'fecha_publicacion': nuevo_material.fecha_publicacion,
                 'id_usuario': nuevo_material.id_usuario,
                 'id_tipo_material': nuevo_material.id_tipo_material,
-                
             }
         }), 201
 
     except Exception as e:
         db.session.rollback()
+        print(e)
         return jsonify({
             'message': 'Error al registrar el material',
             'error': str(e)
@@ -154,7 +138,7 @@ def obtener_materiales():
     
     
 @material.route('/api/imagenes', methods=['POST'])
-def subir_imagenes():
+def subir_imagenes2():
     try:
         # Verificar si el ID del material y las fotos están en la solicitud
         id_material = request.form.get('id_material')
