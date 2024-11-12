@@ -17,7 +17,7 @@ const NavBar = ({ buscar }: { buscar?: string }) => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(search);
+    console.log(search); // Mantenemos el console.log para depuración
     if (search.trim()) {
       navigate(`/buscar?query=${search}`);
     }
@@ -74,7 +74,7 @@ const NavBar = ({ buscar }: { buscar?: string }) => {
                 </svg>
               </button>
 
-              {/* Botón de inicio, lo que tiene forma de casita xd*/}
+              {/* Botón de inicio al lado del buscador */}
               <Link to="/" className="text-gray-600 hover:text-blue-500">
                 <svg
                   width="30"
@@ -94,14 +94,14 @@ const NavBar = ({ buscar }: { buscar?: string }) => {
         </div>
 
         <div className="flex items-center ml-auto gap-4 pr-4">
+          {/* Icono de carrito de compras visible para todos */}
+          <Link to="/carrito" className="text-gray-600 hover:text-blue-500">
+            <FontAwesomeIcon icon={faShoppingCart} size="lg" />
+          </Link>
+
           {user ? (
             <>
-              {/* Icono del carrito */}
-              <Link to="/carrito" className="text-gray-600 hover:text-blue-500">
-                <FontAwesomeIcon icon={faShoppingCart} size="lg" />
-              </Link>
-
-              {/* Icono de guardados */}
+              {/* Icono de guardados (visible solo si está registrado) */}
               <Link
                 to="/guardados"
                 className="text-gray-600 hover:text-blue-500"
