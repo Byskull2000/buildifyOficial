@@ -259,7 +259,10 @@ const Page = () => {
         if (imagenRecortada) {
             formData.append("imagen_perfil", imagenRecortada);
         }
-
+        if (imagenQRRecortada){
+            formData.append("imagen_qr", imagenQRRecortada as Blob);
+        }
+        console.log(imagen_QR)
         try {
             setLoading(true);
             const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;

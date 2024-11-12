@@ -41,34 +41,34 @@ const Page = () => {
   const [images, setImages] = useState<string[]>([]);
   const [imagesPerCrop, setImagesPerCrop] = useState<File[]>([]);
   const [rotation, setRotation] = useState<number>(0); //rotar las imagenes
+  const [fotos, setFotos] = useState<Blob[]>([])
 
   const handleSubmit = async (e?: React.SyntheticEvent<HTMLFormElement>) => {
     if (e) e.preventDefault();
 
-    const body = {
-      nombre_material: titulo,
-      cantidad_material: cantidad,
-      estado_material: condicion,
-      precio_material: precio,
-      descripcion_material: descripcion,
-      latitud_publicacion_material: 1.0,
-      longitud_publicacion_material: 1.0,
-      descripcion_direccion_material: UbicacionMaterial,
-      id_usuario: user.id_usuario,
-      id_tipo_material: categoria,
-      tipo_unidad_material: unidad,
-      imagenes_material: images,
-    };
+    const formData = new FormData();
+    formData.append("nombre_material",titulo)
+    formData.append("estado_material",condicion)
+    formData.append("precio_material", precio)
+    formData.append("descripcion_material",descripcion)
+    formData.append("latitud_publicacion_material", "1")
+    formData.append("longitud_publicacion_material", "1")
+    formData.append("descripcion_direccion_material", UbicacionMaterial)
+    formData.append("id_usuario", user.id_usuario)
+    formData.append("id_tipo_material", categoria)
+    formData.append("tipo_unidad_material", unidad)
+    formData.append("cantidad_material", cantidad)
+    
+    for (let i = 0; i < fotos.length; i++) {
+      formData.append("fotos",fotos[i])
+    }
 
     try {
       setLoading(true);
       const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
       const res = await fetch(`${URL_BACKEND}/api/registrar_material`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
+        body: formData
       });
 
       if (!res.ok) {
