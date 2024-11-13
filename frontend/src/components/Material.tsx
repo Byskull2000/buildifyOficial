@@ -6,14 +6,23 @@ export interface MaterialProp {
   id_material: number;
   nombre_material: string;
   imagenUrl?: string;
-  precio_material: number;
+  precio_material?: string;
   tipo_unidad_material?: string;
   estado_material?: string;
+  nombre_tipo_material?: string;
+  cantidad_material?: number;
+  descripcion_material?: string;
+  estado_publicacion_material?: string;
+  fecha_publicacion_material?: string;
+  imagenes?: [{id_imagen:number,url_imagen:string}],
+  latitud_publicacion_material?: string;
+  longitud_publicacion_material?: string;
+  ubicacion_material?: string;
 }
 
 export interface MaterialProps {
   material: MaterialProp;
-  onSave: (id_material: number) => void;
+  onSave?: (id_material: number) => void;
 }
 
 const Material = ({ material, onSave }: MaterialProps) => {
@@ -23,7 +32,7 @@ const Material = ({ material, onSave }: MaterialProps) => {
   const handleSaveMaterial = () => {
     // Cambiar el estado cuando se hace clic
     setIsSaved((prevState: boolean) => !prevState); 
-    onSave(material.id_material);
+    if(onSave) onSave(material.id_material);
   };
 
   const handleAddToCart = () => {
