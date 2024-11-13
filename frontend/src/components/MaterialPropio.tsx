@@ -5,15 +5,9 @@ import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import imagenDefecto from "../assets/material_imagen_defecto.png";
 import FormEliminacion from "../components/formEliminacion";
+import type { MaterialProp } from "./Material";
 
 // Definimos y exportamos MaterialProp aquí
-export interface MaterialProp {
-  id_material: number;
-  nombre_material: string;
-  imagenUrl?: string;
-  precio_material: number;
-  estado_publicacion_material?: string;
-}
 
 const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
 
