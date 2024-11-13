@@ -99,34 +99,42 @@ const CarritoCompras: React.FC = () => {
           )}
         </div>
 
-        {/* Resumen del carrito */}
-        <div className="md:w-1/3 p-6 bg-[#FDBC3F] rounded-lg shadow-lg text-white">
-          <h3 className="text-2xl font-semibold mb-4">Resumen de Compra</h3>
-          <p className="text-lg">
-            <span className="font-semibold">Cant. Productos:</span>
-            <span className="float-right font-bold">{totalProductos}</span>
-          </p>
-          <p className="text-lg mt-2">
-            <span className="font-semibold">Precio Total:</span>
-            <span className="float-right font-bold">
-              Bs. {totalPrecio.toFixed(2)}
-            </span>
-          </p>
+        {/* Resumen del carrito: Solo se muestra si hay productos */}
+        {materiales.length > 0 && (
+          <div className="md:w-1/3 p-6 bg-[#FDBC3F] rounded-lg shadow-lg text-white">
+            <h3 className="text-2xl font-semibold mb-4">Resumen de Compra</h3>
+            <p className="text-lg">
+              <span className="font-semibold">Cant. Productos:</span>
+              <span className="float-right font-bold">{totalProductos}</span>
+            </p>
+            <p className="text-lg mt-2">
+              <span className="font-semibold">Precio Total:</span>
+              <span className="float-right font-bold">
+                Bs. {totalPrecio.toFixed(2)}
+              </span>
+            </p>
 
-          {/* Botón de proceder o registro */}
-          {user ? (
-            <button className="mt-8 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors">
-              Proceder con la Compra
-            </button>
-          ) : (
-            <button
-              onClick={handleRegisterRedirect}
-              className="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
-            >
-              Antes de continuar debes registrarte
-            </button>
-          )}
-        </div>
+            {/* Botón de proceder o registro */}
+            {user ? (
+              <button
+                onClick={() => {
+                  localStorage.setItem("carrito", JSON.stringify(materiales)); // Aseguramos que el carrito esté actualizado
+                  navigate("/confirmar-pedido");
+                }}
+                className="mt-8 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+              >
+                Proceder con la Compra
+              </button>
+            ) : (
+              <button
+                onClick={handleRegisterRedirect}
+                className="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+              >
+                Antes de continuar debes registrarte
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
