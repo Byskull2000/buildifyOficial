@@ -1,10 +1,11 @@
 import { useRef } from "react";
-import Material, { MaterialProp } from "./MaterialPropio";
+import Material from "./MaterialPropio";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronLeft,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
+import type { MaterialProp } from "./Material";
 
 interface ListarMaterialesProps {
   materiales: MaterialProp[];
