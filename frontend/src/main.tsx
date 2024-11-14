@@ -24,6 +24,7 @@ import CarritoCompras from "./pages/CarritoCompras.tsx";
 import ListaGuardados from "./pages/materiales/ListaGuardados.tsx";
 import ConfirmarPedido from "./pages/ConfirmarPedido.tsx";
 import PagoConTarjeta from "./pages/PagoConTarjeta.tsx";
+import PagoConQR from "./pages/PagoConQR.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -61,6 +62,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/carrito" element={<CarritoCompras />} />
         <Route path="/confirmar-pedido" element={<ConfirmarPedido />} />
         <Route path="/pago-tarjeta" element={<PagoConTarjeta />} />
+        <Route path="/pago-qr" element={<PagoConQR />} />
       </Routes>
     </Router>
     {
