@@ -106,7 +106,7 @@ const PagoConTarjeta: React.FC = () => {
             <p className="text-lg font-semibold text-gray-800">{mensaje}</p>
             {tipoMensaje === "exito" ? (
               <button
-                onClick={() => navigate("/historial-compras")}
+                onClick={() => navigate("/historialcompras")}
                 className="mt-4 bg-[#FCA61E] text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-[#e58d1a]"
               >
                 Ir al Historial
