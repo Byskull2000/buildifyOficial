@@ -22,6 +22,7 @@ import EditarMaterial from "./pages/EditarMaterial.tsx";
 import MaterialesRecomendados from "./pages/materiales/MaterialesRecomendados.tsx";
 import CarritoCompras from "./pages/CarritoCompras.tsx";
 import ListaGuardados from "./pages/materiales/ListaGuardados.tsx";
+import HistorialCompras from "./pages/HistorialCompras.tsx"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -46,6 +47,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/matRegister" element={<MatRegister />} />
         <Route path="/materiales" element={<MaterialesFiltrados />} />
         <Route path="/guardados" element={<ListaGuardados/>} />
+        <Route path="/historialcompras" element={<HistorialCompras/>} />
         <Route
           path="/materiales/recomendados"
           element={<MaterialesRecomendados />}

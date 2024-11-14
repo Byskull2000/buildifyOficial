@@ -316,6 +316,12 @@ const Page = () => {
                             Mi cuenta
                         </a>
                         <a
+                            href="/historialcompras"
+                            className="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full"
+                        >
+                            Historial de compras
+                        </a>
+                        <a
                             href="/publicProfile"
                             className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full"
                         >
