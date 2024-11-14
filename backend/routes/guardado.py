@@ -55,6 +55,26 @@ def guardar_material():
             jsonify({"message": "Error al guardadr el material", "error": str(e)}),
             400,
         )
+    
+@guardado.route("/api/eliminar-guardado/<int:id_guardado>", methods=["DELETE"])
+def eliminar_material_guardado(id_guardado):
+    try:
+        # Buscar el registro de Guardado por su ID
+        material_guardado = Guardado.query.get(id_guardado)
+
+        # Verificar si el registro existe
+        if not material_guardado:
+            return jsonify({"message": "No se encontró el registro guardado con el id especificado"}), 404
+
+        # Eliminar el registro de la base de datos
+        db.session.delete(material_guardado)
+        db.session.commit()
+
+        return jsonify({"message": "Material guardado eliminado exitosamente"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": "Error al eliminar el material guardado", "error": str(e)}), 500
 
 
 @guardado.route('/api/materiales/guardados/<int:id_usuario>', methods=['GET'])
@@ -98,6 +118,7 @@ def obtener_materiales_guardados(id_usuario):
             'message': 'Error al obtener materiales guardados',
             'error': str(e)
         }), 500
+
 
 
 @guardado.route("/api/materiales/guardados/filtrar_avanzado", methods=["GET", "POST"])
