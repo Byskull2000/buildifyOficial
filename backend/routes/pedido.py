@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from models.material import Material
 from models.pedido import Pedido
 from utils.db import db
 
@@ -63,6 +64,8 @@ def completar_pedido(id_pedido):
         pedido.telefono_ref_pedido = data['telefono_ref_pedido']
         pedido.latitud_entrega_pedido = data['latitud_entrega_pedido']
         pedido.longitud_entrega_pedido = data['longitud_entrega_pedido']
+        pedido.estado_pedido = "Entregado"
+        
 
         # Guardar los cambios en la base de datos
         db.session.commit()
@@ -79,26 +82,42 @@ def completar_pedido(id_pedido):
 def obtener_pedidos_por_usuario(id_usuario):
     try:
         # Consultar pedidos por id_usuario
-        pedidos = Pedido.query.filter_by(id_usuario=id_usuario).order_by(Pedido.fecha_pedido.desc()).all()
+        pedidos = db.session.query(Pedido, Material).join(Material, Pedido.id_material == Material.id_material).filter(Pedido.id_usuario == id_usuario).order_by(Pedido.fecha_pedido.desc()).all()
 
         if not pedidos:
             return jsonify({"message": "No se encontraron pedidos para el usuario especificado"}), 404
 
         # Formatear la respuesta con la información de cada pedido
         data = [{
-            'id_pedido': pedido.id_pedido,
-            'estado_pedido': pedido.estado_pedido,
-            'fecha_pedido': pedido.fecha_pedido,
-            'metodo_pago': pedido.metodo_pago,
-            'total_pedido': pedido.total_pedido,
-            'nombre_destinatario_pedido': pedido.nombre_destinatario_pedido,
-            'descrip_direc_entrega_pedido': pedido.descrip_direc_entrega_pedido,
-            'telefono_ref_pedido': pedido.telefono_ref_pedido,
-            'latitud_entrega_pedido': pedido.latitud_entrega_pedido,
-            'longitud_entrega_pedido': pedido.longitud_entrega_pedido,
-            'precio_unitario_producto': pedido.precio_unitario_producto,
-            'id_usuario': pedido.id_usuario,
-            'id_material': pedido.id_material
+            'id_pedido': pedido.Pedido.id_pedido,
+            'estado_pedido': pedido.Pedido.estado_pedido,
+            'fecha_pedido': pedido.Pedido.fecha_pedido,
+            'metodo_pago': pedido.Pedido.metodo_pago,
+            'total_pedido': pedido.Pedido.total_pedido,
+            'nombre_destinatario_pedido': pedido.Pedido.nombre_destinatario_pedido,
+            'descrip_direc_entrega_pedido': pedido.Pedido.descrip_direc_entrega_pedido,
+            'telefono_ref_pedido': pedido.Pedido.telefono_ref_pedido,
+            'latitud_entrega_pedido': pedido.Pedido.latitud_entrega_pedido,
+            'longitud_entrega_pedido': pedido.Pedido.longitud_entrega_pedido,
+            'precio_unitario_producto': pedido.Pedido.precio_unitario_producto,
+            'id_usuario': pedido.Pedido.id_usuario,
+            'id_material': pedido.Pedido.id_material,
+            # Datos del material
+            'material': {
+                'id_material': pedido.Material.id_material,
+                'nombre_material': pedido.Material.nombre_material,
+                'descripcion_material': pedido.Material.descripcion_material,
+                'cantidad_material': pedido.Material.cantidad_material,
+                'estado_material': pedido.Material.estado_material,
+                'precio_material': pedido.Material.precio_material,
+                'id_tipo_material': pedido.Material.id_tipo_material,
+                'latitud_publicacion_material': pedido.Material.latitud_publicacion_material,
+                'longitud_publicacion_material': pedido.Material.longitud_publicacion_material,
+                'descripcion_direccion_material': pedido.Material.descripcion_direccion_material,
+                'estado_publicacion_material': pedido.Material.estado_publicacion_material,
+                'fecha_publicacion': pedido.Material.fecha_publicacion,
+                'tipo_unidad_material': pedido.Material.tipo_unidad_material,
+            }
         } for pedido in pedidos]
 
         return jsonify({"message": "Pedidos obtenidos exitosamente", "data": data}), 200
