@@ -2,10 +2,10 @@ import imgEjemploPerfil from "../assets/ejemploPerfil.jpg";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SimpleNavBar from "../components/simpleNavBar";
-import { MaterialProp } from "../components/Material";
 import { Link } from "react-router-dom";
 import ListarPropios from "../components/ListarPropios";
 import { URL_BACKEND } from "../constant/url";
+import type { MaterialProp } from "../components/Material";
 const Page = () => {
     const [nombre_usuario, setNombre] = useState("");
     //const [numero_telefono, setTelefono] = useState("");

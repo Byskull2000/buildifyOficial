@@ -1,15 +1,16 @@
+import type { MaterialProp } from "../components/Material";
+import Material from "../components/Material";
 import NavBar from "../components/simpleNavBar";
-import Material, { MaterialProp } from "../components/MaterialPropio";
 
 const propios = () => {
     // Ejemplo de datos de materiales
     const materiales: MaterialProp[] = [
-        { id_material: 1, nombre_material: "Cemento", precio_material: 30 },
-        { id_material: 2, nombre_material: "Ladrillo", precio_material: 15 },
-        { id_material: 3, nombre_material: "Arena", precio_material: 20 },
-        { id_material: 4, nombre_material: "Hierro", precio_material: 50 },
-        { id_material: 5, nombre_material: "Cal", precio_material: 10 },
-        { id_material: 6, nombre_material: "Pintura", precio_material: 25 },
+        { id_material: 1, nombre_material: "Cemento", precio_material: "30" },
+        { id_material: 2, nombre_material: "Ladrillo", precio_material: "15" },
+        { id_material: 3, nombre_material: "Arena", precio_material: "20" },
+        { id_material: 4, nombre_material: "Hierro", precio_material: "50" },
+        { id_material: 5, nombre_material: "Cal", precio_material: "10" },
+        { id_material: 6, nombre_material: "Pintura", precio_material: "25" },
         // Filtrar estos materiales desde el BACKEND
     ];
     return (
