@@ -51,6 +51,10 @@ const Material = ({ material, onSave }: MaterialProps) => {
     alert("Producto añadido exitosamente al carrito de compras.");
   };
 
+  const closeModal = () => {
+    setIsSaved(false);
+  };
+
   return (
     <div className="relative flex-shrink-0 transform transition-colors hover:bg-slate-50 bg-white shadow-lg rounded-2xl p-6 w-60 md:w-64 lg:w-72">
       <div className="relative">
@@ -91,6 +95,22 @@ const Material = ({ material, onSave }: MaterialProps) => {
       >
         Añadir al carrito
       </button>
+
+       {/* Modal de confirmación */}
+      {isSaved && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center relative">
+            <button onClick={closeModal} className="absolute top-1 right-2 text-gray-600">
+              &times; {/* Ícono de cierre */}
+            </button>
+            <p>Se guardó la publicación</p>
+            <Link to="/guardados" className="text-orange-600 underline">
+              Ver publicaciones guardadas
+            </Link>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
