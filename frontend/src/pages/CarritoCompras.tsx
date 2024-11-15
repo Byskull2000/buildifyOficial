@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import RegistroRapidoPP from "../components/RegistroRapidoPP.tsx"; // Importa el popup de registro rapido
 
 export interface MaterialProp {
   id_material: number;
@@ -14,6 +15,7 @@ const CarritoCompras: React.FC = () => {
   const [materiales, setMateriales] = useState<MaterialProp[]>([]);
   const [totalProductos, setTotalProductos] = useState(0);
   const [totalPrecio, setTotalPrecio] = useState(0);
+  const [showRegisterPopup, setShowRegisterPopup] = useState(false); // Estado para el popup
   const navigate = useNavigate();
 
   const userStorage =
@@ -46,8 +48,8 @@ const CarritoCompras: React.FC = () => {
     actualizarTotales(nuevoCarrito);
   };
 
-  const handleRegisterRedirect = () => {
-    navigate("/register");
+  const handleShowPopup = () => {
+    setShowRegisterPopup(true); // Abre el popup
   };
 
   return (
@@ -114,7 +116,7 @@ const CarritoCompras: React.FC = () => {
               </span>
             </p>
 
-            {/* Botón de proceder o registro */}
+            {/* Botón de proceder o popup de registro */}
             {user ? (
               <button
                 onClick={() => {
@@ -127,7 +129,7 @@ const CarritoCompras: React.FC = () => {
               </button>
             ) : (
               <button
-                onClick={handleRegisterRedirect}
+                onClick={handleShowPopup}
                 className="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
               >
                 Antes de continuar debes registrarte
@@ -136,6 +138,14 @@ const CarritoCompras: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Popup de registro rápido */}
+      {showRegisterPopup && (
+        <RegistroRapidoPP
+          isOpen={showRegisterPopup}
+          setIsOpen={setShowRegisterPopup}
+        />
+      )}
     </div>
   );
 };
