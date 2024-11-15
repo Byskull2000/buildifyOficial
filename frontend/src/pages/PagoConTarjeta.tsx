@@ -53,6 +53,9 @@ const PagoConTarjeta: React.FC = () => {
         setCargando(false);
         setMensaje("Pago realizado con éxito.");
         setTipoMensaje("exito");
+
+        // Limpiar el carrito
+        localStorage.removeItem("carrito");
       }, 3000); // Simula un tiempo de procesamiento de 3 segundos
     } else {
       setMensaje("Por favor, completa correctamente todos los campos.");

@@ -28,6 +28,9 @@ const PagoConQR: React.FC = () => {
     setTimeout(() => {
       setCargando(false);
       setMensaje("Pago realizado con éxito.");
+
+      // Limpiar el carrito
+      localStorage.removeItem("carrito");
     }, 3000); // Simula un tiempo de procesamiento de 3 segundos
   };
 
@@ -138,4 +141,3 @@ const PagoConQR: React.FC = () => {
 };
 
 export default PagoConQR;
-
