@@ -1,5 +1,4 @@
 from flask import Blueprint, jsonify, request
-import base64
 
 from sqlalchemy import func
 from models.interes import Interes
@@ -7,7 +6,7 @@ from utils.db import db
 from models.material import Material
 from models.tipo_material import TipoMaterial
 from models.foto import Foto
-from utils.imagen import subir_imagenes, guardar_imagenes
+from utils.imagen import subir_imagenes, guardar_imagenes, eliminar_imagenes
 
 material = Blueprint("material", __name__)
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
@@ -554,7 +553,6 @@ def filtrar_materiales_por_interes():
         if not materiales:
             materiales = Material.query.all()
 
-
         # Convertir resultados a JSON
         data = [
             {
@@ -707,40 +705,58 @@ def actualizar_material(id):
         if not material:
             return jsonify({"message": "Material no encontrado"}), 400
 
-        data = request.get_json()
-        nombre_material = data["nombre_material"]
-        cantidad_material = data["cantidad_material"]
-        estado_material = data["estado_material"]
-        precio_material = data["precio_material"]
-        descripcion_material = data["descripcion_material"]
-        id_tipo_material = data["id_tipo_material"]
-        estado_publicacion_material = data["estado_publicacion_material"]
-        latitud_publicacion_material = data["latitud_publicacion_material"]
-        longitud_publicacion_material = data["longitud_publicacion_material"]
-        descripcion_direccion_material = data["descripcion_direccion_material"]
-        tipo_unidad_material = data["tipo_unidad_material"]
-        tipo_material = TipoMaterial.query.get(id_tipo_material)
-        if not tipo_material:
-            return jsonify({"message": "Tipo de material no válido"}), 400
-
-        material.nombre_material = nombre_material
-        material.estado_material = estado_material
-        material.precio_material = precio_material
-        material.descripcion_material = descripcion_material
-        material.id_tipo_material = id_tipo_material
-        material.cantidad_material = cantidad_material
-        material.estado_publicacion_material = estado_publicacion_material
-        material.latitud_publicacion_material = (
-            latitud_publicacion_material  # Actualizar latitud
-        )
-        material.longitud_publicacion_material = (
-            longitud_publicacion_material  # Actualizar longitud
-        )
-        material.descripcion_direccion_material = (
-            descripcion_direccion_material  # Actualizar descripción de dirección
-        )
-        material.tipo_unidad_material = tipo_unidad_material
-
+        data = request.form
+        nombre_material = data.get("nombre_material")
+        cantidad_material = data.get("cantidad_material")
+        estado_material = data.get("estado_material")
+        precio_material = data.get("precio_material")
+        descripcion_material = data.get("descripcion_material")
+        id_tipo_material = data.get("id_tipo_material")
+        estado_publicacion_material = data.get("estado_publicacion_material")
+        latitud_publicacion_material = data.get("latitud_publicacion_material")
+        longitud_publicacion_material = data.get("longitud_publicacion_material")
+        descripcion_direccion_material = data.get("descripcion_direccion_material")
+        tipo_unidad_material = data.get("tipo_unidad_material")
+        
+        if id_tipo_material:
+            tipo_material = TipoMaterial.query.get(id_tipo_material)
+            if not tipo_material:
+                return jsonify({"message": "Tipo de material no válido"}), 400
+        if nombre_material:
+            material.nombre_material = nombre_material
+        if estado_material:
+            material.estado_material = estado_material
+        if precio_material:
+            material.precio_material = precio_material
+        if descripcion_material:
+            material.descripcion_material = descripcion_material
+        if id_tipo_material:
+            material.id_tipo_material = id_tipo_material
+        if cantidad_material:
+            material.cantidad_material = cantidad_material
+        if estado_publicacion_material:
+            material.estado_publicacion_material = estado_publicacion_material
+        if latitud_publicacion_material:
+            material.latitud_publicacion_material =  latitud_publicacion_material  # Actualizar latitud
+        if longitud_publicacion_material:
+            material.longitud_publicacion_material =          longitud_publicacion_material  # Actualizar longitud
+        if descripcion_direccion_material:
+            material.descripcion_direccion_material =  descripcion_direccion_material  # Actualizar descripción de dirección
+        if tipo_unidad_material:
+            material.tipo_unidad_material = tipo_unidad_material
+        # fotos del material
+        fotos = request.files.getlist("nuevas_fotos")
+        if fotos:
+            urls = subir_imagenes(fotos)
+            imagenes = guardar_imagenes(urls, material.id_material)
+            # print(f"urs {urls}")
+            # print(imagenes)
+            db.session.add_all(imagenes)
+            db.session.commit()
+        eliminar_fotos = data.getlist("eliminar_fotos")
+        if eliminar_fotos:
+            eliminar_imagenes(eliminar_fotos)
+            
         db.session.commit()
 
         return jsonify({"message": "material actualizado"})

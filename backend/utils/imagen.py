@@ -2,22 +2,24 @@ import os
 from werkzeug.utils import secure_filename
 from flask import request,current_app
 from models.imagen import Imagen
+from utils.db import db
+import uuid
 
-# funcion que recibe un archivo foto 
 def subir_imagen(foto):
     try:
-        if (foto.filename == ""):
+        if foto.filename == "":
             return None
-        
-        filename = secure_filename(foto.filename)
-        filepath = os.path.join(current_app.root_path,"static/image", filename)
-        #print(f"Guardando imagen en: {filepath}")  # Log para depuración
+
+        # Obtener la extensión del archivo original
+        ext = os.path.splitext(foto.filename)[1]
+        # Generar un nombre único
+        unique_filename = f"{uuid.uuid4()}{ext}"
+        filepath = os.path.join(current_app.root_path, "static/image", unique_filename)
+
         foto.save(filepath)
-        #print(f"Imagen guardada en: {filepath}")
-        
-        return f"{request.host_url}/api/fotos/{filename}"
+        return f"{request.host_url}/api/fotos/{unique_filename}"
     except Exception as e:
-        print(f"Guardar la imagen: {e}")
+        print(f"Error al guardar la imagen: {e}")
         return None
 
 def subir_imagenes(fotos):
@@ -44,3 +46,15 @@ def guardar_imagenes(urls, id_material):
     except Exception as e:
         print(f"Error al guardar las imágenes en la base de datos: {e}")
         return []
+
+def eliminar_imagenes(ids):
+    for id in ids:
+        imagen = Imagen.query.get(id)
+        url = imagen.url_imagen
+        filename = url.split('/')[-1]
+        filepath = os.path.join(current_app.root_path,"static/image", filename)
+        if os.path.exists(filepath):
+            os.remove(filepath)
+            db.session.delete(imagen)
+            
+        print(filepath)
