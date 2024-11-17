@@ -2,10 +2,10 @@ import imgEjemploPerfil from "../assets/ejemploPerfil.jpg";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SimpleNavBar from "../components/simpleNavBar";
-import { MaterialProp } from "../components/Material";
 import { Link } from "react-router-dom";
 import ListarPropios from "../components/ListarPropios";
 import { URL_BACKEND } from "../constant/url";
+import type { MaterialProp } from "../components/Material";
 const Page = () => {
     const [nombre_usuario, setNombre] = useState("");
     //const [numero_telefono, setTelefono] = useState("");
@@ -64,7 +64,7 @@ const Page = () => {
             />
             <SimpleNavBar></SimpleNavBar>
             <div className="bg-white w-full flex flex-col gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931] font-poppins ">
-                <aside className="hidden py-4 md:w-1/3 lg:w-1/4 md:block">
+               <aside className="hidden py-4 md:w-1/3 lg:w-1/4 md:block">
                     <div className="sticky flex flex-col gap-2 p-4 text-sm border-r border-indigo-100 top-12">
                         <h2 className="pl-3 mb-4 text-2xl font-semibold">
                             Ajustes de usuario
@@ -76,6 +76,14 @@ const Page = () => {
                         >
                             Mi cuenta
                         </a>
+                        
+                        <a
+                            href="/historialcompras"
+                            className="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full"
+                        >
+                            Historial de compras
+                        </a>
+
                         <a
                             href="/publicProfile"
                             className="flex items-center px-3 py-2.5 font-bold bg-white  text-yellow-500 border rounded-full"

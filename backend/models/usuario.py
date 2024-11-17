@@ -16,6 +16,7 @@ class Usuario(db.Model):
     estado_usuario = db.Column(db.String(15), nullable=True)
     zona_trabajo = db.Column(db.String(50), nullable=True)
     imagen_perfil = db.Column(db.String(255), nullable=True)
+    imagen_qr = db.Column(db.String(255), nullable=True)
 
     def __init__(
         self,

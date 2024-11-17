@@ -16,7 +16,7 @@ const MaterialesFiltrados = () => {
     const fetchMateriales = async () => {
       try {
         const response = await fetch(
-          `${URL_BACKEND}/api/tipo_material/${id}/materiales`
+          `${URL_BACKEND}/api/materiales/tipo/${id}`
         );
         const data = await response.json();
         setMateriales(data.data || []);

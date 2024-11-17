@@ -4,8 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Mapa from "../components/Mapa";
 import { MdLocationOn } from "react-icons/md";
 import Cropper from "react-easy-crop";
-import { getCroppedImg } from "../components/getCroppedImg";
 import Modal from "react-modal";
+import imgEjemploPerfil from "../assets/ejemploPerfil.jpg";
 Modal.setAppElement("#root");
 
 const Page = () => {
@@ -26,50 +26,50 @@ const Page = () => {
   const [UbicacionMaterial, setUbicacionMaterial] = useState("");
   const [titulo, setTitulo] = useState("");
   const [precio, setPrecio] = useState("");
-  const [categoria, setCategoria] = useState("");
-  const [condicion, setCondicion] = useState("");
+  const [categoria, setCategoria] = useState("1");
+  const [condicion, setCondicion] = useState("nuevo");
   const [descripcion, setDescripcion] = useState("");
-  const [unidad, setUnidad] = useState("");
+  const [unidad, setUnidad] = useState("metroLineal");
   const [cantidad, setCantidad] = useState("");
   const formRef = useRef<HTMLFormElement | null>(null);
   //Para las imagenes
-  const [image, setImage] = useState<string | null>(null);
+  const [image, setImage] = useState(imgEjemploPerfil);
   const [crop, setCrop] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState<number>(1);
-  const [croppedImage, setCroppedImage] = useState<string | null>(null);
+  const [croppedImage, setCroppedImage] = useState<Blob | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<Blob[]>([]);
   const [imagesPerCrop, setImagesPerCrop] = useState<File[]>([]);
-  const [rotation, setRotation] = useState<number>(0); //rotar las imagenes
+  const [rotation, setRotation] = useState<number>(0);
 
   const handleSubmit = async (e?: React.SyntheticEvent<HTMLFormElement>) => {
     if (e) e.preventDefault();
 
-    const body = {
-      nombre_material: titulo,
-      cantidad_material: cantidad,
-      estado_material: condicion,
-      precio_material: precio,
-      descripcion_material: descripcion,
-      latitud_publicacion_material: 1.0,
-      longitud_publicacion_material: 1.0,
-      descripcion_direccion_material: UbicacionMaterial,
-      id_usuario: user.id_usuario,
-      id_tipo_material: categoria,
-      tipo_unidad_material: unidad,
-      imagenes_material: images,
-    };
+    const formData = new FormData();
+    formData.append("nombre_material", titulo);
+    formData.append("estado_material", condicion);
+    formData.append("precio_material", precio);
+    formData.append("descripcion_material", descripcion);
+    formData.append("latitud_publicacion_material", "1");
+    formData.append("longitud_publicacion_material", "1");
+    formData.append("descripcion_direccion_material", UbicacionMaterial);
+    formData.append("id_usuario", user.id_usuario);
+    formData.append("id_tipo_material", categoria);
+    formData.append("tipo_unidad_material", unidad);
+    formData.append("cantidad_material", cantidad);
+
+    for (let i = 0; i < images.length; i++) {
+      formData.append("fotos", images[i]);
+    }
 
     try {
       setLoading(true);
       const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
       const res = await fetch(`${URL_BACKEND}/api/registrar_material`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
+        body: formData,
       });
+      console.log(await res.json());
 
       if (!res.ok) {
         const errorResponse = await res.json();
@@ -95,10 +95,15 @@ const Page = () => {
     const newImages: File[] = [];
     if (files) {
       files.forEach((file) => {
-        if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
+        if (
+          file &&
+          (file.type === "image/jpeg" || file.type === "image/png")
+        ) {
           newImages.push(file);
         } else {
-          alert("Formato Incorrecto: Por favor, sube una imagen JPG o PNG.");
+          alert(
+            "Formato Incorrecto: Por favor, sube una imagen JPG o PNG."
+          );
         }
       });
     }
@@ -139,10 +144,71 @@ const Page = () => {
       const croppedImage = await getCroppedImg(
         image,
         croppedAreaPixels,
-        rotation
       );
-      setCroppedImage(croppedImage); // Guardar la imagen recortada para mostrarla
+      setCroppedImage(croppedImage);
     }
+  };
+
+  const getCroppedImg = async (
+    imageSrc: string,
+    crop: { x: number; y: number; width: number; height: number }
+  ) => {
+    // Función para generar un hash basado en SHA-256
+    async function generateHash(input: string) {
+      const textEncoder = new TextEncoder();
+      const encodedData = textEncoder.encode(input);
+      const hashBuffer = await crypto.subtle.digest(
+        "SHA-256",
+        encodedData
+      );
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray
+        .map((b) => b.toString(16).padStart(2, "0"))
+        .join("");
+      return hashHex;
+    }
+    const image = await createImage(imageSrc);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) return null;
+
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+
+    canvas.width = crop.width;
+    canvas.height = crop.height;
+
+    ctx.drawImage(
+      image,
+      crop.x * scaleX,
+      crop.y * scaleY,
+      crop.width * scaleX,
+      crop.height * scaleY,
+      0,
+      0,
+      crop.width,
+      crop.height
+    );
+    const timestamp = new Date().toISOString();
+    const hash = await generateHash(`${timestamp}`);
+
+    return new Promise<File | null>((resolve) => {
+      canvas.toBlob((blob) => {
+        if (blob) {
+          // Asignar nombre al archivo con el hash generado
+          const fileName = `${hash}.webp `;
+
+          // Convertir el blob en un archivo con el nombre generado
+          const file = new File([blob], fileName, {
+            type: "image/webp",
+          });
+          resolve(file);
+        } else {
+          resolve(null);
+        }
+      }, "image/webp");
+    });
   };
 
   const handleCrop = async () => {
@@ -161,6 +227,15 @@ const Page = () => {
   //funcion para rotar las imagenes
   const rotateImage = () => {
     setRotation((prev) => (prev + 90) % 360); // para que rote 90 grados
+  };
+  const createImage = (url: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = url;
+      img.crossOrigin = "anonymous"; // To avoid CORS issues
+      img.onload = () => resolve(img);
+      img.onerror = (err) => reject(err);
+    });
   };
 
   return (
@@ -233,16 +308,25 @@ const Page = () => {
                     }
                   }}
                   onKeyDown={(e) => {
-                    const input = e.target as HTMLInputElement;
+                    const input =
+                      e.target as HTMLInputElement;
 
                     // Permitir borrar (Backspace y Delete)
-                    if (e.key === 'Backspace' || e.key === 'Delete') {
+                    if (
+                      e.key === "Backspace" ||
+                      e.key === "Delete"
+                    ) {
                       return;
                     }
 
                     // Evitar caracteres no numéricos, negativos y valores superiores a 20000
                     const futureValue = input.value + e.key;
-                    if (!/^[0-9]*$/.test(e.key) || Number(futureValue) > 20000 || e.key === '-' || e.key === 'e') {
+                    if (
+                      !/^[0-9]*$/.test(e.key) ||
+                      Number(futureValue) > 20000 ||
+                      e.key === "-" ||
+                      e.key === "e"
+                    ) {
                       e.preventDefault();
                     }
                   }}
@@ -260,7 +344,9 @@ const Page = () => {
                   name="category"
                   className="w-3/5 bg-gray-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                   value={categoria}
-                  onChange={(e) => setCategoria(e.target.value)}
+                  onChange={(e) =>
+                    setCategoria(e.target.value)
+                  }
                 >
                   <option value="1">Ladrillo</option>
                   <option value="2">Cemento</option>
@@ -268,7 +354,9 @@ const Page = () => {
                   <option value="4">Vigas</option>
                   <option value="5">Arena</option>
                   <option value="6">Mezclas</option>
-                  <option value="7">Herramientas Manuales</option>
+                  <option value="7">
+                    Herramientas Manuales
+                  </option>
                   <option value="8">Madera</option>
                   <option value="9">Tejas</option>
                   <option value="10">Yeso</option>
@@ -287,22 +375,32 @@ const Page = () => {
                   name="condition"
                   className="w-3/5 bg-gray-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                   value={condicion}
-                  onChange={(e) => setCondicion(e.target.value)}
+                  onChange={(e) =>
+                    setCondicion(e.target.value)
+                  }
                 >
                   <option value="nuevo">Nuevo</option>
                   <option value="usado">Usado</option>
                 </select>
               </div>
               <div>
-                <label className="block text-gray-700">Unidad</label>
+                <label className="block text-gray-700">
+                  Unidad
+                </label>
                 <select
                   value={unidad}
                   onChange={(e) => setUnidad(e.target.value)}
                   className="w-3/5 bg-gray-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                 >
-                  <option value="metroLineal">Metro lineal</option>
-                  <option value="metroCuadrado">Metro Cuadrado</option>
-                  <option value="metroCubico">Metro Cúbico</option>
+                  <option value="metroLineal">
+                    Metro lineal
+                  </option>
+                  <option value="metroCuadrado">
+                    Metro Cuadrado
+                  </option>
+                  <option value="metroCubico">
+                    Metro Cúbico
+                  </option>
                   <option value="unidad">Unidad</option>
                   <option value="kilogramo">Kilogramo</option>
                   <option value="paquete">Paquete</option>
@@ -324,7 +422,9 @@ const Page = () => {
                   name="unidad"
                   className="w-3/5 bg-gray-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                   value={cantidad}
-                  onChange={(e) => setCantidad(e.target.value)}
+                  onChange={(e) =>
+                    setCantidad(e.target.value)
+                  }
                   min="0"
                 />
               </div>
@@ -344,10 +444,11 @@ const Page = () => {
                   maxLength={500}
                   className="w-3/5 bg-gray-100 mt-1 p-2 border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
                   value={descripcion}
-                  onChange={(e) => setDescripcion(e.target.value)}
+                  onChange={(e) =>
+                    setDescripcion(e.target.value)
+                  }
                 />
               </div>
-
             </div>
             <div className="mb-4 w-3/5">
               <label className="block text-sm font-medium text-gray-500 ml-2">
@@ -360,7 +461,9 @@ const Page = () => {
                   placeholder="Tu ubicación"
                   required
                   value={UbicacionMaterial}
-                  onChange={(e) => setUbicacionMaterial(e.target.value)}
+                  onChange={(e) =>
+                    setUbicacionMaterial(e.target.value)
+                  }
                 />
                 <div
                   onClick={() => setOpenMap(!openMap)}
@@ -379,21 +482,28 @@ const Page = () => {
                     onClick={(e) => e.stopPropagation()} // Prevenir cierre al hacer clic dentro del modal
                   >
                     <Mapa
-                      onUbicacionSeleccionada={(lat: number, lng: number) => {
+                      onUbicacionSeleccionada={(
+                        lat: number,
+                        lng: number
+                      ) => {
                         setCoordenadasSeleccionadas({
                           lat,
                           lng,
                         });
                         setOpenMap(false);
                       }}
-                      onDireccionObtenida={setUbicacionMaterial}
+                      onDireccionObtenida={
+                        setUbicacionMaterial
+                      }
                       className="w-full h-full"
                     />
                     {/* Botón para cerrar el modal */}
                     <div className="mt-4 flex justify-end">
                       <button
                         className="bg-red-600 text-white font-semibold rounded-lg px-4 py-2 hover:bg-red-700 transition-colors duration-300"
-                        onClick={() => setOpenMap(false)} // Cerrar el modal
+                        onClick={() =>
+                          setOpenMap(false)
+                        } // Cerrar el modal
                       >
                         Cerrar
                       </button>
@@ -402,25 +512,24 @@ const Page = () => {
                 </div>
               )}
             </div>
-        <Link to="/">
-          <button
-            type="submit" 
-            onClick={() => handleSubmit()}
-            className="text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-          >
-            Publicar
-          </button>
-        </Link>
-          
-        <Link to="/">
-          <button
-            type="button"
-            className="text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5"
-          >
-            Cancelar
-          </button>
-        </Link>
-        
+            <Link to="/">
+              <button
+                type="submit"
+                onClick={() => handleSubmit()}
+                className="text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:bg-black focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+              >
+                Publicar
+              </button>
+            </Link>
+
+            <Link to="/">
+              <button
+                type="button"
+                className="text-white bg-red-600 hover:bg-red-700 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5"
+              >
+                Cancelar
+              </button>
+            </Link>
           </form>
         </div>
         <div className="w-full sm:w-[80%] mx-auto sm:mt-10 mt-10">
@@ -445,10 +554,14 @@ const Page = () => {
                     />
                   </svg>
                   <p className="mb-2 text-sm text-gray-500">
-                    <span className="font-semibold">Presiona para subir</span> O
-                    arrastra y suelta
+                    <span className="font-semibold">
+                      Presiona para subir
+                    </span>{" "}
+                    O arrastra y suelta
                   </p>
-                  <p className="text-xs text-gray-500">PNG o JPG</p>
+                  <p className="text-xs text-gray-500">
+                    PNG o JPG
+                  </p>
                 </>
               </div>
               <input
@@ -467,15 +580,21 @@ const Page = () => {
             </button>
           </div>
 
-          <div className="grid grid-cols-3 mt-3">
-            {images.map((image, index) => (
-              <img
-                src={image}
-                key={index}
-                className="w-full h-full object-cover"
-              />
-            ))}
+          <div className="grid grid-cols-3 gap-4 mt-3 p-4">
+            {images.map((image, index) => {
+              const imageUrl = URL.createObjectURL(image);
+              return (
+                <div key={index} className="relative overflow-hidden rounded-lg shadow-lg hover:shadow-2xl transition-all duration-300">
+                  <img
+                    src={imageUrl}
+                    alt={`Image ${index}`}
+                    className="w-full h-full object-cover transform transition-transform duration-300 hover:scale-105"
+                  />
+                </div>
+              );
+            })}
           </div>
+
           {/* Modal de recorte y rotacion */}
           <Modal
             isOpen={isModalOpen}
@@ -483,7 +602,9 @@ const Page = () => {
             className="fixed inset-0 flex items-center justify-center bg-white rounded-lg shadow-lg"
           >
             <div className="p-4 max-w-md w-full">
-              <h2 className="text-lg font-semibold mb-4">Recortar Imagen</h2>
+              <h2 className="text-lg font-semibold mb-4">
+                Recortar Imagen
+              </h2>
               {image && (
                 <div className="relative w-full h-96 mb-4">
                   <Cropper
@@ -528,9 +649,7 @@ const Page = () => {
           </Modal>
         </div>
       </div>
-      <div className="flex flex-wrap mt-3 mb-5 justify-center sm:justify-end w-full gap-4 sm:pr-16">
-      
-      </div>
+      <div className="flex flex-wrap mt-3 mb-5 justify-center sm:justify-end w-full gap-4 sm:pr-16"></div>
     </div>
   );
 };

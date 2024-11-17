@@ -20,6 +20,12 @@ import Material from "./pages/Material.tsx";
 import Propios from "./pages/Propios.tsx";
 import EditarMaterial from "./pages/EditarMaterial.tsx";
 import MaterialesRecomendados from "./pages/materiales/MaterialesRecomendados.tsx";
+import CarritoCompras from "./pages/CarritoCompras.tsx";
+import ListaGuardados from "./pages/materiales/ListaGuardados.tsx";
+import ConfirmarPedido from "./pages/ConfirmarPedido.tsx";
+import PagoConTarjeta from "./pages/PagoConTarjeta.tsx";
+import PagoConQR from "./pages/PagoConQR.tsx";
+import HistorialCompras from "./pages/HistorialCompras.tsx"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -43,13 +49,22 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/buscar" element={<Buscar />} />
         <Route path="/matRegister" element={<MatRegister />} />
         <Route path="/materiales" element={<MaterialesFiltrados />} />
-        <Route path="/materiales/recomendados" element={<MaterialesRecomendados />} />
+        <Route path="/guardados" element={<ListaGuardados />} />
+        <Route path="/historialcompras" element={<HistorialCompras />} />
+        <Route
+          path="/materiales/recomendados"
+          element={<MaterialesRecomendados />}
+        />
         <Route path="/material/:id" element={<Material />} />
         <Route path="/propios" element={<Propios />} />
         <Route
           path="/editarMaterial/:id_material"
           element={<EditarMaterial />}
         />
+        <Route path="/carrito" element={<CarritoCompras />} />
+        <Route path="/confirmar-pedido" element={<ConfirmarPedido />} />
+        <Route path="/pago-tarjeta" element={<PagoConTarjeta />} />
+        <Route path="/pago-qr" element={<PagoConQR />} />
       </Routes>
     </Router>
     {

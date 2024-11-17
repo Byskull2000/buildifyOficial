@@ -4,66 +4,72 @@ from utils.db import db
 from models.usuario import Usuario
 from sqlalchemy.exc import IntegrityError
 from werkzeug.utils import secure_filename
+from utils.imagen import subir_imagen
+
+usuarios = Blueprint("usuarios", __name__, static_folder='../static')
 
 
-usuarios = Blueprint("usuarios", __name__,static_folder='../static')
-# Ruta para actualizar el perfil del usuario
-
+from flask import request, jsonify
+from werkzeug.utils import secure_filename
+import os
+from utils.db import db
 
 @usuarios.route("/api/usuarios/<int:id_usuario>/perfil", methods=["PUT"])
 def actualizar_perfil(id_usuario):
     try:
         usuario = Usuario.query.get_or_404(id_usuario)
-        usuario.nombre_usuario = request.form.get("nombre_usuario")
-        usuario.zona_trabajo = request.form.get("zona_trabajo")
-        usuario.numero_telefono = request.form.get("numero_telefono")
+        
+        nombre_usuario = request.form.get("nombre_usuario")
+        if nombre_usuario:
+            usuario.nombre_usuario = nombre_usuario
+
+        zona_trabajo = request.form.get("zona_trabajo")
+        if zona_trabajo:
+            usuario.zona_trabajo = zona_trabajo
+
+        numero_telefono = request.form.get("numero_telefono")
+        if numero_telefono:
+            usuario.numero_telefono = numero_telefono
 
         if "imagen_perfil" in request.files:
             imagen_perfil = request.files["imagen_perfil"]
             if imagen_perfil.filename != "":
                 filename = secure_filename(imagen_perfil.filename)
-                filepath = os.path.join(usuarios.static_folder, 'image',filename)
-                print(f"Guardando imagen en: {filepath}")  # Log para depuración
+                filepath = os.path.join(usuarios.static_folder, 'image', filename)
                 imagen_perfil.save(filepath)
-                print(f"Imagen guardada en: {filepath}")
-                usuario.imagen_perfil = f"{request.host_url}/api/fotos/{filename}"
-                print(f"URL de la imagen de perfil: {usuario.imagen_perfil}")
+                usuario.imagen_perfil = f"{request.host_url}static/image/{filename}"
+
+        if "imagen_qr" in request.files:
+            imagen_qr = request.files["imagen_qr"]
+            if imagen_qr.filename != "":
+                url = subir_imagen(imagen_qr)
+                usuario.imagen_qr = url
 
         db.session.commit()
 
-        return (
-            jsonify(
-                {
-                    "message": "Perfil actualizado correctamente",
-                    "data": {
-                        "id_usuario": usuario.id_usuario,
-                        "nombre_usuario": usuario.nombre_usuario,
-                        "correo_electronico": usuario.correo_electronico,
-                        "fecha_creacion": usuario.fecha_creacion,
-                        "ultimo_login": usuario.ultimo_login,
-                        "estado_usuario": usuario.estado_usuario,
-                        "numero_telefono": usuario.numero_telefono,
-                        "zona_trabajo": usuario.zona_trabajo,
-                        "imagen_perfil": usuario.imagen_perfil,
-                    },
-                }
-            ),
-            200,
-        )
-    except IntegrityError as e:
-        return jsonify({"message": "El telefono ya se encuentra registrado"})
+        return jsonify({
+            "message": "Perfil actualizado correctamente",
+            "data": {
+                "id_usuario": usuario.id_usuario,
+                "nombre_usuario": usuario.nombre_usuario,
+                "correo_electronico": usuario.correo_electronico,
+                "fecha_creacion": usuario.fecha_creacion,
+                "ultimo_login": usuario.ultimo_login,
+                "estado_usuario": usuario.estado_usuario,
+                "numero_telefono": usuario.numero_telefono,
+                "zona_trabajo": usuario.zona_trabajo,
+                "imagen_perfil": usuario.imagen_perfil,
+                "imagen_qr": usuario.imagen_qr,
+            }
+        }), 200
 
     except Exception as e:
-        print(e)
         # Manejo de errores
-        return (
-            jsonify(
-                {
-                    "message": "Error al actualizar el perfil del usuario",
-                }
-            ),
-            400,
-        )
+        print("Error al actualizar:", e)
+        return jsonify({
+            "message": "Error al actualizar el perfil del usuario",
+            "error": str(e),
+        }), 400
 
 
 # Ruta para devolver los nombres de los campos de la tabla Usuario
@@ -243,6 +249,7 @@ def actualizar_telefono(id_usuario):
     usuario = Usuario.query.get_or_404(id_usuario)
     usuario.numero_telefono = data.get("numero_telefono", usuario.numero_telefono)
     db.session.commit()
+    
     return jsonify(
         {"message": "Teléfono actualizado", "telefono": usuario.numero_telefono}
     )
