@@ -55,7 +55,7 @@ const ListaGuardados: React.FC = () => {
         </Link>
       </div>
 
-      {/* Main content */}
+      
       <div className="p-4 w-2/3 mx-auto">
         <h2 className="text-4xl font-bold text-center mb-4">Publicaciones guardadas</h2>
 
@@ -69,11 +69,11 @@ const ListaGuardados: React.FC = () => {
                 className="flex items-start p-4 mb-4 bg-gray-50 rounded-lg shadow hover:shadow-lg transform transition-all duration-200"
               >
                 <div className="flex-shrink-0 w-36 h-36 bg-gray-200 rounded-md overflow-hidden">
-                  {/* Aquí se carga la imagen desde la propiedad imagen */}
+
                   <img
-                    src={product.imagen}  // Usamos la propiedad imagen
+                    src={product.imagen} 
                     alt={product.title}
-                    className="object-cover w-full h-full"  // Puedes cambiar el tamaño aquí
+                    className="object-cover w-full h-full"  
                   />
                 </div>
                 <div className="flex-1 ml-5">
