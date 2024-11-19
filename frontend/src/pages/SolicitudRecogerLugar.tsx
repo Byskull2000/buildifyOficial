@@ -1,14 +1,14 @@
 import buildifyLogo from "../assets/Buildify.png";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import Mapa from "../components/Mapa"; // Importamos el componente Mapa
+import Mapa from "../components/Mapa"; 
 interface Material {
   name: string;
-  price: number; 
-  quantity: number; 
+  price: number;
+  quantity: number;
   image: string;
-  address: string; 
-  location: { lat: number; lng: number }; 
+  address: string;
+  location: { lat: number; lng: number };
 }
 
 interface Seller {
@@ -28,8 +28,8 @@ const data: Item[] = [
     id: 1,
     material: {
       name: "Cemento Portland",
-      price: 50, // Precio como número
-      quantity: 10, // Cantidad como número
+      price: 50, 
+      quantity: 10,
       image: "https://via.placeholder.com/150",
       address: "Calle Eliodoro Villazon #128, Cochabamba",
       location: { lat: -17.3936, lng: -66.157 }, // Coordenadas de ejemplo
@@ -44,12 +44,9 @@ const data: Item[] = [
 
 const OrderPickup: React.FC = () => {
   const [direccion, setDireccion] = useState<string>(data[0].material.address); 
-  const [ubicacion, setUbicacion] = useState<{ lat: number; lng: number } | null>(data[0].material.location); 
+  const [ubicacion] = useState<{ lat: number; lng: number }>(data[0].material.location); // Ubicación estática
 
-  const handleUbicacionSeleccionada = (lat: number, lng: number) => {
-    setUbicacion({ lat, lng });
-  };
-
+ 
   const handleDireccionObtenida = (nuevaDireccion: string) => {
     setDireccion(nuevaDireccion);
   };
@@ -76,9 +73,9 @@ const OrderPickup: React.FC = () => {
 
         {data.map((item) => (
           <div key={item.id} className="mb-8">
-            {/* Información del material y del vendedor */}
+            
             <div className="grid grid-cols-2 gap-6 mb-6">
-              {/* Info del material */}
+             
               <div className="bg-gray-300 p-6 rounded-lg flex items-start">
                 <img
                   src={item.material.image}
@@ -96,13 +93,10 @@ const OrderPickup: React.FC = () => {
                   <p>
                     <strong>Cantidad:</strong> {item.material.quantity}
                   </p>
-                  <p className="mt-2">
-                    <strong>Total:</strong> Bs.{item.material.price * item.material.quantity}
-                  </p>
                 </div>
               </div>
 
-              {/* Info del vendedor */}
+              
               <div className="bg-gray-300 p-6 rounded-lg flex items-start">
                 <img
                   src={item.seller.image}
@@ -121,11 +115,12 @@ const OrderPickup: React.FC = () => {
               </div>
             </div>
 
-            {/* Map and Address */}
+          
             <div className="grid grid-cols-2 gap-6 items-center">
               <div className="bg-gray-300 h-60 rounded-lg overflow-hidden">
                 <Mapa
-                  onUbicacionSeleccionada={handleUbicacionSeleccionada}
+                  // Pasamos la ubicación estática al mapa sin permitir la modificación
+                  onUbicacionSeleccionada={() => {}}
                   onDireccionObtenida={handleDireccionObtenida}
                   className="w-full h-full"
                 />
@@ -156,4 +151,4 @@ const OrderPickup: React.FC = () => {
   );
 };
 
-export default OrderPickup;
+export default OrderPickup;  

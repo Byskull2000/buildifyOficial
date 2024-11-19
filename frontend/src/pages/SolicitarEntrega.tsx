@@ -1,3 +1,5 @@
+// src/pages/SolicitudEntrega.tsx
+
 import buildifyLogo from "../assets/Buildify.png";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
@@ -21,7 +23,7 @@ const data = [
 ];
 
 const SolicitudEntrega: React.FC = () => {
-  const [direccion, setDireccion] = useState("Cochabamba");
+  const [direccion, setDireccion] = useState("");
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
 
@@ -90,9 +92,6 @@ const SolicitudEntrega: React.FC = () => {
                   </p>
                   <p>
                     <strong>Cantidad:</strong> {item.material.quantity}
-                  </p>
-                  <p className="mt-2">
-                    <strong>Total:</strong> Bs.{item.material.price * item.material.quantity} {/* Calcular el total */}
                   </p>
                 </div>
               </div>

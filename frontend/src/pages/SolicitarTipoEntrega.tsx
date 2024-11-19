@@ -1,15 +1,15 @@
 import buildifyLogo from "../assets/Buildify.png";
-import camionImage from "../assets/Camion .png"; // Imagen del camión
-import ubicacionImage from "../assets/Ubicacion.png"; // Imagen de la ubicación
+import camionImage from "../assets/Camion .png"; 
+import ubicacionImage from "../assets/Ubicacion.png"; 
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 interface Material {
     name: string;
-    price: number; // Precio como número
-    quantity: number; // Cantidad como número
+    price: number;
+    quantity: number;
     image: string;
-    address: string; // Dirección inicial
+    address: string;
 }
 
 interface Seller {
@@ -29,8 +29,8 @@ const data: Item[] = [
         id: 1,
         material: {
             name: "Cemento Portland",
-            price: 50, // Precio como número
-            quantity: 10, // Cantidad como número
+            price: 50,
+            quantity: 10,
             image: "https://via.placeholder.com/150",
             address: "Calle Eliodoro Villazon #128, Cochabamba",
         },
@@ -68,7 +68,7 @@ const OrderPickup: React.FC = () => {
                 {data.map((item) => (
                     <div key={item.id} className="mb-8">
                         <div className="grid grid-cols-2 gap-6 mb-6">
-                            {/* Info del material */}
+
                             <div className="bg-gray-300 p-6 rounded-lg flex items-start">
                                 <img
                                     src={item.material.image}
@@ -86,13 +86,10 @@ const OrderPickup: React.FC = () => {
                                     <p>
                                         <strong>Cantidad:</strong> {item.material.quantity}
                                     </p>
-                                    <p className="mt-2">
-                                        <strong>Total:</strong> Bs.{item.material.price * item.material.quantity}
-                                    </p>
                                 </div>
                             </div>
 
-                            {/* Info del vendedor */}
+
                             <div className="bg-gray-300 p-6 rounded-lg flex items-start">
                                 <img
                                     src={item.seller.image}
@@ -111,12 +108,12 @@ const OrderPickup: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Métodos de envío */}
+
                         <h3 className="text-2xl font-bold mb-4">Métodos de Envío</h3>
 
-                        {/* Options for pickup or delivery */}
+
                         <div className="grid grid-cols-2 gap-6 items-center">
-                            {/* Button for pickup */}
+
                             <button
                                 onClick={() => navigate("/solicitudRecoger")}
                                 className="flex flex-col items-center bg-yellow-500 text-white py-3 px-4 rounded-lg shadow hover:bg-yellow-600"
@@ -129,7 +126,7 @@ const OrderPickup: React.FC = () => {
                                 Recoger en el lugar
                             </button>
 
-                            {/* Button for delivery */}
+
                             <button
                                 onClick={() => navigate("/solicitarEntrega")}
                                 className="flex flex-col items-center bg-yellow-500 text-white py-3 px-4 rounded-lg shadow hover:bg-yellow-600"
@@ -145,9 +142,12 @@ const OrderPickup: React.FC = () => {
                     </div>
                 ))}
 
-                {/* Back Button */}
+
                 <div className="flex justify-start mt-8">
-                    <button className="bg-gray-400 text-white py-3 px-6 rounded-md hover:bg-gray-500">
+                    <button
+                        onClick={() => navigate("/historialcompras")}
+                        className="bg-gray-400 text-white py-3 px-6 rounded-md hover:bg-gray-500"
+                    >
                         Volver
                     </button>
                 </div>
