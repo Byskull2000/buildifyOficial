@@ -11,7 +11,7 @@ def registrar_pedido():
 
     # Validar los campos requeridos
     campos_requeridos = [
-        'metodo_pago', 'total_pedido', 'precio_unitario_producto', 'id_usuario', 'id_material'
+        'metodo_pago', 'total_pedido', 'precio_unitario_producto', 'id_usuario', 'id_material', 'cantidad_producto'
     ]
     for campo in campos_requeridos:
         if campo not in data:
@@ -25,7 +25,8 @@ def registrar_pedido():
             total_pedido=data['total_pedido'],
             precio_unitario_producto=data['precio_unitario_producto'],
             id_usuario=data['id_usuario'],
-            id_material=data['id_material']
+            id_material=data['id_material'],
+            cantidad_producto=data['cantidad_producto']
         )
 
         # Guardar el pedido en la base de datos
