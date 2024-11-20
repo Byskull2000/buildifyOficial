@@ -1,7 +1,8 @@
 import buildifyLogo from "../assets/Buildify.png";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import Mapa from "../components/Mapa";
+import Mapa2 from "../components/Mapa2";
+
 interface Material {
   name: string;
   price: number;
@@ -43,11 +44,16 @@ const data: Item[] = [
 ];
 
 const OrderPickup: React.FC = () => {
-  const [direccion, setDireccion] = useState<string>(data[0].material.address);
-  //const [ubicacion] = useState<{ lat: number; lng: number }>(data[0].material.location); // Ubicación estática
+  const [direcciones, setDirecciones] = useState<string[]>(
+    data.map((item) => item.material.address)
+  );
 
-  const handleDireccionObtenida = (nuevaDireccion: string) => {
-    setDireccion(nuevaDireccion);
+  const handleDireccionObtenida = (id: number, nuevaDireccion: string) => {
+    setDirecciones((prev) => {
+      const nuevasDirecciones = [...prev];
+      nuevasDirecciones[id] = nuevaDireccion;
+      return nuevasDirecciones;
+    });
   };
 
   return (
@@ -70,7 +76,7 @@ const OrderPickup: React.FC = () => {
       <div className="p-8 mx-auto max-w-7xl bg-white rounded-lg shadow-lg mt-6">
         <h2 className="text-2xl font-bold mb-6">Pedido</h2>
 
-        {data.map((item) => (
+        {data.map((item, index) => (
           <div key={item.id} className="mb-8">
             <div className="grid grid-cols-2 gap-6 mb-6">
               <div className="bg-gray-300 p-6 rounded-lg flex items-start">
@@ -117,10 +123,11 @@ const OrderPickup: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-6 items-center">
               <div className="bg-gray-300 h-60 rounded-lg overflow-hidden">
-                <Mapa
-                  // Pasamos la ubicación estática al mapa sin permitir la modificación
-                  onUbicacionSeleccionada={() => {}}
-                  onDireccionObtenida={handleDireccionObtenida}
+                <Mapa2
+                  location={item.material.location} 
+                  onDireccionObtenida={(direccion) =>
+                    handleDireccionObtenida(index, direccion)
+                  }
                   className="w-full h-full"
                 />
               </div>
@@ -128,7 +135,7 @@ const OrderPickup: React.FC = () => {
                 <label className="font-semibold mb-2">Dirección:</label>
                 <input
                   type="text"
-                  value={direccion}
+                  value={direcciones[index]}
                   readOnly
                   className="bg-gray-200 p-3 rounded-md"
                 />
@@ -144,9 +151,13 @@ const OrderPickup: React.FC = () => {
           >
             Volver
           </Link>
-          <button className="bg-green-500 text-white py-3 px-6 rounded-md hover:bg-green-600">
+          <Link
+            to="/historialcompras"
+            className="bg-green-500 text-white py-3 px-6 rounded-md hover:bg-green-600"
+          >
             OK
-          </button>
+          </Link>
+
         </div>
       </div>
     </div>
