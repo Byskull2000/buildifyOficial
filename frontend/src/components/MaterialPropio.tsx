@@ -5,15 +5,9 @@ import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import imagenDefecto from "../assets/material_imagen_defecto.png";
 import FormEliminacion from "../components/formEliminacion";
+import type { MaterialProp } from "./Material";
 
 // Definimos y exportamos MaterialProp aquí
-export interface MaterialProp {
-  id_material: number;
-  nombre_material: string;
-  imagenUrl?: string;
-  precio_material: number;
-  estado_publicacion_material?: string;
-}
 
 const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
 
@@ -75,12 +69,12 @@ const Material = ({ material }: { material: MaterialProp }) => {
       className="relative flex-shrink-0 transform transition-colors hover:bg-slate-50 bg-white shadow-lg rounded-2xl p-6 w-60 md:w-64 lg:w-72"
     >
       <div
-        className={`absolute top-2 left-2 px-2 py-1 text-xs font-semibold rounded-full ${estadoMaterial === "activo"
+        className={`absolute top-2 left-2 px-2 py-1 text-xs font-semibold rounded-full ${estadoMaterial === "Activo" || estadoMaterial === "activo" 
           ? "bg-green-500 text-white"
           : "bg-red-500 text-white"
           }`}
       >
-        {estadoMaterial === "activo" ? "Activo" : "Inactivo"}
+        {estadoMaterial === "Activo" || estadoMaterial === "activo"? "Activo" : "Inactivo"}
       </div>
 
       <Link to={`/material/${material.id_material}`}>
@@ -113,7 +107,7 @@ const Material = ({ material }: { material: MaterialProp }) => {
           >
             Editar
           </button>
-          {estadoMaterial === "activo" ? (
+          {estadoMaterial === "activo" || estadoMaterial === "Activo" ? (
             <button
               className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
               onClick={() => {

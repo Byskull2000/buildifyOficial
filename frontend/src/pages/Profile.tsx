@@ -94,6 +94,16 @@ const Page = () => {
                         >
                             Mi cuenta
                         </a>
+
+                        <Link to="/historialcompras">
+                            <a
+                                href="#"
+                                className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full"
+                            >
+                                Historial de compras
+                            </a>
+                        </Link>
+
                         <Link to="/publicProfile">
                             <a
                                 href="#"

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Categorias from "../components/Categorias";
+import Material, { MaterialProp } from "../components/Material";
 import { URL_BACKEND } from "../constant/url";
 
 const MaterialesFiltrados = () => {
-  const [materiales, setMateriales] = useState<any[]>([]);
+  const [materiales, setMateriales] = useState<MaterialProp[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -15,7 +16,7 @@ const MaterialesFiltrados = () => {
     const fetchMateriales = async () => {
       try {
         const response = await fetch(
-          `${URL_BACKEND}/api/tipo_material/${id}/materiales`
+          `${URL_BACKEND}/api/materiales/tipo/${id}`
         );
         const data = await response.json();
         setMateriales(data.data || []);
@@ -45,18 +46,15 @@ const MaterialesFiltrados = () => {
         </button>
       </div>
 
-      {/* Mensaje descriptivo debajo de los botones */}
+      {/* Mensaje descriptivo */}
       <div className="text-center text-lg font-medium mt-4 text-gray-800 bg-[#FDBC3F] p-2 rounded-md shadow-md">
         Descubra los productos disponibles en esta categoría de materiales
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mt-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
         {materiales.length > 0 ? (
           materiales.map((material) => (
-            <div key={material.id_material} className="border rounded p-4">
-              <h3>{material.nombre_material}</h3>
-              <p>Precio: Bs.{material.precio_material}</p>
-            </div>
+            <Material key={material.id_material} material={material} />
           ))
         ) : (
           <p className="text-center mt-4 text-gray-500">

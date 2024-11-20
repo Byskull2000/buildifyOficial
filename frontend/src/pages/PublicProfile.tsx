@@ -2,15 +2,10 @@ import imgEjemploPerfil from "../assets/ejemploPerfil.jpg";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SimpleNavBar from "../components/simpleNavBar";
-import material1 from "../assets/material1.png";
-import material2 from "../assets/material2.png";
-import material3 from "../assets/material3.png";
-import material4 from "../assets/material4.png";
-import material5 from "../assets/material5.png";
-import { MaterialProp } from "../components/Material";
 import { Link } from "react-router-dom";
 import ListarPropios from "../components/ListarPropios";
 import { URL_BACKEND } from "../constant/url";
+import type { MaterialProp } from "../components/Material";
 const Page = () => {
     const [nombre_usuario, setNombre] = useState("");
     //const [numero_telefono, setTelefono] = useState("");
@@ -33,7 +28,7 @@ const Page = () => {
             );
             const data = await response.json();
             if (response.ok) {
-                setPropios(data.data)
+                setPropios(data.data);
             } else {
                 console.error("Error al obtener los materiales propios", data);
             }
@@ -42,41 +37,6 @@ const Page = () => {
     //Esta lista reemplazar por la API de similares
     useEffect(() => {
         // esta lista debe ser reemplazada por la API de recomendados
-
-        const propios = [
-            {
-                id_material: 1,
-                imagenUrl: material1,
-                precio_material: 200,
-                nombre_material: "Ladrillos 6 huecos",
-            },
-            {
-                id_material: 2,
-                imagenUrl: material2,
-                precio_material: 200,
-                nombre_material: "Ladrillos 6 huecos",
-            },
-            {
-                id_material: 3,
-                imagenUrl: material3,
-                precio_material: 200,
-                nombre_material: "Ladrillos 6 huecos",
-            },
-            {
-                id_material: 4,
-                imagenUrl: material4,
-                precio_material: 200,
-                nombre_material: "Ladrillos 6 huecos",
-            },
-            {
-                id_material: 5,
-                imagenUrl: material5,
-                precio_material: 80,
-                nombre_material: "Arena lavada",
-            },
-        ];
-
-        setPropios(propios);
         getMaterialesPropios();
     }, []);
 
@@ -104,7 +64,7 @@ const Page = () => {
             />
             <SimpleNavBar></SimpleNavBar>
             <div className="bg-white w-full flex flex-col gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931] font-poppins ">
-                <aside className="hidden py-4 md:w-1/3 lg:w-1/4 md:block">
+               <aside className="hidden py-4 md:w-1/3 lg:w-1/4 md:block">
                     <div className="sticky flex flex-col gap-2 p-4 text-sm border-r border-indigo-100 top-12">
                         <h2 className="pl-3 mb-4 text-2xl font-semibold">
                             Ajustes de usuario
@@ -116,6 +76,14 @@ const Page = () => {
                         >
                             Mi cuenta
                         </a>
+                        
+                        <a
+                            href="/historialcompras"
+                            className="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full"
+                        >
+                            Historial de compras
+                        </a>
+
                         <a
                             href="/publicProfile"
                             className="flex items-center px-3 py-2.5 font-bold bg-white  text-yellow-500 border rounded-full"
@@ -243,7 +211,9 @@ const Page = () => {
                                 </a>
                             </Link>
                         </div>
-                        <ListarPropios materiales={propios} />
+                        {propios.length > 0 && (
+                            <ListarPropios materiales={propios} />
+                        )}
                     </div>
                 </main>
             </div>

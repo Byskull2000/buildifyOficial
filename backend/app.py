@@ -7,7 +7,9 @@ from utils.db import db
 #from models import ubicacion
 #from models import interes
 #from models import tipo_material
-from models import material
+#from models import material
+#from models import guardado
+#from models import pedido
 
 # importacion de rutas
 from routes.usuarios import usuarios
@@ -19,6 +21,7 @@ from routes.interes import interes
 from routes.tipo_material import tipo_material
 from routes.material import material
 from routes.productos_similares import productos_similares  
+from routes.imagenes import imagen  
 
 app = Flask(__name__)
 
@@ -32,6 +35,7 @@ app.register_blueprint(interes)
 app.register_blueprint(tipo_material)
 app.register_blueprint(material)
 app.register_blueprint(productos_similares) 
+app.register_blueprint(imagen) 
 
 
 # CONEXION PARA PRUEBAS EN PYTHONANYWHERE
