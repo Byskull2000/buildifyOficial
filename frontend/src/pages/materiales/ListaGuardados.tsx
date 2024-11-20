@@ -32,9 +32,16 @@ const initialProducts: Product[] = [
 
 const ListaGuardados: React.FC = () => {
   const [savedProducts, setSavedProducts] = useState<Product[]>(initialProducts);
+  const [notification, setNotification] = useState<string | null>(null);
 
   const handleRemoveProduct = (productId: number) => {
     setSavedProducts((prevProducts) => prevProducts.filter((product) => product.id !== productId));
+    setNotification('La publicación ha sido removida de la lista de guardados.');
+
+  };
+
+  const closeNotification = () => {
+    setNotification(null);
   };
 
   return (
@@ -58,6 +65,21 @@ const ListaGuardados: React.FC = () => {
       
       <div className="p-4 w-2/3 mx-auto">
         <h2 className="text-4xl font-bold text-center mb-4">Publicaciones guardadas</h2>
+
+        {/* Notificación */}
+        {notification && (
+          <div className="mb-4 p-4 flex justify-between items-center text-white bg-[#e3961b] rounded-md shadow">
+            <span>{notification}</span>
+            <button
+              onClick={closeNotification}
+              aria-label="Cerrar notificación"
+              className="text-white font-bold text-lg focus:outline-none"
+            >
+              ×
+            </button>
+          </div>
+        )}
+
 
         <div className="bg-white p-4 rounded-lg shadow-md">
           {savedProducts.length === 0 ? (
