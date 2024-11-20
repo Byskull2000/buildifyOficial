@@ -244,8 +244,6 @@ def actualizar_nombre(id_usuario):
 
 
 # Ruta para actualizar el teléfono de un usuario
-
-
 @usuarios.route("/api/usuarios/<int:id_usuario>/telefono", methods=["PUT"])
 def actualizar_telefono(id_usuario):
     data = request.get_json()
