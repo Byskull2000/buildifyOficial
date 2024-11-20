@@ -1,7 +1,7 @@
 import buildifyLogo from "../assets/Buildify.png";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import Mapa from "../components/Mapa"; 
+import Mapa from "../components/Mapa";
 interface Material {
   name: string;
   price: number;
@@ -28,7 +28,7 @@ const data: Item[] = [
     id: 1,
     material: {
       name: "Cemento Portland",
-      price: 50, 
+      price: 50,
       quantity: 10,
       image: "https://via.placeholder.com/150",
       address: "Calle Eliodoro Villazon #128, Cochabamba",
@@ -43,10 +43,9 @@ const data: Item[] = [
 ];
 
 const OrderPickup: React.FC = () => {
-  const [direccion, setDireccion] = useState<string>(data[0].material.address); 
-  const [ubicacion] = useState<{ lat: number; lng: number }>(data[0].material.location); // Ubicación estática
+  const [direccion, setDireccion] = useState<string>(data[0].material.address);
+  //const [ubicacion] = useState<{ lat: number; lng: number }>(data[0].material.location); // Ubicación estática
 
- 
   const handleDireccionObtenida = (nuevaDireccion: string) => {
     setDireccion(nuevaDireccion);
   };
@@ -73,9 +72,7 @@ const OrderPickup: React.FC = () => {
 
         {data.map((item) => (
           <div key={item.id} className="mb-8">
-            
             <div className="grid grid-cols-2 gap-6 mb-6">
-             
               <div className="bg-gray-300 p-6 rounded-lg flex items-start">
                 <img
                   src={item.material.image}
@@ -83,7 +80,9 @@ const OrderPickup: React.FC = () => {
                   className="w-48 h-48 object-cover rounded-lg mr-6"
                 />
                 <div>
-                  <h3 className="font-semibold text-lg mb-2">Información de Material</h3>
+                  <h3 className="font-semibold text-lg mb-2">
+                    Información de Material
+                  </h3>
                   <p className="mb-2">
                     <strong>Nombre:</strong> {item.material.name}
                   </p>
@@ -96,7 +95,6 @@ const OrderPickup: React.FC = () => {
                 </div>
               </div>
 
-              
               <div className="bg-gray-300 p-6 rounded-lg flex items-start">
                 <img
                   src={item.seller.image}
@@ -104,7 +102,9 @@ const OrderPickup: React.FC = () => {
                   className="w-48 h-48 object-cover rounded-full mr-6"
                 />
                 <div>
-                  <h3 className="font-semibold text-lg mb-2">Información de Vendedor</h3>
+                  <h3 className="font-semibold text-lg mb-2">
+                    Información de Vendedor
+                  </h3>
                   <p className="mb-2">
                     <strong>Nombre:</strong> {item.seller.name}
                   </p>
@@ -115,7 +115,6 @@ const OrderPickup: React.FC = () => {
               </div>
             </div>
 
-          
             <div className="grid grid-cols-2 gap-6 items-center">
               <div className="bg-gray-300 h-60 rounded-lg overflow-hidden">
                 <Mapa
@@ -139,7 +138,10 @@ const OrderPickup: React.FC = () => {
         ))}
 
         <div className="flex justify-between mt-8">
-          <Link to="/solicitarTipoEntrega" className="bg-gray-400 text-white py-3 px-6 rounded-md text-center hover:bg-gray-500">
+          <Link
+            to="/solicitarTipoEntrega"
+            className="bg-gray-400 text-white py-3 px-6 rounded-md text-center hover:bg-gray-500"
+          >
             Volver
           </Link>
           <button className="bg-green-500 text-white py-3 px-6 rounded-md hover:bg-green-600">
@@ -151,4 +153,4 @@ const OrderPickup: React.FC = () => {
   );
 };
 
-export default OrderPickup;  
+export default OrderPickup;
