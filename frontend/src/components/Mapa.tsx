@@ -1,6 +1,4 @@
-// src/components/Mapa.tsx
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -9,8 +7,11 @@ interface MapaProps {
   onUbicacionSeleccionada: (lat: number, lng: number) => void;
   onDireccionObtenida: (direccion: string) => void;
   className?: string; // Agregado para permitir estilos
+  lat?: number; // Coordenada inicial opcional
+  lng?: number; // Coordenada inicial opcional
 }
 
+// Configuración de los íconos predeterminados para Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -22,13 +23,16 @@ L.Icon.Default.mergeOptions({
 const Mapa: React.FC<MapaProps> = ({
   onUbicacionSeleccionada,
   onDireccionObtenida,
-  className, // Desestructurar aquí
+  className,
+  lat = -17.3936, // Coordenada inicial predeterminada (Cochabamba)
+  lng = -66.157,
 }) => {
-  const [ubicacion, setUbicacion] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
+  const [ubicacion, setUbicacion] = useState<{ lat: number; lng: number }>({
+    lat,
+    lng,
+  });
 
+  // Obtener dirección a partir de coordenadas
   const obtenerDireccion = async (lat: number, lng: number) => {
     try {
       const response = await fetch(
@@ -43,6 +47,7 @@ const Mapa: React.FC<MapaProps> = ({
     }
   };
 
+  // Manejo de eventos en el mapa
   const MapEvents = () => {
     useMapEvents({
       click(e) {
@@ -56,9 +61,17 @@ const Mapa: React.FC<MapaProps> = ({
     return null;
   };
 
+  // Actualizar la ubicación inicial si las coordenadas cambian
+  useEffect(() => {
+    if (lat && lng) {
+      setUbicacion({ lat, lng });
+      obtenerDireccion(lat, lng);
+    }
+  }, [lat, lng]);
+
   return (
     <MapContainer
-      center={[-17.3936, -66.157]}
+      center={[ubicacion.lat, ubicacion.lng]} // Centrar en la ubicación inicial
       zoom={13}
       className={`w-full h-full rounded-lg ${className}`} // Aplicar className
     >
@@ -66,7 +79,7 @@ const Mapa: React.FC<MapaProps> = ({
         url="https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=GCOpKicdylXi0ePsOuiv"
         attribution='&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> contributors'
       />
-      {ubicacion && <Marker position={[ubicacion.lat, ubicacion.lng]} />}
+      <Marker position={[ubicacion.lat, ubicacion.lng]} />
       <MapEvents />
     </MapContainer>
   );
