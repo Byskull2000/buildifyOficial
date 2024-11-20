@@ -30,7 +30,14 @@ def obtener_productos_similares():
             "longitud_publicacion_material": producto.longitud_publicacion_material,
             "descripcion_direccion_material": producto.descripcion_direccion_material,
             "estado_publicacion_material": producto.estado_publicacion_material,
-            "fecha_publicacion": producto.fecha_publicacion
+            "fecha_publicacion": producto.fecha_publicacion,
+            "imagenUrl": (
+                    producto.imagenes[0].url_imagen if producto.Material.imagenes else None
+                ),
+            "imagenes": [
+                {"id_imagen": imagen.id_imagen, "url_imagen": imagen.url_imagen}
+                for imagen in producto.Material.imagenes
+            ],
         }
         for producto in productos_similares
     ]

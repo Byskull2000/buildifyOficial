@@ -106,6 +106,13 @@ def obtener_materiales_guardados(id_usuario):
             'estado_publicacion_material': guardado_mat.estado_publicacion_material,
             'fecha_publicacion': guardado_mat.fecha_publicacion,
             'tipo_unidad_material': guardado_mat.tipo_unidad_material,
+            "imagenUrl": (
+                    guardado_mat.imagenes[0].url_imagen if guardado_mat.imagenes else None
+                ),
+                "imagenes": [
+                    {"id_imagen": imagen.id_imagen, "url_imagen": imagen.url_imagen}
+                    for imagen in guardado_mat.imagenes
+                ],
         } for guardado_mat in materiales_guardados]
 
         return jsonify({
