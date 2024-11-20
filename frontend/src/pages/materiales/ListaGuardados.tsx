@@ -1,5 +1,5 @@
 import buildifyLogo from "../../assets/Buildify.png";
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 interface Product {
@@ -32,8 +32,45 @@ const initialProducts: Product[] = [
 
 const ListaGuardados: React.FC = () => {
   const [savedProducts, setSavedProducts] = useState<Product[]>(initialProducts);
-  const [notification, setNotification] = useState<string | null>(null);
+  //const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    const fetchSavedProducts = async () => {
+      try {
+        const URL_BACKEND = import.meta.env.VITE_URL_BACKEND; // Variable de entorno definida en .env
+
+        const res = await fetch(`${URL_BACKEND}/api/materiales/guardados`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // Enviar cookies/sesión si es necesario
+        });
+
+        if (!res.ok) {
+          throw new Error("Error al obtener los materiales guardados");
+        }
+
+        const responseData = await res.json();
+        const formattedData = responseData.data.map((item: any) => ({
+          id: item.id_material,
+          title: item.nombre_material,
+          price: item.precio_material,
+          quantity: item.cantidad_material,
+          description: item.descripcion_material,
+          imagen: item.imagen || "https://via.placeholder.com/150",
+        }));
+        setSavedProducts(formattedData);
+      } catch (err: any) {
+        console.error(err.message);
+        //setError(err.message || "Ocurrió un error inesperado");
+      }
+    };
+
+    fetchSavedProducts();
+  }, []); // Se ejecuta una vez al montar el componente
+  const [notification, setNotification] = useState<string | null>(null);
+  
   const handleRemoveProduct = (productId: number) => {
     setSavedProducts((prevProducts) => prevProducts.filter((product) => product.id !== productId));
     setNotification('La publicación ha sido removida de la lista de guardados.');

@@ -1,6 +1,8 @@
 import { useState } from "react";
+import axios from 'axios';
 import { Link } from "react-router-dom";
 import imagenDefecto from "../assets/material_imagen_defecto.png";
+
 
 export interface MaterialProp {
   id_material: number;
@@ -29,12 +31,34 @@ const Material = ({ material, onSave }: MaterialProps) => {
   // Definir el tipo de estado explícitamente como 'boolean'
   const [isSaved, setIsSaved] = useState<boolean>(false);
 
-  const handleSaveMaterial = () => {
-    // Cambiar el estado cuando se hace clic
-    setIsSaved((prevState: boolean) => !prevState); 
-    if(onSave) onSave(material.id_material);
-  };
+  const handleSaveMaterial = async () => {
+    try {
+      const response = await axios.post(
+        "/api/guardar-material",
+        new URLSearchParams({
+          material: material.id_material.toString(),
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
 
+      // Verifica si la respuesta fue exitosa
+      if (response.status === 201) {
+        alert("Material guardado exitosamente");
+        setIsSaved(true); // Actualizamos el estado isSaved a true
+        if (onSave) onSave(material.id_material); // Llama al callback si está definido
+      } else {
+        throw new Error(response.data.message || "Error al guardar material");
+      }
+    } catch (error: any) {
+      console.error("Error al guardar el material:", error);
+      alert(error.response?.data?.message || "Error al guardar el material");
+    }
+  };
+  
   const handleAddToCart = () => {
     const carritoActual = JSON.parse(localStorage.getItem("carrito") || "[]");
     const materialExistente = carritoActual.find(
