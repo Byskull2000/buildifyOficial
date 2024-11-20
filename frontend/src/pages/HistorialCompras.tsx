@@ -172,6 +172,13 @@ const HistorialCompras = () => {
               >
                 Editar perfil
               </Link>
+              <a
+                            href="#"
+                            className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full"
+                        >
+                            Notificaciones
+                        </a>
+
               <button
                 onClick={() => {
                   localStorage.removeItem("user");
