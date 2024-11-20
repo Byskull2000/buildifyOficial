@@ -16,9 +16,13 @@ const SolicitudEntrega: React.FC = () => {
   const [direccion, setDireccion] = useState("");
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
-  const [coordenadas, setCoordenadas] = useState<{ lat: number; lng: number } | null>(null);
+  const [coordenadas, setCoordenadas] = useState<{ lat: number; lng: number }>({
+    lat: -17.3936,
+    lng: -66.157,
+  }); // Coordenadas iniciales por defecto
   const [mostrarDirecciones, setMostrarDirecciones] = useState(false);
   const [direcciones, setDirecciones] = useState<DireccionEntrega[]>([]);
+  const [mensaje, setMensaje] = useState<string | null>(null);
 
   const userStorage = sessionStorage.getItem("user") || localStorage.getItem("user") || null;
   const user = userStorage ? JSON.parse(userStorage) : null;
@@ -45,7 +49,16 @@ const SolicitudEntrega: React.FC = () => {
     setNombre("");
     setTelefono("");
     setDireccion("");
-    setCoordenadas(null);
+    setCoordenadas({ lat: -17.3936, lng: -66.157 }); // Coordenadas iniciales por defecto
+    setMensaje(null);
+  };
+
+  const handleEnviarSolicitud = () => {
+    if (nombre && direccion && telefono && coordenadas) {
+      setMensaje("Dirección de entrega registrada correctamente.");
+    } else {
+      setMensaje("Por favor, llene todos los campos para la entrega.");
+    }
   };
 
   useEffect(() => {
@@ -96,7 +109,7 @@ const SolicitudEntrega: React.FC = () => {
       </div>
 
       {/* Pedido */}
-      <div className={`p-8 mx-auto max-w-7xl bg-white rounded-lg shadow-lg mt-6 ${mostrarDirecciones ? "pointer-events-none opacity-50" : ""}`}>
+      <div className="p-8 mx-auto max-w-7xl bg-white rounded-lg shadow-lg mt-6">
         <h2 className="text-2xl font-bold mb-6">Pedido</h2>
 
         <div className="grid grid-cols-2 gap-6 mb-6">
@@ -142,9 +155,9 @@ const SolicitudEntrega: React.FC = () => {
           <Mapa
             onUbicacionSeleccionada={handleUbicacionSeleccionada}
             onDireccionObtenida={handleDireccionObtenida}
-            className="h-48"
-            lat={coordenadas?.lat}
-            lng={coordenadas?.lng}
+            className="h-48 z-0"
+            lat={coordenadas.lat}
+            lng={coordenadas.lng}
           />
 
           <div className="flex flex-col space-y-4">
@@ -205,6 +218,16 @@ const SolicitudEntrega: React.FC = () => {
           </div>
         </div>
 
+        {mensaje && (
+          <div
+            className={`mt-4 p-3 rounded-md text-center ${
+              mensaje.includes("correctamente") ? "bg-green-200 text-green-700" : "bg-red-200 text-red-700"
+            }`}
+          >
+            {mensaje}
+          </div>
+        )}
+
         <div className="flex justify-between mt-10">
           <Link to="/solicitarTipoEntrega">
             <button className="bg-gray-400 text-white py-3 px-6 rounded-md hover:bg-gray-500">
@@ -218,19 +241,20 @@ const SolicitudEntrega: React.FC = () => {
             >
               Limpiar
             </button>
-            <Link
-              to="/historialcompras"
+            <button
+              onClick={handleEnviarSolicitud}
               className="bg-green-600 text-white py-3 px-6 rounded-md hover:bg-green-700"
             >
               Enviar solicitud
-            </Link>
+            </button>
           </div>
         </div>
       </div>
 
+      {/* Modal de Direcciones */}
       {mostrarDirecciones && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg max-w-lg w-full shadow-lg relative z-60">
+          <div className="bg-white p-6 rounded-lg max-w-lg w-full z-60 shadow-lg relative">
             <h3 className="text-xl font-bold mb-4">Seleccionar Dirección</h3>
             <ul className="space-y-4">
               {direcciones.map((dir) => (
