@@ -104,7 +104,14 @@ def obtener_tipo_material_por_id(id):
                 "longitud_publicacion_material": material.longitud_publicacion_material,
                 "descripcion_direccion_material": material.descripcion_direccion_material,
                 "estado_publicacion_material": material.estado_publicacion_material,
-                "fecha_publicacion": material.fecha_publicacion
+                "fecha_publicacion": material.fecha_publicacion,
+                "imagenUrl": (
+                    material.Material.imagenes[0].url_imagen if material.Material.imagenes else None
+                ),
+                "imagenes": [
+                    {"id_imagen": imagen.id_imagen, "url_imagen": imagen.url_imagen}
+                    for imagen in material.Material.imagenes
+                ],
             }
         )
 

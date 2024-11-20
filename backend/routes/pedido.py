@@ -117,6 +117,13 @@ def obtener_pedidos_por_usuario(id_usuario):
                 'estado_publicacion_material': pedido.Material.estado_publicacion_material,
                 'fecha_publicacion': pedido.Material.fecha_publicacion,
                 'tipo_unidad_material': pedido.Material.tipo_unidad_material,
+                "imagenUrl": (
+                    pedido.Material.imagenes[0].url_imagen if pedido.Material.imagenes else None
+                ),
+                "imagenes": [
+                    {"id_imagen": imagen.id_imagen, "url_imagen": imagen.url_imagen}
+                    for imagen in pedido.Material.imagenes
+                ],
             }
         } for pedido in pedidos]
 

@@ -26,6 +26,9 @@ import ConfirmarPedido from "./pages/ConfirmarPedido.tsx";
 import PagoConTarjeta from "./pages/PagoConTarjeta.tsx";
 import PagoConQR from "./pages/PagoConQR.tsx";
 import HistorialCompras from "./pages/HistorialCompras.tsx"
+import SolicitudRecogerLugar from "./pages/SolicitudRecogerLugar.tsx";
+import SolicitudEntrega from "./pages/SolicitarEntrega.tsx";
+import SolicitarTipoEntrega from "./pages/SolicitarTipoEntrega.tsx"
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -51,6 +54,9 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/materiales" element={<MaterialesFiltrados />} />
         <Route path="/guardados" element={<ListaGuardados />} />
         <Route path="/historialcompras" element={<HistorialCompras />} />
+        <Route path="/solicitudRecoger" element={<SolicitudRecogerLugar />} />
+        <Route path="/solicitarEntrega" element={<SolicitudEntrega />} />
+        <Route path="/solicitarTipoEntrega" element={<SolicitarTipoEntrega />} />
         <Route
           path="/materiales/recomendados"
           element={<MaterialesRecomendados />}

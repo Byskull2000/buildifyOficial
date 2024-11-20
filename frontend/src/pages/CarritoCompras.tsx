@@ -15,7 +15,11 @@ const CarritoCompras: React.FC = () => {
   const [materiales, setMateriales] = useState<MaterialProp[]>([]);
   const [totalProductos, setTotalProductos] = useState(0);
   const [totalPrecio, setTotalPrecio] = useState(0);
-  const [showRegisterPopup, setShowRegisterPopup] = useState(false); // Estado para el popup
+  const [showRegisterPopup, setShowRegisterPopup] = useState(false); // Estado para el popup de registro
+  const [showConfirmPopup, setShowConfirmPopup] = useState(false); // Estado para el popup de confirmación
+  const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(
+    null
+  ); // ID del material a eliminar
   const navigate = useNavigate();
 
   const userStorage =
@@ -46,10 +50,16 @@ const CarritoCompras: React.FC = () => {
     setMateriales(nuevoCarrito);
     localStorage.setItem("carrito", JSON.stringify(nuevoCarrito));
     actualizarTotales(nuevoCarrito);
+    setShowConfirmPopup(false); // Cierra el popup de confirmación
   };
 
   const handleShowPopup = () => {
-    setShowRegisterPopup(true); // Abre el popup
+    setShowRegisterPopup(true); // Abre el popup de registro
+  };
+
+  const handleConfirmDelete = (id: number) => {
+    setSelectedMaterialId(id); // Guarda el ID del material a eliminar
+    setShowConfirmPopup(true); // Muestra el popup de confirmación
   };
 
   return (
@@ -91,7 +101,7 @@ const CarritoCompras: React.FC = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => handleRemove(material.id_material)}
+                  onClick={() => handleConfirmDelete(material.id_material)}
                   className="text-sm px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-md transition-colors"
                 >
                   Eliminar
@@ -145,6 +155,31 @@ const CarritoCompras: React.FC = () => {
           isOpen={showRegisterPopup}
           setIsOpen={setShowRegisterPopup}
         />
+      )}
+
+      {/* Popup de confirmación */}
+      {showConfirmPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              ¿Estás seguro de eliminar este producto del carrito?
+            </h2>
+            <div className="flex justify-center gap-4 mt-4">
+              <button
+                onClick={() => handleRemove(selectedMaterialId!)}
+                className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                Sí
+              </button>
+              <button
+                onClick={() => setShowConfirmPopup(false)}
+                className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

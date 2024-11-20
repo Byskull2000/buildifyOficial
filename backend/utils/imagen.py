@@ -10,17 +10,21 @@ def subir_imagen(foto):
         if foto.filename == "":
             return None
 
-        # Obtener la extensión del archivo original
-        ext = os.path.splitext(foto.filename)[1]
-        # Generar un nombre único
-        unique_filename = f"{uuid.uuid4()}{ext}"
-        filepath = os.path.join(current_app.root_path, "static/image", unique_filename)
+        filename = secure_filename(foto.filename)
+        unique_filename = f"{uuid.uuid4()}_{filename}"
+        
+        filepath = os.path.join(current_app.static_folder, 'image', unique_filename)
 
         foto.save(filepath)
-        return f"{request.host_url}/api/fotos/{unique_filename}"
+
+        url = f"{request.host_url}static/image/{unique_filename}"
+        print(f"Imagen guardada en: {filepath}, URL generada: {url}")
+
+        return url
     except Exception as e:
         print(f"Error al guardar la imagen: {e}")
         return None
+
 
 def subir_imagenes(fotos):
     try:

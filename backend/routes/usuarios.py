@@ -96,6 +96,7 @@ def obtener_usuarios():
                 "estado_usuario": u.estado_usuario,
                 "zona_trabajo": u.zona_trabajo,
                 "imagen_perfil": u.imagen_perfil,
+                "imagen_qr": u.imagen_qr,
             }
             for u in usuarios
         ]
@@ -131,6 +132,7 @@ def agregar_usuario():
             "zona_trabajo": nuevo_usuario.zona_trabajo,
             "imagen_perfil": nuevo_usuario.imagen_perfil,
             "numero_telefono": nuevo_usuario.numero_telefono,
+            "imagen_qr": nuevo_usuario.imagen_qr,
         }
 
         return (
@@ -184,6 +186,7 @@ def login():
                         "numero_telefono": user.numero_telefono,
                         "zona_trabajo": user.zona_trabajo,
                         "imagen_perfil": user.imagen_perfil,
+                        "imagen_qr": user.imagen_qr,
                     }
                 }
             ),
@@ -241,8 +244,6 @@ def actualizar_nombre(id_usuario):
 
 
 # Ruta para actualizar el teléfono de un usuario
-
-
 @usuarios.route("/api/usuarios/<int:id_usuario>/telefono", methods=["PUT"])
 def actualizar_telefono(id_usuario):
     data = request.get_json()
