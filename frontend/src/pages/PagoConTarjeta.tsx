@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheckCircle,
@@ -9,6 +9,8 @@ import {
   faKey,
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
+import buildifyLogo from "../assets/Buildify.png"; // Logo de Buildify
+import fondoPagoTarjeta from "../assets/FondoPagoTarjeta.png"; // Fondo del apartado
 
 const PagoConTarjeta: React.FC = () => {
   const [numeroTarjeta, setNumeroTarjeta] = useState("");
@@ -76,9 +78,25 @@ const PagoConTarjeta: React.FC = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-8 bg-white shadow-xl rounded-lg">
-      <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-        Tarjeta de Débito/Crédito
+    <div
+      className="min-h-screen bg-fixed bg-cover bg-center py-10 px-4 flex flex-col items-center"
+      style={{ backgroundImage: `url(${fondoPagoTarjeta})` }} // Fondo fijo
+    >
+      {/* Botón con logo de Buildify */}
+      <div className="flex items-center justify-between bg-white bg-opacity-90 py-4 px-6 rounded-lg shadow-lg mb-8">
+        <Link to="/" className="flex items-center gap-2">
+          <img
+            src={buildifyLogo}
+            alt="Logo de Buildify"
+            className="h-14 w-14"
+          />
+          <h1 className="text-2xl font-black text-gray-800">Buildify</h1>
+        </Link>
+      </div>
+
+      {/* Título del apartado */}
+      <h2 className="text-4xl font-bold text-gray-800 bg-white bg-opacity-90 py-2 px-4 rounded-lg shadow-md mb-8">
+        💳 Pago con Tarjeta
       </h2>
 
       {/* Spinner de carga */}
@@ -154,9 +172,10 @@ const PagoConTarjeta: React.FC = () => {
         </div>
       )}
 
-      <form className="space-y-6">
+      {/* Formulario */}
+      <form className="space-y-6 bg-white bg-opacity-90 p-6 rounded-lg shadow-xl w-full max-w-lg">
         <div>
-          <label className="flex items-center gap-2 text-lg font-semibold text-gray-700">
+          <label className="flex items-center gap-2 text-lg font-bold text-gray-800">
             <FontAwesomeIcon icon={faCreditCard} />
             Número de Tarjeta
           </label>
@@ -166,11 +185,11 @@ const PagoConTarjeta: React.FC = () => {
             onChange={(e) => setNumeroTarjeta(formatCardNumber(e.target.value))}
             placeholder="0000 0000 0000 0000"
             maxLength={19}
-            className="w-full p-3 border rounded-lg shadow-md"
+            className="w-full p-3 border rounded-lg shadow-md focus:ring-2 focus:ring-orange-400"
           />
         </div>
         <div>
-          <label className="flex items-center gap-2 text-lg font-semibold text-gray-700">
+          <label className="flex items-center gap-2 text-lg font-bold text-gray-800">
             <FontAwesomeIcon icon={faCalendar} />
             Fecha de Vencimiento
           </label>
@@ -182,11 +201,11 @@ const PagoConTarjeta: React.FC = () => {
             }
             placeholder="MM/AA"
             maxLength={5}
-            className="w-full p-3 border rounded-lg shadow-md"
+            className="w-full p-3 border rounded-lg shadow-md focus:ring-2 focus:ring-orange-400"
           />
         </div>
         <div>
-          <label className="flex items-center gap-2 text-lg font-semibold text-gray-700">
+          <label className="flex items-center gap-2 text-lg font-bold text-gray-800">
             <FontAwesomeIcon icon={faKey} />
             CVV
           </label>
@@ -196,12 +215,12 @@ const PagoConTarjeta: React.FC = () => {
             onChange={(e) => setCvv(e.target.value.replace(/\D/g, ""))}
             placeholder="123"
             maxLength={3}
-            className="w-full p-3 border rounded-lg shadow-md"
+            className="w-full p-3 border rounded-lg shadow-md focus:ring-2 focus:ring-orange-400"
           />
         </div>
       </form>
 
-      <div className="flex justify-between mt-8">
+      <div className="flex justify-between mt-8 w-full max-w-lg">
         <button
           onClick={handleCancelar}
           className="bg-gray-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-700"

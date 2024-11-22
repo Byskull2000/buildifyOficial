@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import RegistroRapidoPP from "../components/RegistroRapidoPP.tsx"; // Importa el popup de registro rapido
+import { Link, useNavigate } from "react-router-dom";
+import RegistroRapidoPP from "../components/RegistroRapidoPP.tsx";
+import buildifyLogo from "../assets/Buildify.png";
+import fondoCarrito from "../assets/FondoCarrito.png"; // Imagen de fondo
 
 export interface MaterialProp {
   id_material: number;
@@ -15,11 +17,11 @@ const CarritoCompras: React.FC = () => {
   const [materiales, setMateriales] = useState<MaterialProp[]>([]);
   const [totalProductos, setTotalProductos] = useState(0);
   const [totalPrecio, setTotalPrecio] = useState(0);
-  const [showRegisterPopup, setShowRegisterPopup] = useState(false); // Estado para el popup de registro
-  const [showConfirmPopup, setShowConfirmPopup] = useState(false); // Estado para el popup de confirmación
+  const [showRegisterPopup, setShowRegisterPopup] = useState(false);
+  const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [selectedMaterialId, setSelectedMaterialId] = useState<number | null>(
     null
-  ); // ID del material a eliminar
+  );
   const navigate = useNavigate();
 
   const userStorage =
@@ -50,25 +52,42 @@ const CarritoCompras: React.FC = () => {
     setMateriales(nuevoCarrito);
     localStorage.setItem("carrito", JSON.stringify(nuevoCarrito));
     actualizarTotales(nuevoCarrito);
-    setShowConfirmPopup(false); // Cierra el popup de confirmación
+    setShowConfirmPopup(false);
   };
 
   const handleShowPopup = () => {
-    setShowRegisterPopup(true); // Abre el popup de registro
+    setShowRegisterPopup(true);
   };
 
   const handleConfirmDelete = (id: number) => {
-    setSelectedMaterialId(id); // Guarda el ID del material a eliminar
-    setShowConfirmPopup(true); // Muestra el popup de confirmación
+    setSelectedMaterialId(id);
+    setShowConfirmPopup(true);
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-8 bg-white shadow-xl rounded-lg">
-      <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">
+    <div
+      className="min-h-screen bg-cover bg-center flex flex-col items-center py-10"
+      style={{ backgroundImage: `url(${fondoCarrito})` }} // Fondo del carrito
+    >
+      {/* Botón con logo de Buildify */}
+      <div className="flex items-center justify-between mb-6 bg-white bg-opacity-90 py-4 px-6 rounded-lg shadow-lg">
+        <Link to="/" className="flex items-center gap-2">
+          <img
+            src={buildifyLogo}
+            alt="Logo de Buildify"
+            className="h-14 w-14"
+          />
+          <h1 className="text-2xl font-black text-gray-800">Buildify</h1>
+        </Link>
+      </div>
+
+      {/* Título del carrito */}
+      <h2 className="text-4xl font-bold text-gray-800 bg-white bg-opacity-90 py-2 px-4 rounded-lg shadow-md mb-8">
         🛒 Carrito de Compras
       </h2>
 
-      <div className="flex flex-col md:flex-row gap-8">
+      {/* Contenedor principal */}
+      <div className="flex flex-col md:flex-row gap-8 bg-white bg-opacity-90 p-6 rounded-lg shadow-xl w-11/12 max-w-5xl">
         {/* Lista de materiales */}
         <div className="flex-1 bg-gray-100 p-6 rounded-lg shadow-inner">
           {materiales.length === 0 ? (
@@ -79,12 +98,12 @@ const CarritoCompras: React.FC = () => {
             materiales.map((material) => (
               <div
                 key={material.id_material}
-                className="flex items-center justify-between mb-6 border-b pb-4"
+                className="flex items-center justify-between mb-6 border-b pb-4 hover:shadow-md transition-shadow"
               >
                 <img
                   src={material.imagenUrl}
                   alt={material.nombre_material}
-                  className="w-24 h-24 rounded-lg object-cover"
+                  className="w-24 h-24 rounded-lg object-cover shadow-lg"
                 />
                 <div className="ml-4 flex-1">
                   <h3 className="text-lg font-semibold text-gray-800">
@@ -102,7 +121,7 @@ const CarritoCompras: React.FC = () => {
                 </div>
                 <button
                   onClick={() => handleConfirmDelete(material.id_material)}
-                  className="text-sm px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-md transition-colors"
+                  className="text-sm px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-md transition-transform transform hover:scale-105"
                 >
                   Eliminar
                 </button>
@@ -111,7 +130,7 @@ const CarritoCompras: React.FC = () => {
           )}
         </div>
 
-        {/* Resumen del carrito: Solo se muestra si hay productos */}
+        {/* Resumen del carrito */}
         {materiales.length > 0 && (
           <div className="md:w-1/3 p-6 bg-[#FDBC3F] rounded-lg shadow-lg text-white">
             <h3 className="text-2xl font-semibold mb-4">Resumen de Compra</h3>
@@ -125,22 +144,20 @@ const CarritoCompras: React.FC = () => {
                 Bs. {totalPrecio.toFixed(2)}
               </span>
             </p>
-
-            {/* Botón de proceder o popup de registro */}
             {user ? (
               <button
                 onClick={() => {
-                  localStorage.setItem("carrito", JSON.stringify(materiales)); // Aseguramos que el carrito esté actualizado
+                  localStorage.setItem("carrito", JSON.stringify(materiales));
                   navigate("/confirmar-pedido");
                 }}
-                className="mt-8 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+                className="mt-8 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-transform transform hover:scale-105"
               >
                 Proceder con la Compra
               </button>
             ) : (
               <button
                 onClick={handleShowPopup}
-                className="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+                className="mt-8 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-transform transform hover:scale-105"
               >
                 Antes de continuar debes registrarte
               </button>

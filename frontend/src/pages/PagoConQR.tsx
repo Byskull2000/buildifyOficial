@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheckCircle,
@@ -7,6 +7,8 @@ import {
   faDownload,
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
+import buildifyLogo from "../assets/Buildify.png"; // Logo de Buildify
+import fondoQR from "../assets/FondoQR.png"; // Fondo del apartado
 
 const PagoConQR: React.FC = () => {
   const [mensaje, setMensaje] = useState("");
@@ -35,9 +37,25 @@ const PagoConQR: React.FC = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-8 bg-white shadow-xl rounded-lg">
-      <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">
-        Pago con QR Simple
+    <div
+      className="min-h-screen bg-fixed bg-cover bg-center py-10 px-4 flex flex-col items-center"
+      style={{ backgroundImage: `url(${fondoQR})` }} // Fondo fijo
+    >
+      {/* Botón con logo de Buildify */}
+      <div className="flex items-center justify-between bg-white bg-opacity-90 py-4 px-6 rounded-lg shadow-lg mb-8">
+        <Link to="/" className="flex items-center gap-2">
+          <img
+            src={buildifyLogo}
+            alt="Logo de Buildify"
+            className="h-14 w-14"
+          />
+          <h1 className="text-2xl font-black text-gray-800">Buildify</h1>
+        </Link>
+      </div>
+
+      {/* Título del apartado */}
+      <h2 className="text-4xl font-bold text-gray-800 bg-white bg-opacity-90 py-2 px-4 rounded-lg shadow-md mb-8">
+        📱 Pago con QR Simple
       </h2>
 
       {/* Spinner de carga */}
@@ -101,14 +119,14 @@ const PagoConQR: React.FC = () => {
 
       {/* Contenido principal */}
       <div className="text-center">
-        <p className="text-lg font-semibold text-gray-700 mb-4 flex items-center justify-center gap-2">
+        <p className="text-lg font-bold text-gray-800 mb-4 flex items-center justify-center gap-2">
           <FontAwesomeIcon icon={faQrcode} />
           Escanea el código QR para realizar el pago:
         </p>
         <img
           src={qrCodeUrl}
           alt="Código QR"
-          className="mx-auto mb-4 border rounded-lg shadow-md"
+          className="mx-auto mb-4 border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow"
         />
         <div className="flex justify-center">
           <button
@@ -122,7 +140,7 @@ const PagoConQR: React.FC = () => {
       </div>
 
       {/* Botones de acción */}
-      <div className="flex justify-between mt-8">
+      <div className="flex justify-between mt-8 w-full max-w-lg">
         <button
           onClick={() => setMostrarConfirmacionCancelar(true)}
           className="bg-gray-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-700"

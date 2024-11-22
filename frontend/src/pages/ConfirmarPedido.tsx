@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MaterialProp } from "./CarritoCompras";
+import buildifyLogo from "../assets/Buildify.png"; // Logo de Buildify
+import fondoConfirmarPedido from "../assets/FondoConfirmarPedido.png"; // Fondo del apartado
 
 const ConfirmarPedido: React.FC = () => {
   const [materiales, setMateriales] = useState<MaterialProp[]>([]);
@@ -27,52 +29,75 @@ const ConfirmarPedido: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-8 bg-gradient-to-br from-orange-50 to-orange-100 shadow-2xl rounded-lg">
-      <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">
+    <div
+      className="min-h-screen bg-cover bg-center py-10 px-4 flex flex-col items-center"
+      style={{ backgroundImage: `url(${fondoConfirmarPedido})` }}
+    >
+      {/* Botón con logo de Buildify */}
+      <div className="flex items-center justify-between bg-white bg-opacity-90 py-4 px-6 rounded-lg shadow-lg mb-8">
+        <Link to="/" className="flex items-center gap-2">
+          <img
+            src={buildifyLogo}
+            alt="Logo de Buildify"
+            className="h-14 w-14"
+          />
+          <h1 className="text-2xl font-black text-gray-800">Buildify</h1>
+        </Link>
+      </div>
+
+      {/* Título del apartado */}
+      <h2 className="text-4xl font-bold text-gray-800 bg-white bg-opacity-90 py-2 px-4 rounded-lg shadow-md mb-8">
         🛒 Confirmar Pedido
       </h2>
 
       {/* Resumen de la compra */}
-      <div className="bg-orange-50 p-6 rounded-lg shadow-lg mb-6">
-        <h3 className="text-2xl font-semibold mb-4 text-gray-800">
+      <div className="bg-white bg-opacity-90 p-6 rounded-lg shadow-xl w-full max-w-4xl mb-8">
+        <h3 className="text-2xl font-semibold mb-4 text-gray-800 border-b pb-2">
           Resumen de Compra
         </h3>
         {materiales.map((material) => (
           <div
             key={material.id_material}
-            className="flex items-center justify-between border-b pb-4 mb-4"
+            className="flex items-center justify-between mb-6 p-4 border border-gray-200 rounded-lg hover:shadow-lg transition-shadow"
           >
             <div className="flex-1">
-              <h4 className="text-lg font-semibold text-gray-800">
+              <h4 className="text-lg font-bold text-blue-800">
                 {material.nombre_material}
               </h4>
               <p className="text-gray-600">
-                Estado: {material.estado_material}
+                <span className="font-semibold text-gray-800">Estado:</span>{" "}
+                {material.estado_material}
               </p>
               <p className="text-gray-600">
-                Medida: {material.tipo_unidad_material}
+                <span className="font-semibold text-gray-800">Medida:</span>{" "}
+                {material.tipo_unidad_material}
               </p>
-              <p className="text-gray-800 font-bold">
+              <p className="text-lg font-semibold text-green-700">
                 Precio: Bs. {material.precio_material}
               </p>
             </div>
             <img
               src={material.imagenUrl}
               alt={material.nombre_material}
-              className="w-24 h-24 rounded-lg object-cover"
+              className="w-24 h-24 rounded-lg object-cover shadow-md"
             />
           </div>
         ))}
-        <p className="text-lg font-bold text-gray-800">
-          Total a pagar: Bs. {totalPrecio.toFixed(2)}
-        </p>
+        <div className="text-right mt-4">
+          <p className="text-lg font-bold text-gray-800">
+            Total a pagar:
+            <span className="text-2xl text-red-600 ml-2">
+              Bs. {totalPrecio.toFixed(2)}
+            </span>
+          </p>
+        </div>
       </div>
 
       {/* Métodos de pago */}
-      <div className="bg-orange-100 p-6 rounded-lg shadow-lg text-center mb-6">
+      <div className="bg-white bg-opacity-90 p-6 rounded-lg shadow-xl w-full max-w-4xl mb-8 text-center">
         <label
           htmlFor="metodoPago"
-          className="block text-lg font-semibold mb-2 text-gray-700"
+          className="block text-lg font-semibold mb-4 text-gray-800"
         >
           Selecciona un método de pago:
         </label>
@@ -80,7 +105,7 @@ const ConfirmarPedido: React.FC = () => {
           id="metodoPago"
           value={metodoPago}
           onChange={(e) => setMetodoPago(e.target.value)}
-          className="w-2/3 p-3 border rounded-lg shadow-md text-gray-700"
+          className="w-2/3 p-3 border rounded-lg shadow-md text-gray-700 transition-transform transform hover:scale-105"
         >
           <option value="" disabled>
             Elige un método
@@ -94,8 +119,7 @@ const ConfirmarPedido: React.FC = () => {
       {metodoPago && (
         <button
           onClick={handleProcederPago}
-          className="bg-[#FCA61E] text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-[#e58d1a] transition-colors"
-          style={{ margin: "0 auto", display: "block" }}
+          className="bg-[#FCA61E] text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-[#e58d1a] transition-transform transform hover:scale-105"
         >
           Confirmar compra
         </button>
