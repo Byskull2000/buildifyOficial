@@ -1,4 +1,7 @@
-//import imgEjemploPerfil from "../assets/ejemploPerfil.jpg";
+import imgMaterial1 from "../assets/material1.png";
+import imgMaterial5 from "../assets/material5.png";
+import imgMaterial2 from "../assets/material2.png";
+import imgMaterial3 from "../assets/material3.png";
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import SimpleNavBar from "../components/simpleNavBar";
@@ -12,48 +15,39 @@ const HistorialCompras = () => {
 
   const navigate = useNavigate();
 
+  const formatDateForDisplay = (date: string) => {
+    const [year, month, day] = date.split("-");
+    return `${day}/${month}/${year}`;
+  };
+
   const comprasEjemplo = [
     {
-      nombre_material: "Cemento",
+      nombre_material: "Ladrillo",
       fecha_compra: "2024-11-01",
       vendedor: "Proveedor A",
       estado_entrega: "",
-      imagen: "https://example.com/imagen_cemento.jpg",
+      imagen: imgMaterial1,
     },
     {
       nombre_material: "Arena",
-      fecha_compra: "2024-10-15",
-      vendedor: "Proveedor B",
-      estado_entrega: "",
-      imagen: "https://example.com/imagen_arenas.jpg",
-    },
-    {
-      nombre_material: "Grava",
-      fecha_compra: "2024-09-20",
-      vendedor: "Proveedor A",
-      estado_entrega: "",
-      imagen: "https://example.com/imagen_grava.jpg",
-    },
-    {
-      nombre_material: "Cemento",
       fecha_compra: "2024-11-01",
       vendedor: "Proveedor A",
       estado_entrega: "Entregado",
-      imagen: "https://example.com/imagen_cemento.jpg",
+      imagen: imgMaterial5,
     },
     {
-      nombre_material: "Arena",
+      nombre_material: "Ladrillo 6 huecos",
       fecha_compra: "2024-10-15",
       vendedor: "Proveedor B",
-      estado_entrega: "En tránsito",
-      imagen: "https://example.com/imagen_arenas.jpg",
+      estado_entrega: "En progreso",
+      imagen: imgMaterial2,
     },
     {
-      nombre_material: "Grava",
+      nombre_material: "Ladrillo por mayor",
       fecha_compra: "2024-09-20",
       vendedor: "Proveedor A",
       estado_entrega: "Pendiente",
-      imagen: "https://example.com/imagen_grava.jpg",
+      imagen: imgMaterial3,
     },
   ];
 
@@ -129,7 +123,7 @@ const HistorialCompras = () => {
   const getEstadoEntregaColor = (estado: string) => {
     if (estado === "Entregado") return "text-green-500";
     if (estado === "Pendiente") return "text-yellow-500";
-    if (estado === "En tránsito") return "text-red-500";
+    if (estado === "En progreso") return "text-blue-500";
     return "text-gray-500";
   };
 
@@ -173,11 +167,11 @@ const HistorialCompras = () => {
                 Editar perfil
               </Link>
               <a
-                            href="#"
-                            className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full"
-                        >
-                            Notificaciones
-                        </a>
+                href="#"
+                className="flex items-center px-3 py-2.5 font-semibold hover:text-black hover:border hover:rounded-full"
+              >
+                Notificaciones
+              </a>
 
               <button
                 onClick={() => {
@@ -200,7 +194,7 @@ const HistorialCompras = () => {
                     <img
                       src={compra.imagen}
                       alt="Foto del material"
-                      className="w-20 h-20 object-cover rounded-md"
+                      className="w-32 h-32 object-cover rounded-md"
                     />
                   </div>
                   <div className="ml-4 w-3/4">
@@ -209,7 +203,9 @@ const HistorialCompras = () => {
                     </h3>
                     <p className="font-semibold">
                       Fecha:{" "}
-                      <span className="font-normal">{compra.fecha_compra}</span>
+                      <span className="font-normal">
+                        {formatDateForDisplay(compra.fecha_compra)}
+                      </span>
                     </p>
                     <p className="font-semibold">
                       Vendedor:{" "}
@@ -278,7 +274,7 @@ const HistorialCompras = () => {
                 >
                   <option value="">Todos</option>
                   <option value="Entregado">Entregado</option>
-                  <option value="En tránsito">En tránsito</option>
+                  <option value="En progreso">En progreso</option>
                   <option value="Pendiente">Pendiente</option>
                 </select>
               </div>
