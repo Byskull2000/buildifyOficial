@@ -1,159 +1,131 @@
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import buildifyLogo from "../../assets/Buildify.png";
-import React, { useState,useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import FondoGuardado from "../../assets/FondoGuardado.png";
+import { MaterialProp } from "../../components/Material";
 
-interface Product {
-  id: number;
-  title: string;
-  price: number;
-  quantity: number;
-  description: string;
-  imagen: string;  // Cambié imageUrl a imagen
-}
-
-const initialProducts: Product[] = [
-  {
-    id: 1,
-    title: 'Ladrillos 6 huecos',
-    price: 200,
-    quantity: 100,
-    description: 'Ladrillos que sobraron en la construcción de un edificio venta por falta de utilidad para el dueño',
-    imagen: 'https://via.placeholder.com/150',  // Cambié imageUrl a imagen
-  },
-  {
-    id: 2,
-    title: 'Ladrillos 6 huecos',
-    price: 200,
-    quantity: 100,
-    description: 'Ladrillos que sobraron en la construcción de un edificio venta por falta de utilidad para el dueño',
-    imagen: 'https://via.placeholder.com/150',  // Cambié imageUrl a imagen
-  },
-];
-
-const ListaGuardados: React.FC = () => {
-  const [savedProducts, setSavedProducts] = useState<Product[]>(initialProducts);
-  //const [error, setError] = useState<string | null>(null);
+const ListaGuardados = () => {
+  const [savedProducts, setSavedProducts] = useState<MaterialProp[]>([]);
+  const [markedForDelete, setMarkedForDelete] = useState<number[]>([]); // IDs marcados para eliminar
+  const [deleting, setDeleting] = useState<number | null>(null); // Publicación en proceso de eliminación
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchSavedProducts = async () => {
-      try {
-        const URL_BACKEND = import.meta.env.VITE_URL_BACKEND; // Variable de entorno definida en .env
+    const publicacionesGuardadas = JSON.parse(
+      localStorage.getItem("publicacionesGuardadas") || "[]"
+    );
+    setSavedProducts(publicacionesGuardadas);
+  }, []);
 
-        const res = await fetch(`${URL_BACKEND}/api/materiales/guardados`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // Enviar cookies/sesión si es necesario
-        });
-
-        if (!res.ok) {
-          throw new Error("Error al obtener los materiales guardados");
-        }
-
-        const responseData = await res.json();
-        const formattedData = responseData.data.map((item: any) => ({
-          id: item.id_material,
-          title: item.nombre_material,
-          price: item.precio_material,
-          quantity: item.cantidad_material,
-          description: item.descripcion_material,
-          imagen: item.imagen || "https://via.placeholder.com/150",
-        }));
-        setSavedProducts(formattedData);
-      } catch (err: any) {
-        console.error(err.message);
-        //setError(err.message || "Ocurrió un error inesperado");
-      }
-    };
-
-    fetchSavedProducts();
-  }, []); // Se ejecuta una vez al montar el componente
-  const [notification, setNotification] = useState<string | null>(null);
-  
-  const handleRemoveProduct = (productId: number) => {
-    setSavedProducts((prevProducts) => prevProducts.filter((product) => product.id !== productId));
-    setNotification('La publicación ha sido removida de la lista de guardados.');
-
+  const markForDelete = (id_material: number) => {
+    setMarkedForDelete((prev) => [...prev, id_material]);
   };
 
-  const closeNotification = () => {
-    setNotification(null);
+  const undoDelete = (id_material: number) => {
+    setMarkedForDelete((prev) => prev.filter((id) => id !== id_material));
+  };
+
+  const handleRemoveProduct = (id_material: number) => {
+    setDeleting(id_material); // Activar animación de eliminación
+    setTimeout(() => {
+      // Esperar la animación antes de eliminar
+      const nuevasPublicaciones = savedProducts.filter(
+        (item) => item.id_material !== id_material
+      );
+      localStorage.setItem(
+        "publicacionesGuardadas",
+        JSON.stringify(nuevasPublicaciones)
+      );
+      setSavedProducts(nuevasPublicaciones);
+      setMarkedForDelete((prev) => prev.filter((id) => id !== id_material));
+      setDeleting(null); // Eliminar referencia de animación
+    }, 500); // Duración de la animación
+  };
+
+  const handleViewPublication = (id_material: number) => {
+    navigate(`/material/${id_material}`);
   };
 
   return (
-    <div>
-      {/* Header */}
-      <div className="bg-white border-b border-gray-300 font-nunito flex justify-between w-full sm:px-4 py-4">
-        <Link to="/">
-          <div className="flex items-center gap-2 px-2">
-            <img
-              src={buildifyLogo}
-              alt="Logo de Buildify"
-              className="h-14 w-14 mr-2 hidden sm:block"
-            />
-            <h1 className="self-center text-2xl font-black whitespace-nowrap hidden sm:block">
-              Buildify
-            </h1>
-          </div>
+    <div
+      className="min-h-screen bg-cover bg-center py-10 px-4 flex flex-col items-center"
+      style={{ backgroundImage: `url(${FondoGuardado})` }}
+    >
+      {/* Botón con logo de Buildify */}
+      <div className="flex items-center justify-between bg-white bg-opacity-90 py-4 px-6 rounded-lg shadow-lg mb-8">
+        <Link to="/" className="flex items-center gap-2">
+          <img
+            src={buildifyLogo}
+            alt="Logo de Buildify"
+            className="h-14 w-14"
+          />
+          <h1 className="text-2xl font-black text-gray-800">Buildify</h1>
         </Link>
       </div>
 
-      
-      <div className="p-4 w-2/3 mx-auto">
-        <h2 className="text-4xl font-bold text-center mb-4">Publicaciones guardadas</h2>
+      {/* Título del apartado */}
+      <h2 className="text-4xl font-bold text-gray-800 bg-white bg-opacity-90 py-2 px-4 rounded-lg shadow-md mb-8">
+        🗂️ Publicaciones Guardadas
+      </h2>
 
-        {/* Notificación */}
-        {notification && (
-          <div className="mb-4 p-4 flex justify-between items-center text-white bg-[#e3961b] rounded-md shadow">
-            <span>{notification}</span>
-            <button
-              onClick={closeNotification}
-              aria-label="Cerrar notificación"
-              className="text-white font-bold text-lg focus:outline-none"
+      <div className="bg-white bg-opacity-90 p-6 rounded-lg shadow-xl w-full max-w-4xl">
+        {savedProducts.length === 0 ? (
+          <p className="text-center text-gray-500">La lista está vacía</p>
+        ) : (
+          savedProducts.map((product) => (
+            <div
+              key={product.id_material}
+              className={`flex items-start p-4 mb-4 rounded-lg shadow ${
+                deleting === product.id_material
+                  ? "opacity-0 scale-90 transition-all duration-500 ease-out" // Animación de eliminación
+                  : markedForDelete.includes(product.id_material)
+                  ? "bg-gray-200 opacity-50"
+                  : "bg-gray-50 hover:shadow-lg transform transition-all duration-200"
+              }`}
             >
-              ×
-            </button>
-          </div>
-        )}
-
-
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          {savedProducts.length === 0 ? (
-            <p className="text-center text-gray-500">La lista está vacía</p>
-          ) : (
-            savedProducts.map((product) => (
-              <div
-                key={product.id}
-                className="flex items-start p-4 mb-4 bg-gray-50 rounded-lg shadow hover:shadow-lg transform transition-all duration-200"
-              >
-                <div className="flex-shrink-0 w-36 h-36 bg-gray-200 rounded-md overflow-hidden">
-
-                  <img
-                    src={product.imagen} 
-                    alt={product.title}
-                    className="object-cover w-full h-full"  
-                  />
-                </div>
-                <div className="flex-1 ml-5">
-                  <h3 className="text-lg font-semibold">{product.title}</h3>
-                  <p className="text-sm text-gray-700">
-                    <span className="font-bold">PRECIO:</span> Bs {product.price} <span className="ml-2 font-bold">CANTIDAD:</span> {product.quantity}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    <span className="font-bold">DESCRIPCIÓN:</span> {product.description}
-                  </p>
+              <div className="flex-shrink-0 w-36 h-36 bg-gray-200 rounded-md overflow-hidden">
+                <img
+                  src={product.imagenUrl || "https://via.placeholder.com/150"}
+                  alt={product.nombre_material}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+              <div className="flex-1 ml-5">
+                <h3 className="text-lg font-semibold">
+                  {product.nombre_material}
+                </h3>
+                <p className="text-sm text-gray-700">
+                  Bs. {product.precio_material}
+                </p>
+                <p className="text-sm text-gray-600">
+                  {product.descripcion_material}
+                </p>
+                <button
+                  onClick={() => handleViewPublication(product.id_material)}
+                  className="px-4 py-2 mt-2 text-sm font-semibold text-white bg-[#e3961b] rounded-md hover:bg-orange-600 transition duration-200"
+                >
+                  Ver Publicación
+                </button>
+              </div>
+              <div className="ml-auto">
+                {markedForDelete.includes(product.id_material) ? (
+                  <>
+                    <button
+                      onClick={() => handleRemoveProduct(product.id_material)}
+                      className="px-4 py-2 text-sm font-semibold text-white bg-red-500 rounded-md hover:bg-red-600 transition duration-200"
+                    >
+                      Eliminar definitivamente
+                    </button>
+                    <button
+                      onClick={() => undoDelete(product.id_material)}
+                      className="px-4 py-2 ml-2 text-sm font-semibold text-gray-700 bg-gray-300 rounded-md hover:bg-gray-400 transition duration-200"
+                    >
+                      Cancelar
+                    </button>
+                  </>
+                ) : (
                   <button
-                    onClick={() => alert('Ver Publicación')}
-                    className="px-4 py-2 mt-2 text-sm font-semibold text-white bg-[#e3961b] rounded-md hover:bg-orange-600 transition duration-200"
-                  >
-                    Ver Publicación
-                  </button>
-                </div>
-                <div className="ml-auto">
-                  <button
-                    onClick={() => handleRemoveProduct(product.id)}
-                    aria-label="Eliminar Producto"
+                    onClick={() => markForDelete(product.id_material)}
                     className="w-10 h-10 flex items-center justify-center bg-orange-500 text-white rounded-full shadow hover:bg-orange-600 transition duration-200"
                   >
                     <svg
@@ -165,11 +137,11 @@ const ListaGuardados: React.FC = () => {
                       <path d="M5 4a3 3 0 0 1 3-3h8a3 3 0 0 1 3 3v18l-7-3-7 3V4z" />
                     </svg>
                   </button>
-                </div>
+                )}
               </div>
-            ))
-          )}
-        </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

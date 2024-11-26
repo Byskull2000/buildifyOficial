@@ -1,8 +1,6 @@
-import { useState } from "react";
-import axios from 'axios';
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import imagenDefecto from "../assets/material_imagen_defecto.png";
-
 
 export interface MaterialProp {
   id_material: number;
@@ -16,7 +14,7 @@ export interface MaterialProp {
   descripcion_material?: string;
   estado_publicacion_material?: string;
   fecha_publicacion_material?: string;
-  imagenes?: [{id_imagen:number,url_imagen:string}],
+  imagenes?: [{ id_imagen: number; url_imagen: string }];
   latitud_publicacion_material?: string;
   longitud_publicacion_material?: string;
   ubicacion_material?: string;
@@ -27,38 +25,57 @@ export interface MaterialProps {
   onSave?: (id_material: number) => void;
 }
 
-const Material = ({ material, onSave }: MaterialProps) => {
-  // Definir el tipo de estado explícitamente como 'boolean'
+const Material = ({ material }: MaterialProps) => {
   const [isSaved, setIsSaved] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
-  const handleSaveMaterial = async () => {
-    try {
-      const response = await axios.post(
-        "/api/guardar-material",
-        new URLSearchParams({
-          material: material.id_material.toString(),
-        }),
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
-        }
+  useEffect(() => {
+    // Verificar si el material está en guardados al montar el componente
+    const publicacionesGuardadas = JSON.parse(
+      localStorage.getItem("publicacionesGuardadas") || "[]"
+    );
+    const guardado = publicacionesGuardadas.some(
+      (item: MaterialProp) => item.id_material === material.id_material
+    );
+    setIsSaved(guardado);
+  }, [material.id_material]);
+
+  const handleToggleSaveMaterial = () => {
+    const userStorage =
+      sessionStorage.getItem("user") || localStorage.getItem("user") || null;
+    const user = userStorage ? JSON.parse(userStorage) : null;
+
+    if (!user) {
+      alert("Debes iniciar sesión para guardar materiales.");
+      return;
+    }
+
+    const publicacionesGuardadas = JSON.parse(
+      localStorage.getItem("publicacionesGuardadas") || "[]"
+    );
+
+    if (isSaved) {
+      // Eliminar de guardados
+      const nuevasPublicaciones = publicacionesGuardadas.filter(
+        (item: MaterialProp) => item.id_material !== material.id_material
       );
-
-      // Verifica si la respuesta fue exitosa
-      if (response.status === 201) {
-        alert("Material guardado exitosamente");
-        setIsSaved(true); // Actualizamos el estado isSaved a true
-        if (onSave) onSave(material.id_material); // Llama al callback si está definido
-      } else {
-        throw new Error(response.data.message || "Error al guardar material");
-      }
-    } catch (error: any) {
-      console.error("Error al guardar el material:", error);
-      alert(error.response?.data?.message || "Error al guardar el material");
+      localStorage.setItem(
+        "publicacionesGuardadas",
+        JSON.stringify(nuevasPublicaciones)
+      );
+      setIsSaved(false); // Actualizar el estado local
+    } else {
+      // Agregar a guardados
+      const nuevasPublicaciones = [...publicacionesGuardadas, material];
+      localStorage.setItem(
+        "publicacionesGuardadas",
+        JSON.stringify(nuevasPublicaciones)
+      );
+      setIsSaved(true); // Actualizar el estado local
+      setShowModal(true); // Mostrar el modal
     }
   };
-  
+
   const handleAddToCart = () => {
     const carritoActual = JSON.parse(localStorage.getItem("carrito") || "[]");
     const materialExistente = carritoActual.find(
@@ -75,21 +92,45 @@ const Material = ({ material, onSave }: MaterialProps) => {
     alert("Producto añadido exitosamente al carrito de compras.");
   };
 
-  const closeModal = () => {
-    setIsSaved(false);
-  };
-
   return (
     <div className="relative flex-shrink-0 transform transition-colors hover:bg-slate-50 bg-white shadow-lg rounded-2xl p-6 w-60 md:w-64 lg:w-72">
+      {/* Modal al guardar */}
+      {showModal && (
+        <div className="absolute top-0 left-0 right-0 z-10 flex justify-center items-center">
+          <div className="bg-white shadow-lg rounded-md p-4 w-72 text-center border relative">
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-1 right-2 text-gray-500 hover:text-gray-700"
+            >
+              &times;
+            </button>
+            <p className="text-black font-medium">Se guardó la publicación</p>
+            <Link
+              to="/guardados"
+              className="text-orange-600 underline hover:text-orange-800 transition mt-2 inline-block"
+              onClick={() => setShowModal(false)}
+            >
+              Ver publicaciones guardadas
+            </Link>
+          </div>
+        </div>
+      )}
+
       <div className="relative">
         {/* Botón de guardar */}
         <div className="absolute top-1 right-2">
           <button
-            onClick={handleSaveMaterial}
-            className={`p-2 rounded-full transition-colors ${isSaved ? "bg-orange-500 text-white" : "bg-gray-200 text-gray-500"
-              }`}
+            onClick={handleToggleSaveMaterial}
+            className={`p-2 rounded-full transition-colors ${
+              isSaved ? "bg-orange-500 text-white" : "bg-gray-200 text-gray-500"
+            }`}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+            >
               <path d="M0 0h24v24H0z" fill="none" />
               <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2zm0 15l-5-2.18L7 18V5h10v13z" />
             </svg>
@@ -119,22 +160,6 @@ const Material = ({ material, onSave }: MaterialProps) => {
       >
         Añadir al carrito
       </button>
-
-       {/* Modal de confirmación */}
-      {isSaved && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center relative">
-            <button onClick={closeModal} className="absolute top-1 right-2 text-gray-600">
-              &times; {/* Ícono de cierre */}
-            </button>
-            <p>Se guardó la publicación</p>
-            <Link to="/guardados" className="text-orange-600 underline">
-              Ver publicaciones guardadas
-            </Link>
-          </div>
-        </div>
-      )}
-
     </div>
   );
 };
