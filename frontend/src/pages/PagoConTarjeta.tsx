@@ -9,8 +9,8 @@ import {
   faKey,
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
-import buildifyLogo from "../assets/Buildify.png"; // Logo de Buildify
-import fondoPagoTarjeta from "../assets/FondoPagoTarjeta.png"; // Fondo del apartado
+import buildifyLogo from "../assets/Buildify.png";
+import fondoPagoTarjeta from "../assets/FondoPagoTarjeta.png"; // Fondo tarjeta
 
 const PagoConTarjeta: React.FC = () => {
   const [numeroTarjeta, setNumeroTarjeta] = useState("");
@@ -20,7 +20,7 @@ const PagoConTarjeta: React.FC = () => {
     useState(false);
   const [mensaje, setMensaje] = useState("");
   const [tipoMensaje, setTipoMensaje] = useState<"exito" | "error" | "">("");
-  const [cargando, setCargando] = useState(false); // Estado para el spinner
+  const [cargando, setCargando] = useState(false); // spinner
   const navigate = useNavigate();
 
   const formatCardNumber = (value: string) => {
@@ -45,24 +45,32 @@ const PagoConTarjeta: React.FC = () => {
   };
 
   const handleConfirmarPago = () => {
-    if (
-      numeroTarjeta.length === 19 &&
-      validateExpiryDate(fechaVencimiento) &&
-      cvv.length === 3
-    ) {
-      setCargando(true);
-      setTimeout(() => {
-        setCargando(false);
-        setMensaje("Pago realizado con éxito.");
-        setTipoMensaje("exito");
-
-        // Limpiar el carrito
-        localStorage.removeItem("carrito");
-      }, 3000); // Simula un tiempo de procesamiento de 3 segundos
-    } else {
-      setMensaje("Por favor, completa correctamente todos los campos.");
+    if (numeroTarjeta.length !== 19) {
+      setMensaje("El número de tarjeta debe tener 16 dígitos.");
       setTipoMensaje("error");
+      return;
     }
+    if (!validateExpiryDate(fechaVencimiento)) {
+      setMensaje(
+        "La fecha de vencimiento es inválida o la tarjeta está vencida."
+      );
+      setTipoMensaje("error");
+      return;
+    }
+    if (cvv.length !== 3) {
+      setMensaje("El CVV debe contener 3 dígitos.");
+      setTipoMensaje("error");
+      return;
+    }
+
+    setCargando(true);
+    setTimeout(() => {
+      setCargando(false);
+      setMensaje("Pago realizado con éxito.");
+      setTipoMensaje("exito");
+
+      localStorage.removeItem("carrito");
+    }, 3000); // 3 segundos de carga
   };
 
   const handleCancelar = () => {
@@ -70,7 +78,7 @@ const PagoConTarjeta: React.FC = () => {
   };
 
   const confirmarCancelar = () => {
-    setCargando(false); // Asegurarse de desactivar cualquier carga activa
+    setCargando(false);
     setMensaje("");
     setTipoMensaje("");
     setMostrarConfirmacionCancelar(false);
@@ -80,7 +88,7 @@ const PagoConTarjeta: React.FC = () => {
   return (
     <div
       className="min-h-screen bg-fixed bg-cover bg-center py-10 px-4 flex flex-col items-center"
-      style={{ backgroundImage: `url(${fondoPagoTarjeta})` }} // Fondo fijo
+      style={{ backgroundImage: `url(${fondoPagoTarjeta})` }}
     >
       {/* Botón con logo de Buildify */}
       <div className="flex items-center justify-between bg-white bg-opacity-90 py-4 px-6 rounded-lg shadow-lg mb-8">
