@@ -40,6 +40,7 @@ const Editar = () => {
     const [imagesPerCrop, setImagesPerCrop] = useState<File[]>([]);
     const [rotation, setRotation] = useState<number>(0);
     const [isPopupVisible, setIsPopupVisible] = useState(false);
+    const [imagenes,setImagenes] = useState<{id_imagen:number,url_imagen:string}[]>([]);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files ? Array.from(e.target.files) : [];
@@ -142,6 +143,7 @@ const Editar = () => {
                     lat: material.latitud_publicacion_material,
                     lng: material.longitud_publicacion_material,
                 });
+                setImagenes(material.imagenes)
             } catch (error) {
                 console.error("Error:", error);
             }
@@ -499,6 +501,13 @@ const Editar = () => {
                         {images.map((image, index) => (
                             <img
                                 src={image}
+                                key={index}
+                                className="w-full h-full object-cover"
+                            />
+                        ))}
+                        {imagenes.map((image, index) => (
+                            <img
+                                src={image.url_imagen}
                                 key={index}
                                 className="w-full h-full object-cover"
                             />
