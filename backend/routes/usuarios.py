@@ -102,6 +102,30 @@ def obtener_usuarios():
         ]
     )  # Devolver como JSON
 
+# Ruta para obtener un usuario por su id
+@usuarios.route("/api/usuarios/<int:id_usuario>", methods=["GET"])
+def obtener_usuario(id_usuario):
+    try:
+        usuario = Usuario.query.get_or_404(id_usuario)
+        return jsonify({
+            "id_usuario": usuario.id_usuario,
+            "nombre_usuario": usuario.nombre_usuario,
+            "correo_electronico": usuario.correo_electronico,
+            "numero_telefono": usuario.numero_telefono,
+            "fecha_creacion": usuario.fecha_creacion,
+            "ultimo_login": usuario.ultimo_login,
+            "estado_usuario": usuario.estado_usuario,
+            "zona_trabajo": usuario.zona_trabajo,
+            "imagen_perfil": usuario.imagen_perfil,
+            "imagen_qr": usuario.imagen_qr,
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "message": "Error al obtener los datos del usuario",
+            "error": str(e),
+        }), 400
+
+
 
 # Ruta para agregar un nuevo usuario
 
@@ -254,3 +278,14 @@ def actualizar_telefono(id_usuario):
     return jsonify(
         {"message": "Teléfono actualizado", "telefono": usuario.numero_telefono}
     )
+
+@usuarios.route("/api/usuarios/<int:id_usuario>/qr", methods=["GET"])
+def obtener_qr_usuario(id_usuario):
+    """
+    Retorna el QR asociado a un usuario
+    """
+    try:
+        usuario = Usuario.query.get_or_404(id_usuario)
+        return jsonify({"imagen_qr": usuario.imagen_qr}), 200
+    except Exception as e:
+        return jsonify({"error": f"Error al obtener el QR: {str(e)}"}), 500

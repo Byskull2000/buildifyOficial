@@ -67,7 +67,6 @@ def completar_pedido(id_pedido):
         pedido.longitud_entrega_pedido = data['longitud_entrega_pedido']
         pedido.estado_pedido = "Entregado"
         
-
         # Guardar los cambios en la base de datos
         db.session.commit()
 
@@ -78,55 +77,63 @@ def completar_pedido(id_pedido):
         return jsonify({"message": "Error al completar el pedido", "error": str(e)}), 500
 
 
-
-@pedido.route('/api/pedidos/<int:id_usuario>', methods=['GET'])
-def obtener_pedidos_por_usuario(id_usuario):
+@pedido.route('/api/pedidos/<int:id_usuario_comprador>', methods=['GET'])
+def obtener_pedidos_por_usuario(id_usuario_comprador):
     try:
-        # Consultar pedidos por id_usuario
-        pedidos = db.session.query(Pedido, Material).join(Material, Pedido.id_material == Material.id_material).filter(Pedido.id_usuario == id_usuario).order_by(Pedido.fecha_pedido.desc()).all()
+        # Consultar pedidos por id_usuario (comprador) y uniendo con materiales para obtener información del vendedor
+        pedidos = (
+            db.session.query(Pedido, Material)
+            .join(Material, Pedido.id_material == Material.id_material)
+            .filter(Pedido.id_usuario == id_usuario_comprador)
+            .order_by(Pedido.fecha_pedido.desc())
+            .all()
+        )
 
         if not pedidos:
-            return jsonify({"message": "No se encontraron pedidos para el usuario especificado"}), 404
+            return jsonify({"message": "No se encontraron pedidos para este usuario"}), 404
 
-        # Formatear la respuesta con la información de cada pedido
-        data = [{
-            'id_pedido': pedido.Pedido.id_pedido,
-            'estado_pedido': pedido.Pedido.estado_pedido,
-            'fecha_pedido': pedido.Pedido.fecha_pedido,
-            'metodo_pago': pedido.Pedido.metodo_pago,
-            'total_pedido': pedido.Pedido.total_pedido,
-            'nombre_destinatario_pedido': pedido.Pedido.nombre_destinatario_pedido,
-            'descrip_direc_entrega_pedido': pedido.Pedido.descrip_direc_entrega_pedido,
-            'telefono_ref_pedido': pedido.Pedido.telefono_ref_pedido,
-            'latitud_entrega_pedido': pedido.Pedido.latitud_entrega_pedido,
-            'longitud_entrega_pedido': pedido.Pedido.longitud_entrega_pedido,
-            'precio_unitario_producto': pedido.Pedido.precio_unitario_producto,
-            'id_usuario': pedido.Pedido.id_usuario,
-            'id_material': pedido.Pedido.id_material,
-            # Datos del material
-            'material': {
-                'id_material': pedido.Material.id_material,
-                'nombre_material': pedido.Material.nombre_material,
-                'descripcion_material': pedido.Material.descripcion_material,
-                'cantidad_material': pedido.Material.cantidad_material,
-                'estado_material': pedido.Material.estado_material,
-                'precio_material': pedido.Material.precio_material,
-                'id_tipo_material': pedido.Material.id_tipo_material,
-                'latitud_publicacion_material': pedido.Material.latitud_publicacion_material,
-                'longitud_publicacion_material': pedido.Material.longitud_publicacion_material,
-                'descripcion_direccion_material': pedido.Material.descripcion_direccion_material,
-                'estado_publicacion_material': pedido.Material.estado_publicacion_material,
-                'fecha_publicacion': pedido.Material.fecha_publicacion,
-                'tipo_unidad_material': pedido.Material.tipo_unidad_material,
-                "imagenUrl": (
-                    pedido.Material.imagenes[0].url_imagen if pedido.Material.imagenes else None
-                ),
-                "imagenes": [
-                    {"id_imagen": imagen.id_imagen, "url_imagen": imagen.url_imagen}
-                    for imagen in pedido.Material.imagenes
-                ],
+        # Formatear la respuesta incluyendo datos del vendedor
+        data = []
+        for pedido in pedidos:
+            pedido_info = {
+                'id_pedido': pedido.Pedido.id_pedido,
+                'estado_pedido': pedido.Pedido.estado_pedido,
+                'fecha_pedido': pedido.Pedido.fecha_pedido,
+                'metodo_pago': pedido.Pedido.metodo_pago,
+                'total_pedido': pedido.Pedido.total_pedido,
+                'nombre_destinatario_pedido': pedido.Pedido.nombre_destinatario_pedido,
+                'descrip_direc_entrega_pedido': pedido.Pedido.descrip_direc_entrega_pedido,
+                'telefono_ref_pedido': pedido.Pedido.telefono_ref_pedido,
+                'latitud_entrega_pedido': pedido.Pedido.latitud_entrega_pedido,
+                'longitud_entrega_pedido': pedido.Pedido.longitud_entrega_pedido,
+                'precio_unitario_producto': pedido.Pedido.precio_unitario_producto,
+                'id_usuario_comprador': pedido.Pedido.id_usuario,
+                'id_material': pedido.Pedido.id_material,
+                # Información del material
+                'material': {
+                    'id_material': pedido.Material.id_material,
+                    'nombre_material': pedido.Material.nombre_material,
+                    'descripcion_material': pedido.Material.descripcion_material,
+                    'cantidad_material': pedido.Material.cantidad_material,
+                    'estado_material': pedido.Material.estado_material,
+                    'precio_material': pedido.Material.precio_material,
+                    'tipo_unidad_material': pedido.Material.tipo_unidad_material,
+                    'imagenUrl': (
+                        pedido.Material.imagenes[0].url_imagen if pedido.Material.imagenes else None
+                    ),
+                },
+                # Información del vendedor (relación con Usuario)
+                'vendedor': {
+                    'id_vendedor': pedido.Material.id_usuario,
+                    'nombre_vendedor': pedido.Material.usuario.nombre_usuario if pedido.Material.usuario else None,
+                    'zona_trabajo': pedido.Material.usuario.zona_trabajo if pedido.Material.usuario else None,
+                    'telefono_vendedor': pedido.Material.usuario.numero_telefono if pedido.Material.usuario else None,
+                    'imagen_qr_vendedor': pedido.Material.usuario.imagen_qr if pedido.Material.usuario else None,  # Aquí
+                },
+
             }
-        } for pedido in pedidos]
+
+            data.append(pedido_info)
 
         return jsonify({"message": "Pedidos obtenidos exitosamente", "data": data}), 200
 

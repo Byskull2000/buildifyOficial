@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheckCircle,
@@ -7,24 +7,54 @@ import {
   faDownload,
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 import buildifyLogo from "../assets/Buildify.png"; // Logo de Buildify
 import fondoQR from "../assets/FondoQR.png"; // Fondo del apartado
 
 const PagoConQR: React.FC = () => {
+  const { idUsuario } = useParams<{ idUsuario: string }>(); // Obtener el idUsuario desde los parámetros de la URL
+  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null); // URL del QR
   const [mensaje, setMensaje] = useState("");
   const [mostrarConfirmacionCancelar, setMostrarConfirmacionCancelar] =
     useState(false);
   const [cargando, setCargando] = useState(false); // Estado para el spinner
-  const qrCodeUrl = "https://via.placeholder.com/200"; // URL temporal del QR (reemplazar con el QR real)
   const navigate = useNavigate();
 
+  // Efecto para obtener el código QR del vendedor
+  useEffect(() => {
+    const fetchQrCode = async () => {
+      if (idUsuario) {
+        try {
+          // Realizar la solicitud para obtener el código QR
+          const response = await axios.get(`/api/usuarios/${idUsuario}/qr`);
+          console.log("Respuesta del servidor:", response); // Verifica la respuesta
+          
+          if (response.data && response.data.imagen_qr) {
+            setQrCodeUrl(response.data.imagen_qr); // Guardar la URL del QR en el estado
+          } else {
+            console.error("La respuesta no contiene la URL del QR.");
+            setQrCodeUrl(null); // Si no se encuentra el QR, limpiamos el estado
+          }
+        } catch (error) {
+          console.error("Error al obtener el código QR:", error);
+          setQrCodeUrl(null); // Si hay un error, limpiamos el estado del QR
+        }
+      }
+    };
+    fetchQrCode(); // Llamar la función para obtener el QR
+  }, [idUsuario]); // Volver a ejecutar cuando cambie el idUsuario
+
+  // Función para descargar el código QR
   const handleDescargarQR = () => {
-    const link = document.createElement("a");
-    link.href = qrCodeUrl;
-    link.download = "CodigoQR.png";
-    link.click();
+    if (qrCodeUrl) {
+      const link = document.createElement("a");
+      link.href = qrCodeUrl;
+      link.download = "CodigoQR.png";
+      link.click();
+    }
   };
 
+  // Función para confirmar el pago
   const handleConfirmarPago = () => {
     setCargando(true);
     setTimeout(() => {
@@ -123,15 +153,19 @@ const PagoConQR: React.FC = () => {
           <FontAwesomeIcon icon={faQrcode} />
           Escanea el código QR para realizar el pago:
         </p>
-        <img
-          src={qrCodeUrl}
-          alt="Código QR"
-          className="mx-auto mb-4 border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-        />
+        {qrCodeUrl ? (
+          <img
+            src={qrCodeUrl}
+            alt="Código QR"
+            className="mx-auto mb-4 border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+          />
+        ) : (
+          <p className="text-gray-500">Cargando el código QR...</p>
+        )}
         <div className="flex justify-center">
           <button
             onClick={handleDescargarQR}
-            className="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colors mb-6 flex items-center gap-2"
+            className="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-blue-700 transition-colores mb-6 flex items-center gap-2"
           >
             <FontAwesomeIcon icon={faDownload} />
             Descargar Código QR
