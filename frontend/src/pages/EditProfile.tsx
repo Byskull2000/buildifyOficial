@@ -41,14 +41,13 @@ const Page = () => {
     const [zoom2, setZoom2] = useState(1);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
-    const [zonas, setZonas] = useState<string[]>([]); // Nuevo estado para almacenar las zonas
+    const [zonas, setZonas] = useState<string[]>([]); 
 
     const obtenerZonaPorCoordenadas = async (lat: number, lng: number) => {
         try {
-            // Aquí iría tu lógica para obtener la zona, por ejemplo, mediante una API o un arreglo local
             const response = await fetch(`tu_api_zonas?lat=${lat}&lng=${lng}`);
             const data = await response.json();
-            setZonas(data.zonas); // Asumiendo que la respuesta contiene un campo 'zonas'
+            setZonas(data.zonas); 
         } catch (error) {
             console.error("Error al obtener las zonas", error);
         }
