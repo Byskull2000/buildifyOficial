@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import buildifyLogo from "../assets/Buildify.png";
+import imgEjemploPerfil from "../assets/ejemploPerfil.jpg";
 import Mapa from "../components/Mapa";
 
 interface DireccionEntrega {
@@ -24,7 +25,11 @@ const SolicitudEntrega: React.FC = () => {
   const [direcciones, setDirecciones] = useState<DireccionEntrega[]>([]);
   const [mensaje, setMensaje] = useState<string | null>(null);
 
-  const userStorage = sessionStorage.getItem("user") || localStorage.getItem("user") || null;
+  const location = useLocation();
+  const materialData = location.state?.material;
+
+  const userStorage =
+    sessionStorage.getItem("user") || localStorage.getItem("user") || null;
   const user = userStorage ? JSON.parse(userStorage) : null;
 
   const handleNombreChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,12 +72,17 @@ const SolicitudEntrega: React.FC = () => {
     const fetchDirecciones = async () => {
       try {
         const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
-        const response = await fetch(`${URL_BACKEND}/api/direcciones-entrega/${user.id_usuario}`);
+        const response = await fetch(
+          `${URL_BACKEND}/api/direcciones-entrega/${user.id_usuario}`
+        );
         if (response.ok) {
           const data = await response.json();
           setDirecciones(data.data || []);
         } else {
-          console.error("Error al obtener las direcciones:", response.statusText);
+          console.error(
+            "Error al obtener las direcciones:",
+            response.statusText
+          );
         }
       } catch (error) {
         console.error("Error al conectar con el backend:", error);
@@ -86,7 +96,10 @@ const SolicitudEntrega: React.FC = () => {
     setNombre(direccion.nombre_destinatario);
     setDireccion(direccion.descrip_direc_entrega);
     setTelefono(direccion.telefono);
-    setCoordenadas({ lat: direccion.latitud_entrega, lng: direccion.longitud_entrega });
+    setCoordenadas({
+      lat: direccion.latitud_entrega,
+      lng: direccion.longitud_entrega,
+    });
     setMostrarDirecciones(false);
   };
 
@@ -112,44 +125,56 @@ const SolicitudEntrega: React.FC = () => {
       <div className="p-8 mx-auto max-w-7xl bg-white rounded-lg shadow-lg mt-6">
         <h2 className="text-2xl font-bold mb-6">Pedido</h2>
 
-        <div className="grid grid-cols-2 gap-6 mb-6">
-          <div className="bg-gray-300 p-6 rounded-lg flex items-start">
-            <img
-              src="https://via.placeholder.com/150"
-              alt="Cemento Portland"
-              className="w-48 h-48 object-cover rounded-lg mr-6"
-            />
-            <div>
-              <h3 className="font-semibold text-lg mb-2">Información de Material</h3>
-              <p className="mb-2">
-                <strong>Nombre:</strong> Cemento Portland
-              </p>
-              <p className="mb-2">
-                <strong>Precio:</strong> Bs.200
-              </p>
-              <p>
-                <strong>Cantidad:</strong> 10
-              </p>
+        {materialData ? (
+          <div className="grid grid-cols-2 gap-6 mb-6">
+            <div className="bg-gray-300 p-6 rounded-lg flex items-start">
+              <img
+                src={
+                  materialData.imagenUrl || "https://via.placeholder.com/150"
+                }
+                alt={materialData.nombre_material}
+                className="w-48 h-48 object-cover rounded-lg mr-6"
+              />
+              <div>
+                <h3 className="font-semibold text-lg mb-2">
+                  Información de Material
+                </h3>
+                <p className="mb-2">
+                  <strong>Nombre:</strong> {materialData.nombre_material}
+                </p>
+                <p className="mb-2">
+                  <strong>Precio:</strong> Bs.{materialData.precio_material}
+                </p>
+                <p>
+                  <strong>Estado:</strong>{" "}
+                  {materialData.estado_material || "No especificado"}
+                </p>
+              </div>
             </div>
-          </div>
 
-          <div className="bg-gray-300 p-6 rounded-lg flex items-start">
-            <img
-              src="https://via.placeholder.com/150"
-              alt="Juan Pérez"
-              className="w-48 h-48 object-cover rounded-full mr-6"
-            />
-            <div>
-              <h3 className="font-semibold text-lg mb-2">Información de Vendedor</h3>
-              <p className="mb-2">
-                <strong>Nombre:</strong> Juan Pérez
-              </p>
-              <p>
-                <strong>Teléfono:</strong> +591 78912345
-              </p>
+            <div className="bg-gray-300 p-6 rounded-lg flex items-start">
+              <img
+                src={imgEjemploPerfil}
+                alt="Vendedor"
+                className="w-48 h-48 object-cover rounded-full mr-6"
+              />
+              <div>
+                <h3 className="font-semibold text-lg mb-2">
+                  Información de Vendedor
+                </h3>
+                <p className="mb-2">
+                  <strong>Nombre:</strong>{" "}
+                  {materialData.vendedor || "Vendedor desconocido"}
+                </p>
+                <p>
+                  <strong>Empresa:</strong> Buildify Proveedores
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <p>No se encontraron datos para mostrar.</p>
+        )}
 
         <div className="grid grid-cols-3 gap-6 items-start">
           <Mapa
@@ -221,7 +246,9 @@ const SolicitudEntrega: React.FC = () => {
         {mensaje && (
           <div
             className={`mt-4 p-3 rounded-md text-center ${
-              mensaje.includes("correctamente") ? "bg-green-200 text-green-700" : "bg-red-200 text-red-700"
+              mensaje.includes("correctamente")
+                ? "bg-green-200 text-green-700"
+                : "bg-red-200 text-red-700"
             }`}
           >
             {mensaje}

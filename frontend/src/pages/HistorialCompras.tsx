@@ -6,6 +6,53 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import SimpleNavBar from "../components/simpleNavBar";
 
+const nombres = [
+  "Pablo",
+  "Mario",
+  "Lionel",
+  "Andrea",
+  "Sofia",
+  "Carlos",
+  "Miguel",
+  "Ana",
+  "Laura",
+  "Diego",
+];
+const apellidos = [
+  "Gomez",
+  "Fernandez",
+  "Martinez",
+  "Perez",
+  "Rodriguez",
+  "Lopez",
+  "Garcia",
+  "Hernandez",
+  "Ruiz",
+  "Castro",
+];
+
+const generarNombreAleatorio = () => {
+  const tipo = Math.floor(Math.random() * 3);
+
+  switch (tipo) {
+    case 0: // Solo nombre
+      return nombres[Math.floor(Math.random() * nombres.length)];
+    case 1: // Nombre + Apellido
+      return (
+        nombres[Math.floor(Math.random() * nombres.length)] +
+        " " +
+        apellidos[Math.floor(Math.random() * apellidos.length)]
+      );
+    case 2: // Nombre + Número
+      return (
+        nombres[Math.floor(Math.random() * nombres.length)] +
+        Math.floor(Math.random() * 1000)
+      );
+    default:
+      return "UsuarioDesconocido";
+  }
+};
+
 const HistorialCompras = () => {
   const [compras, setCompras] = useState<any[]>([]);
   const [materialFilter, setMaterialFilter] = useState("");
@@ -16,8 +63,15 @@ const HistorialCompras = () => {
   const navigate = useNavigate();
 
   const formatDateForDisplay = (date: string) => {
-    const [year, month, day] = date.split("-");
-    return `${day}/${month}/${year}`;
+    const parsedDate = new Date(date);
+    if (isNaN(parsedDate.getTime())) {
+      return "Fecha inválida";
+    }
+    return parsedDate.toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
   };
 
   const comprasEjemplo = [
@@ -26,92 +80,80 @@ const HistorialCompras = () => {
       fecha_compra: "2024-11-01",
       vendedor: "Proveedor A",
       estado_entrega: "",
-      imagen: imgMaterial1,
+      imagenUrl: imgMaterial1,
     },
     {
       nombre_material: "Arena",
       fecha_compra: "2024-11-01",
       vendedor: "Proveedor A",
       estado_entrega: "Entregado",
-      imagen: imgMaterial5,
+      imagenUrl: imgMaterial5,
     },
     {
       nombre_material: "Ladrillo 6 huecos",
       fecha_compra: "2024-10-15",
       vendedor: "Proveedor B",
       estado_entrega: "En progreso",
-      imagen: imgMaterial2,
+      imagenUrl: imgMaterial2,
     },
     {
       nombre_material: "Ladrillo por mayor",
       fecha_compra: "2024-09-20",
       vendedor: "Proveedor A",
       estado_entrega: "Pendiente",
-      imagen: imgMaterial3,
+      imagenUrl: imgMaterial3,
     },
   ];
 
-  const fetchHistorialCompras = async () => {
-    const userStorage =
-      sessionStorage.getItem("user") || localStorage.getItem("user") || null;
-    const user = userStorage ? JSON.parse(userStorage) : null;
-    const URL_BACKEND = import.meta.env.VITE_URL_BACKEND;
+  interface Compra {
+    nombre_material: string;
+    fecha_compra: string;
+    vendedor?: string;
+    estado_entrega?: string;
+    imagen?: string;
+  }
 
-    if (!user) {
-      console.error("Usuario no autenticado");
-      setCompras(comprasEjemplo);
-      return;
-    }
+  const loadHistorialCompras = () => {
+    const historial = JSON.parse(
+      localStorage.getItem("historialCompras") || "[]"
+    ) as Compra[]; // Aseguramos que sea un array de `Compra`
 
-    try {
-      const response = await fetch(
-        `${URL_BACKEND}/api/pedidos/${user.id_usuario}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+    const historialConVendedor = historial.map((compra: Compra) => ({
+      ...compra,
+      vendedor: compra.vendedor || generarNombreAleatorio(),
+    }));
 
-      if (!response.ok) {
-        throw new Error(
-          `Error al obtener el historial: ${await response.text()}`
-        );
-      }
-
-      const result = await response.json();
-      if (result.data) {
-        const datosReales = result.data.map((pedido: any) => ({
-          nombre_material: pedido.material.nombre_material,
-          fecha_compra: pedido.fecha_pedido,
-          vendedor:
-            pedido.material.descripcion_material || "Vendedor desconocido",
-          estado_entrega: pedido.estado_pedido || "Pendiente",
-          imagen: pedido.material.imagen || "https://example.com/default.jpg",
-        }));
-        setCompras([...comprasEjemplo, ...datosReales]);
-      }
-    } catch (error) {
-      console.error("Error al obtener el historial de compras:", error);
-      setCompras(comprasEjemplo);
-    }
+    setCompras([...comprasEjemplo, ...historialConVendedor]); // Combinar ejemplos con datos reales
   };
 
-  const filteredCompras = compras.filter(
-    (compra) =>
-      (!materialFilter ||
-        compra.nombre_material
-          .toLowerCase()
-          .includes(materialFilter.toLowerCase())) &&
-      (!fechaFilter || compra.fecha_compra === fechaFilter) &&
-      (!vendedorFilter ||
-        compra.vendedor.toLowerCase().includes(vendedorFilter.toLowerCase())) &&
-      (!estadoFilter ||
-        compra.estado_entrega
-          .toLowerCase()
-          .includes(estadoFilter.toLowerCase()))
-  );
+  const filteredCompras = compras.filter((compra) => {
+    // Asegurar valores predeterminados para evitar errores
+    const vendedor =
+      compra.vendedor?.toLowerCase() || generarNombreAleatorio().toLowerCase();
+    const estado = compra.estado_entrega?.toLowerCase() || "sin estado";
+
+    // Comparar material
+    const materialMatch =
+      !materialFilter ||
+      compra.nombre_material
+        .toLowerCase()
+        .includes(materialFilter.toLowerCase());
+
+    // Comparar fecha (formatear ambas para asegurarnos de que coincidan)
+    const fechaMatch =
+      !fechaFilter ||
+      new Date(compra.fecha_compra).toLocaleDateString("en-CA") === fechaFilter;
+
+    // Comparar vendedor
+    const vendedorMatch =
+      !vendedorFilter || vendedor.includes(vendedorFilter.toLowerCase());
+
+    // Comparar estado
+    const estadoMatch =
+      !estadoFilter || estado.includes(estadoFilter.toLowerCase());
+
+    return materialMatch && fechaMatch && vendedorMatch && estadoMatch;
+  });
 
   const clearFilters = () => {
     setMaterialFilter("");
@@ -128,7 +170,7 @@ const HistorialCompras = () => {
   };
 
   useEffect(() => {
-    fetchHistorialCompras();
+    loadHistorialCompras();
   }, []);
 
   return (
@@ -192,7 +234,7 @@ const HistorialCompras = () => {
                 <div key={index} className="flex border p-4 rounded-md shadow">
                   <div className="w-1/4 flex items-center justify-center">
                     <img
-                      src={compra.imagen}
+                      src={compra.imagenUrl || compra.imagen}
                       alt="Foto del material"
                       className="w-32 h-32 object-cover rounded-md"
                     />
@@ -209,19 +251,29 @@ const HistorialCompras = () => {
                     </p>
                     <p className="font-semibold">
                       Vendedor:{" "}
-                      <span className="font-normal">{compra.vendedor}</span>
+                      <span className="font-normal">
+                        {compra.vendedor || generarNombreAleatorio()}
+                      </span>
                     </p>
                     <p className="font-semibold text-black">
                       Estado:{" "}
                       <span
-                        className={getEstadoEntregaColor(compra.estado_entrega)}
+                        className={getEstadoEntregaColor(
+                          compra.estado_entrega || "Sin estado"
+                        )}
                       >
-                        {compra.estado_entrega || "Sin asignar"}
+                        {compra.estado_entrega || "Sin estado"}
                       </span>
                     </p>
                     <button
                       className="px-4 py-1 bg-yellow-500 text-white rounded-md hover:bg-yellow-600"
-                      onClick={() => navigate("/solicitarTipoEntrega")}
+                      onClick={() =>
+                        navigate("/solicitarTipoEntrega", {
+                          state: {
+                            material: compra,
+                          },
+                        })
+                      }
                     >
                       Seleccionar tipo de entrega
                     </button>
@@ -229,7 +281,9 @@ const HistorialCompras = () => {
                 </div>
               ))
             ) : (
-              <p>No se encontraron compras.</p>
+              <p className="text-center text-gray-500">
+                No se encontraron compras que coincidan con los filtros.
+              </p>
             )}
           </div>
           {/* Panel de filtros */}

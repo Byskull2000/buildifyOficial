@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MaterialProp } from "./CarritoCompras";
-import buildifyLogo from "../assets/Buildify.png"; // Logo de Buildify
-import fondoConfirmarPedido from "../assets/FondoConfirmarPedido.png"; // Fondo del apartado
+import buildifyLogo from "../assets/Buildify.png";
+import fondoConfirmarPedido from "../assets/FondoConfirmarPedido.png";
 
 const ConfirmarPedido: React.FC = () => {
   const [materiales, setMateriales] = useState<MaterialProp[]>([]);
@@ -20,7 +20,29 @@ const ConfirmarPedido: React.FC = () => {
     setTotalPrecio(total);
   }, []);
 
+  const guardarHistorial = () => {
+    const historial = JSON.parse(
+      localStorage.getItem("historialCompras") || "[]"
+    );
+    const fechaCompra = new Date().toISOString();
+    const comprasActuales = materiales.map((material) => ({
+      nombre_material: material.nombre_material,
+      precio_material: material.precio_material,
+      fecha_compra: fechaCompra,
+      imagenUrl: material.imagenUrl || "https://example.com/default.jpg",
+      estado_entrega: "Pendiente",
+    }));
+
+    // Guardar el historial actualizado
+    const nuevoHistorial = [...historial, ...comprasActuales];
+    localStorage.setItem("historialCompras", JSON.stringify(nuevoHistorial));
+
+    // Vaciar el carrito
+    localStorage.removeItem("carrito");
+  };
+
   const handleProcederPago = () => {
+    guardarHistorial(); // Guardar en historial antes de proceder
     if (metodoPago === "tarjeta") {
       navigate("/pago-tarjeta");
     } else if (metodoPago === "qr") {

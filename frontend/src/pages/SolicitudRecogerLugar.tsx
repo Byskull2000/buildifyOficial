@@ -1,59 +1,41 @@
 import buildifyLogo from "../assets/Buildify.png";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import imgEjemploPerfil from "../assets/ejemploPerfil.jpg";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import Mapa2 from "../components/Mapa2";
 
-interface Material {
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-  address: string;
-  location: { lat: number; lng: number };
-}
-
-interface Seller {
-  name: string;
-  phone: string;
-  image: string;
-}
-
-interface Item {
-  id: number;
-  material: Material;
-  seller: Seller;
-}
-
-const data: Item[] = [
-  {
-    id: 1,
-    material: {
-      name: "Cemento Portland",
-      price: 50,
-      quantity: 10,
-      image: "https://via.placeholder.com/150",
-      address: "Calle Eliodoro Villazon #128, Cochabamba",
-      location: { lat: -17.3936, lng: -66.157 }, // Coordenadas de ejemplo
-    },
-    seller: {
-      name: "Juan Pérez",
-      phone: "+591 78912345",
-      image: "https://via.placeholder.com/150",
-    },
-  },
-];
-
 const OrderPickup: React.FC = () => {
-  const [direcciones, setDirecciones] = useState<string[]>(
-    data.map((item) => item.material.address)
-  );
+  const [direcciones, setDirecciones] = useState<string[]>([]);
+  const location = useLocation();
+  const [materialData, setMaterialData] = useState<any>(null);
 
-  const handleDireccionObtenida = (id: number, nuevaDireccion: string) => {
-    setDirecciones((prev) => {
-      const nuevasDirecciones = [...prev];
-      nuevasDirecciones[id] = nuevaDireccion;
-      return nuevasDirecciones;
-    });
+  useEffect(() => {
+    // Obtener datos desde el estado del router o localStorage
+    if (location.state?.material) {
+      setMaterialData(location.state.material);
+      localStorage.setItem(
+        "currentOrderMaterial",
+        JSON.stringify(location.state.material)
+      );
+    } else {
+      const savedData = localStorage.getItem("currentOrderMaterial");
+      if (savedData) {
+        setMaterialData(JSON.parse(savedData));
+      } else {
+        console.error("No se encontraron datos del material.");
+      }
+    }
+  }, [location.state]);
+
+  useEffect(() => {
+    // Configurar direcciones iniciales basadas en los datos dinámicos
+    if (materialData?.address) {
+      setDirecciones([materialData.address]);
+    }
+  }, [materialData]);
+
+  const handleDireccionObtenida = (nuevaDireccion: string) => {
+    setDirecciones([nuevaDireccion]); // Actualizar dirección en base a la selección
   };
 
   return (
@@ -76,74 +58,84 @@ const OrderPickup: React.FC = () => {
       <div className="p-8 mx-auto max-w-7xl bg-white rounded-lg shadow-lg mt-6">
         <h2 className="text-2xl font-bold mb-6">Pedido</h2>
 
-        {data.map((item, index) => (
-          <div key={item.id} className="mb-8">
-            <div className="grid grid-cols-2 gap-6 mb-6">
-              <div className="bg-gray-300 p-6 rounded-lg flex items-start">
-                <img
-                  src={item.material.image}
-                  alt={item.material.name}
-                  className="w-48 h-48 object-cover rounded-lg mr-6"
-                />
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">
-                    Información de Material
-                  </h3>
-                  <p className="mb-2">
-                    <strong>Nombre:</strong> {item.material.name}
-                  </p>
-                  <p className="mb-2">
-                    <strong>Precio:</strong> Bs.{item.material.price}
-                  </p>
-                  <p>
-                    <strong>Cantidad:</strong> {item.material.quantity}
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-gray-300 p-6 rounded-lg flex items-start">
-                <img
-                  src={item.seller.image}
-                  alt={item.seller.name}
-                  className="w-48 h-48 object-cover rounded-full mr-6"
-                />
-                <div>
-                  <h3 className="font-semibold text-lg mb-2">
-                    Información de Vendedor
-                  </h3>
-                  <p className="mb-2">
-                    <strong>Nombre:</strong> {item.seller.name}
-                  </p>
-                  <p>
-                    <strong>Teléfono:</strong> {item.seller.phone}
-                  </p>
-                </div>
+        {materialData ? (
+          <div className="grid grid-cols-2 gap-6 mb-6">
+            {/* Información del Material */}
+            <div className="bg-gray-300 p-6 rounded-lg flex items-start">
+              <img
+                src={
+                  materialData.imagenUrl || "https://via.placeholder.com/150"
+                }
+                alt={materialData.nombre_material}
+                className="w-48 h-48 object-cover rounded-lg mr-6"
+              />
+              <div>
+                <h3 className="font-semibold text-lg mb-2">
+                  Información de Material
+                </h3>
+                <p className="mb-2">
+                  <strong>Nombre:</strong> {materialData.nombre_material}
+                </p>
+                <p className="mb-2">
+                  <strong>Precio:</strong> Bs.{materialData.precio_material}
+                </p>
+                <p>
+                  <strong>Estado:</strong>{" "}
+                  {materialData.estado_material || "No especificado"}
+                </p>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-6 items-center">
-              <div className="bg-gray-300 h-60 rounded-lg overflow-hidden">
-                <Mapa2
-                  location={item.material.location} 
-                  onDireccionObtenida={(direccion) =>
-                    handleDireccionObtenida(index, direccion)
-                  }
-                  className="w-full h-full"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="font-semibold mb-2">Dirección:</label>
-                <input
-                  type="text"
-                  value={direcciones[index]}
-                  readOnly
-                  className="bg-gray-200 p-3 rounded-md"
-                />
+            {/* Información del Vendedor */}
+            <div className="bg-gray-300 p-6 rounded-lg flex items-start">
+              <img
+                src={imgEjemploPerfil}
+                alt="Vendedor"
+                className="w-48 h-48 object-cover rounded-full mr-6"
+              />
+              <div>
+                <h3 className="font-semibold text-lg mb-2">
+                  Información de Vendedor
+                </h3>
+                <p className="mb-2">
+                  <strong>Nombre:</strong>{" "}
+                  {materialData.vendedor || "Vendedor desconocido"}
+                </p>
+                <p>
+                  <strong>Empresa:</strong> Buildify Proveedores
+                </p>
               </div>
             </div>
           </div>
-        ))}
+        ) : (
+          <p className="text-gray-500">No se encontraron datos para mostrar.</p>
+        )}
 
+        {/* Mapa y Dirección */}
+        <div className="grid grid-cols-2 gap-6 items-center">
+          <div className="bg-gray-300 h-60 rounded-lg overflow-hidden">
+            <Mapa2
+              location={
+                materialData?.location || { lat: -17.3936, lng: -66.157 }
+              }
+              onDireccionObtenida={(direccion) =>
+                handleDireccionObtenida(direccion)
+              }
+              className="w-full h-full"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label className="font-semibold mb-2">Dirección:</label>
+            <input
+              type="text"
+              value={direcciones[0] || ""}
+              readOnly
+              className="bg-gray-200 p-3 rounded-md"
+            />
+          </div>
+        </div>
+
+        {/* Botones de navegación */}
         <div className="flex justify-between mt-8">
           <Link
             to="/solicitarTipoEntrega"
@@ -157,7 +149,6 @@ const OrderPickup: React.FC = () => {
           >
             OK
           </Link>
-
         </div>
       </div>
     </div>
