@@ -9,20 +9,20 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import buildifyLogo from "../assets/Buildify.png"; // Logo de Buildify
 import fondoQR from "../assets/FondoQR.png"; // Fondo del apartado
+import ejemploQR from "../assets/EjemploQR2.png"; // QR estático
 
 const PagoConQR: React.FC = () => {
   const { idUsuario } = useParams<{ idUsuario: string }>(); // Obtener el idUsuario desde los parámetros de la URL
-  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>("/static/assets/EjemploQR.png"); // URL del QR estático
+  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(ejemploQR); // URL del QR estático
   const [mensaje, setMensaje] = useState("");
   const [mostrarConfirmacionCancelar, setMostrarConfirmacionCancelar] =
     useState(false);
   const [cargando, setCargando] = useState(false); // Estado para el spinner
   const navigate = useNavigate();
 
- 
   useEffect(() => {
     console.log(idUsuario); // Verifica que el idUsuario es el esperado
-    setQrCodeUrl("/static/assets/EjemploQR.png"); // QR estático
+    setQrCodeUrl(ejemploQR); // Asegurar que se establezca el QR estático
   }, [idUsuario]);
 
   // Función para descargar el código QR
@@ -137,7 +137,8 @@ const PagoConQR: React.FC = () => {
         <img
           src={qrCodeUrl || ""}
           alt="Código QR"
-          className="mx-auto mb-4 border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+          className="mx-auto mb-4 border border-gray-200 rounded-lg shadow-md hover:shadow-lg transition-shadow bg-white p-4 max-w-xs"
+          style={{ width: "200px", height: "200px" }} // Ajusta el tamaño
         />
         {qrCodeUrl && (
           <div className="flex justify-center">
